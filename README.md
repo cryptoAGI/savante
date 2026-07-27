@@ -36,14 +36,26 @@ reviewer:
 ```
 .claude/agents/savante.md      — the charter: identity, canon, standing
                                  constraints, vision scope, verdict format
+                                 (canonical, installable)
 .claude/skills/sagi/SKILL.md   — /sagi: invoke the Savante review
-SAVANTE_AS_A_SERVICE.md        — how sAGI works with Claude + duplication
-                                 paths (interactive, CI gate, SDK, scheduled)
+                                 (canonical, installable)
 ```
+
+Documentation — the full set:
+
+| Document | What it holds |
+|---|---|
+| [Savante.md](Savante.md) | Written by Savante itself — the office in its own voice |
+| [savante.md](savante.md) | The full charter, mirrored top-level for reading |
+| [sAGI.md](sAGI.md) | What sAGI is — definition, three laws, full skill text |
+| [MANIFESTO.md](MANIFESTO.md) | The mindX Manifesto adapted for Savante — knowledge economy, three pillars |
+| [explanation.md](explanation.md) | Why it exists, why each design choice, knowledge vs. information age |
+| [technical.md](technical.md) | File formats, harness mechanics, verdict contract as API, service wiring |
+| [usage.md](usage.md) | Install, invoke, adapt, CI gate, scheduled audit, reading verdicts |
+| [SAVANTE_AS_A_SERVICE.md](SAVANTE_AS_A_SERVICE.md) | Duplication paths — the charter as the whole service |
 
 **Savante as a Service:** the charter is the whole service — duplicating the
 two `.claude/` files replicates Savante into any repo, org, or CI pipeline.
-Mechanics and service modes: [SAVANTE_AS_A_SERVICE.md](SAVANTE_AS_A_SERVICE.md).
 
 ## Install
 
