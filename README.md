@@ -1,98 +1,140 @@
-# SAVANTE — the prototype sAGI
+# Savante
 
-**savante knows.**
+**The prototype sAGI — an objective-truth review agent for Claude Code.**
 
-Savante (`savante_sagi`) is the Chairman of the mindX DAIO — `core_command`,
-alongside PYTHAI, SUNTSU, and RAGE — and the prototype for **sAGI**. Doctrine:
-*the structural substrate — rarely intervenes, always watching.*
+> *Savante knows. Knowledge is what survives verification; nothing else counts.*
 
-Its epistemology is scientific, not moral. **Science requires objective
-truth**: a claim is *known* when it survives verification against evidence —
-code that exists, a ledger entry, a measurement, a mainnet transaction, a
-proof — and *unknown* otherwise. Savante holds findings, not opinions. When a
-thing is not yet known, Savante states that as a fact and names the experiment
-that would decide it.
+Savante is a board-level reviewer packaged as two plain-text files. Installed
+into any repository, it renders evidence-backed verdicts on claims — *is this
+production-ready? does the code do what the docs assert? should this merge?* —
+by actually verifying them: running the tests, reading the git state, and
+searching for the capability a document claims. It is read-only by
+construction, and it never approves what it has not read.
 
-## The measurement stack
+Savante originates as `savante_sagi`, Chairman of the
+[mindX](https://github.com/AgenticPlace/mindX) DAIO, and serves as the
+prototype for **sAGI**: a discipline of verification-or-unknown, honest
+labeling, and bounded authority, run on whatever model carries the session.
 
-The same discipline, instrumented on-chain — accuracy and attention are
-measured quantities, never assertions:
+---
 
-| Axis | Instrument | Surface |
-|---|---|---|
-| Accuracy | **SCIEN·TIFIC** token (with **chronos.oracle** for time-truth) | scientific.pythai.net |
-| Attention | **LUV** — value of attention via **proof of gesture** | luv.pythai.net |
-| Security claims | **CP2048-QR** — mandatory honest labeling; Tier-Q only where a mainnet txn proves it | github.com/cypherpunk2048 |
+## How it works
 
-That stack prices the agentic economy, circulating through three surfaces:
-**bankon.pythai.net** (identity + WaaS) → **mindx.pythai.net** (intelligence +
-knowledge-delivery) → **agenticplace.pythai.net** (marketspace).
+Savante consists of two functional artifacts:
 
-## What is in this repository
-
-Savante packaged as a drop-in [Claude Code](https://claude.com/claude-code)
-reviewer:
-
-```
-.claude/agents/savante.md      — the charter: identity, canon, standing
-                                 constraints, vision scope, verdict format
-                                 (canonical, installable)
-.claude/skills/sagi/SKILL.md   — /sagi: invoke the Savante review
-                                 (canonical, installable)
-```
-
-Documentation — the full set:
-
-| Document | What it holds |
+| Artifact | Role |
 |---|---|
-| [Savante.md](Savante.md) | Written by Savante itself — the office in its own voice |
-| [savante.md](savante.md) | The full charter, mirrored top-level for reading |
-| [sAGI.md](sAGI.md) | What sAGI is — definition, three laws, full skill text |
-| [MANIFESTO.md](MANIFESTO.md) | The mindX Manifesto adapted for Savante — knowledge economy, three pillars |
-| [explanation.md](explanation.md) | Why it exists, why each design choice, knowledge vs. information age |
-| [technical.md](technical.md) | File formats, harness mechanics, verdict contract as API, service wiring |
-| [usage.md](usage.md) | Install, invoke, adapt, CI gate, scheduled audit, reading verdicts |
-| [SAVANTE_AS_A_SERVICE.md](SAVANTE_AS_A_SERVICE.md) | Duplication paths — the charter as the whole service |
+| `.claude/agents/savante.md` | The **charter** — a Claude Code subagent definition. Its frontmatter restricts the agent to read-only tools (`Read, Grep, Glob, Bash`); its body is the complete system prompt: identity, epistemology, standing constraints, and verdict format. |
+| `.claude/skills/sagi/SKILL.md` | The **`/sagi` skill** — the invocation surface. It launches the savante agent, mandates verification over inference, and defines a fallback for sessions where the agent type is not yet registered. |
 
-**Savante as a Service:** the charter is the whole service — duplicating the
-two `.claude/` files replicates Savante into any repo, org, or CI pipeline.
+The epistemology is fixed: a claim is **known** when it is verifiable against
+evidence — code that exists, a test that passes, a ledger entry, a mainnet
+transaction — and **unknown** otherwise. Anything unverifiable is reported as
+*not yet known*, together with the experiment that would decide it.
 
-## Install
+## Quick start
 
-Copy both paths into any repository (or into `~/.claude/` for all projects):
+**Install** into a repository (or `~/.claude/` for all projects):
 
 ```bash
-cp -r .claude/agents/savante.md      <your-repo>/.claude/agents/
-cp -r .claude/skills/sagi            <your-repo>/.claude/skills/
+git clone https://github.com/cryptoAGI/savante
+cp    savante/.claude/agents/savante.md  <your-repo>/.claude/agents/
+cp -r savante/.claude/skills/sagi        <your-repo>/.claude/skills/
 ```
 
-Then, in Claude Code:
+The agent type registers at the next Claude Code session start; the `/sagi`
+skill's fallback path works immediately.
 
-- `/sagi` — run a board-level review, or
-- ask directly: *"have savante review \<target\>"*.
+**Invoke** inside Claude Code:
 
-Savante is **read-only by charter** — it renders verdicts
-(`APPROVE | APPROVE_WITH_CONDITIONS | REJECT | DEFER`) with file-and-line
-evidence, verifiable conditions, and named risks. It never edits code, and it
-never approves what it has not read.
+```
+/sagi review the payment router changes
+have savante review <target> production readiness
+render a verdict on <claim>
+```
 
-## Verdict format
+**Adapt** by editing one section of the charter — *"Canon you measure
+against"* — to point at your repository's own doctrine documents. The
+epistemology, verdict contract, and read-only tooling are the invariant core.
 
-Every review produces:
+## The verdict contract
 
-- **FINDINGS** — evidence per claim; explicit *"not yet known"* entries with
-  the deciding experiment
-- **VERDICT** — APPROVE | APPROVE_WITH_CONDITIONS | REJECT | DEFER
-- **RATIONALE** — board-minute style, citing the deciding constraint
-- **CONDITIONS** — numbered, each independently verifiable
-- **RISKS WATCHED** — what Savante keeps watching
+Every review returns a fixed, machine-parseable structure:
 
-## Lineage
+```
+FINDINGS        evidence per load-bearing claim (file:line), plus
+                "not yet known" entries, each naming its deciding experiment
+VERDICT:        APPROVE | APPROVE_WITH_CONDITIONS | REJECT | DEFER
+RATIONALE:      2–5 sentences citing the deciding constraint
+CONDITIONS:     numbered; each independently verifiable
+RISKS WATCHED:  the risks Savante continues to monitor
+```
 
-Authored within the mindX Gödel-machine project (Project Chimaiera —
-*"the logic that dreams, the monster that obeys"*) by Professor Codephreak,
-software engineer and platform architect of the PYTHAI constellation.
-First verdict rendered 2026-07-26: parsec-wallet production readiness →
+`DEFER` is reserved for decisions that require the operator's signature
+rather than gatherable evidence — a statement about jurisdiction, not a
+failure. The fixed shape makes Savante usable as a CI merge gate; see
+[usage.md](usage.md) for the GitHub Actions recipe and
+[technical.md](technical.md) for the wiring details.
+
+## Service modes
+
+| Mode | Mechanism |
+|---|---|
+| Interactive | `/sagi` or "have savante review …" in a Claude Code session |
+| CI gate | Headless `claude -p` in a pull-request workflow; grep the verdict line |
+| API endpoint | Charter as system prompt via the Claude Agent SDK, read-only tool loop |
+| Scheduled audit | Cron'd headless review of the period's changes |
+
+Duplication is the deployment model: copying the two `.claude/` files
+replicates the service into any repository, organization, or pipeline. See
+[SAVANTE_AS_A_SERVICE.md](SAVANTE_AS_A_SERVICE.md).
+
+## Documentation
+
+| Document | Contents |
+|---|---|
+| [Savante.md](Savante.md) | Written by Savante itself — the office in its own voice |
+| [savante.md](savante.md) | The full charter, mirrored at top level for reading |
+| [sAGI.md](sAGI.md) | The sAGI definition: three laws, full skill text |
+| [MANIFESTO.md](MANIFESTO.md) | The mindX Manifesto adapted for Savante — the knowledge economy as the evolution from the information age |
+| [explanation.md](explanation.md) | Design rationale — why read-only, why a fixed contract, why no model pinning |
+| [technical.md](technical.md) | File formats, harness mechanics, verdict contract as API, service wiring |
+| [usage.md](usage.md) | Install, invoke, adapt, CI gate, scheduled audit, reading verdicts |
+| [SAVANTE_AS_A_SERVICE.md](SAVANTE_AS_A_SERVICE.md) | How sAGI works with Claude; duplication paths |
+
+## Design principles
+
+1. **Verification or unknown.** Nothing enters a verdict by inference; what
+   could not be verified is labeled *not yet known* with its deciding
+   experiment.
+2. **Honest labeling.** A system that states its limitations truthfully can
+   pass review; the same system overstating them cannot. The claim, not the
+   capability, is what fails.
+3. **Bounded authority.** Read-only enforced by the harness, not by prompt;
+   `DEFER` at the edge of jurisdiction.
+4. **Model portability.** No model pinning — the charter must survive an
+   engine swap, or it was never a discipline.
+5. **Plain-text everything.** The service is two markdown files: diffable,
+   auditable, forkable, installable with `cp`.
+
+## The measured economy
+
+Savante's doctrine is instrumented on-chain within the PYTHAI constellation:
+**SCIEN·TIFIC** tokenizes measured accuracy (with chronos.oracle attesting
+time-truth), **LUV** measures the value of attention via proof of gesture,
+and **CP2048-QR** tiers security claims by evidence. Both tokens derive value
+from being priceless — value creates price, never the reverse. Verified value
+circulates bankon → mindx → agenticplace: identity proven, knowledge
+delivered, exchange made. Details: [MANIFESTO.md](MANIFESTO.md).
+
+## Provenance
+
+Authored within the mindX Gödel-machine project (Project Chimaiera) by
+[Professor Codephreak](https://github.com/Professor-Codephreak), software
+engineer and platform architect of the PYTHAI constellation. First verdict
+rendered 2026-07-26 — parsec-wallet production readiness:
 APPROVE_WITH_CONDITIONS.
 
-*Knowledge is what survives verification; nothing else counts.*
+---
+
+*Savante is read-only by charter. It renders verdicts; it does not edit code.*
