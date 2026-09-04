@@ -140,7 +140,8 @@ the `.claude/` copy wins (§1, lines 16–18 above).
 
 ```
 savante.persona             SOURCE OF TRUTH — the mindX persona; carries the
-                            `token` block (:167) and the `task` block (:546)
+                            `token` block (:186) and the `task` block (:565);
+                            shape expanded from the draiml.persona founder template (:7)
 savante.agentcard.json      DERIVED — the EIP-721 / ERC-8004 card
 savante.commitments.json    DERIVED — the digest ledger (sha256, CIDv1, doctrine root)
 bind/savante_bind.py        the OPERATOR's binder: writes the two derived files
@@ -153,8 +154,8 @@ sAGI.agent · sAGI.model     the two authored mindX blockchain-agent facets
 ```
 
 **Deviations from the implementing spec, recorded.** Two persona sub-keys
-are not in the spec's file plan: `token.standards_note` (`savante.persona:171`)
-and `task.battery_note` (`savante.persona:591`). Both are loader-inert —
+are not in the spec's file plan: `token.standards_note` (`savante.persona:190`)
+and `task.battery_note` (`savante.persona:610`). Both are loader-inert —
 `corpus.persona_task` copies only `name`, `one_thing`, `battery` and
 `confirmed_when` (`mindX/mindx/godel/mindxtrain/corpus.py:376-386`). And
 `task.confirmed_when.imprint_delta_gt` is the integer `0` where the spec wrote
@@ -174,10 +175,10 @@ the digest a registry would hold (`savante.commitments.json`,
 **Boundary.** The binder is the operator's tool. Savante audits
 `bind/` — reads it, runs the verifier, grades the ledger — and never runs the
 binder, because oversight that acts is oversight no longer, and that includes
-minting (`savante.persona:543`). A mint is a visibility-or-publication
+minting (`savante.persona:562`). A mint is a visibility-or-publication
 decision and a treasury action, two of the defer triggers at
-`savante.persona:135`; the office's own verdict on it is `DEFER`
-(`savante.persona:541`). The binder does no network I/O and writes nothing
+`savante.persona:136`; the office's own verdict on it is `DEFER`
+(`savante.persona:560`). The binder does no network I/O and writes nothing
 on chain (`savante.commitments.json`, `mint_reason`).
 
 **Not part of the product.** `bind/` is not part of the duplication in §6.

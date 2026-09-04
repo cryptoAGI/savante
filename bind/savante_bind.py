@@ -508,7 +508,11 @@ def build_card(persona: Dict[str, Any], chartered: Dict[str, Any], generated_fro
                      "the ledger because a document cannot carry its own digest"),
         },
         "image_candidate": image_candidate,
-        "generated_from": generated_from,
+        # The git HEAD and working-tree state live in the LEDGER only. A card that
+        # named the commit it lives in could never be consistent with any commit:
+        # the card naming X exists only after X, and committing it makes Y.
+        "provenance": {"ledger": LEDGER_NAME,
+                       "note": "repo_head_commit and components_differing_from_head are recorded in the ledger, never here"},
     }
     # Persona-authored annotations win over binder defaults; unknown notes are carried, not dropped.
     for k in sorted(ANNOTATION_KEYS & set(pm)):

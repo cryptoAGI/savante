@@ -144,7 +144,9 @@ its author transcribed those statuses and did not itself fetch the pages
 
 ## The persona as an iNFT
 
-Savante's identity is also a mindX persona, `savante.persona`, and that file
+Savante's identity is also a mindX persona, `savante.persona` — its `.persona v1`
+shape expanded from the founder template `mindX/mindx/godel/mindxtrain/personas/draiml.persona`
+(recorded in the file's own `template` key) — and that file
 now carries two additional top-level blocks: `token` — the whole iNFT surface
 as inert data (standards, public metadata, grants, permanently-null binding
 slots, rights, and the office's own verdict on minting) — and `task` — the
@@ -154,7 +156,7 @@ charter and the skill conveys the office; these convey the office's ledger.
 
 | Artifact | Role |
 |---|---|
-| `savante.persona` | The mindX persona — source of truth; carries the `token` (line 167) and `task` (line 546) blocks. Mirrored byte-for-byte into mindX. |
+| `savante.persona` | The mindX persona — source of truth; carries the `token` (line 186) and `task` (line 565) blocks; its shape is expanded from the `draiml.persona` founder template (`template`, line 7). Mirrored byte-for-byte into mindX. |
 | `iNFT.md` | The binding document, rendered in the five-field contract. Its verdict heading reads `## VERDICT: DEFER`. |
 | `sAGI.agent` · `sAGI.model` | The two authored facets of mindX's six-facet blockchain-agent class (`agents/blockchain/facets.py:14-15,29`); `savante.persona` is the third authored facet, and the wallet/bankon/iNFT facets are written only by a mint pipeline. savante === sAGI.agent. |
 | `savante.agentcard.json` | Derived public card — one document that is both an EIP-721 metadata instance and an ERC-8004 registration file. Built from `token.public_metadata` plus what the binder derives itself: the first-commit date read from `git log`, the digest pointers, and the mint status. Never hand-edited. |
@@ -178,11 +180,11 @@ most want elsewhere:
   commercial model. That is load-bearing: a token purporting to convey rights
   the repository does not grant would fail its own charter. The terms under
   which this persona may be copied, forked, sold or bound are *not yet known*
-  until the author commits one (`savante.persona:529-530`).
+  until the author commits one (`savante.persona:548-549`).
 - **The binding document is `iNFT.md`, and its verdict is `DEFER`.** A mint
   is a visibility-or-publication decision and a treasury action — two of the
-  office's own defer triggers (`savante.persona:135`) — so the decision is
-  the operator's, not Savante's (`savante.persona:541-543`).
+  office's own defer triggers (`savante.persona:136`) — so the decision is
+  the operator's, not Savante's (`savante.persona:560-562`).
 
 Verify the binding yourself, trusting nothing the author wrote:
 

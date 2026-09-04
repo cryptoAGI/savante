@@ -123,26 +123,16 @@
         "/embodiment",
         "/token/intelligence/tool_allowlist"
       ],
-      "doctrine_root": "0x7c443697d6a67adeff7d41ef29da2d366f620f95df9b89d806016fad32c2db19",
-      "persona_sha256": "10de9195289e9679b73e70faa81e8a1c6c1b0fee4a375c4955fe7ccfb4951363",
+      "doctrine_root": "0x92fe83eb0fb8fb6b9cbde75ee4bbb671032a849ee25d65592b86913d0ae137d0",
+      "persona_sha256": "0df67f08d372228b7e7af5976df34e5d07a7d5f21b508284193616b00bc84e5a",
       "charter_sha256": "2cf2d3b6a42c9438f89c6dc3bae833486e356795a997e8a0f932205d2fe18c3a",
       "skill_sha256": "1179dfba8426938ecce75f5c24147a90949ce1914094797cf8050702b5c69990",
       "note": "recompute with `python3 bind/savante_verify.py .`; the card's own CID lives only in the ledger because a document cannot carry its own digest"
     },
     "image_candidate": null,
-    "generated_from": {
-      "repo_head_commit": "c2cccc5dd8a775979045fd580f3549b02f78ee77",
-      "repo_head_commit_date": "2026-07-31T08:39:51-07:00",
-      "components_differing_from_head": [
-        ".claude/agents/savante.md",
-        ".claude/skills/sagi/SKILL.md",
-        "sAGI.agent",
-        "sAGI.model",
-        "savante.persona"
-      ],
-      "note": "no wall-clock timestamp by design — re-running over unchanged inputs must reproduce these files byte for byte; the digests above are over the WORKING TREE, so a non-empty components_differing_from_head means they are not the digests of the commit named here",
-      "binder": "bind/savante_bind.py",
-      "keccak_backend": "pycryptodome Crypto.Hash.keccak(digest_bits=256)"
+    "provenance": {
+      "ledger": "savante.commitments.json",
+      "note": "repo_head_commit and components_differing_from_head are recorded in the ledger, never here"
     },
     "services_note": "one entry only: the deployment model is `cp` of two files (SAVANTE_AS_A_SERVICE.md:39-57) and that repository IS the service.",
     "proposed_services_note": "the four modes are the ones SAVANTE_AS_A_SERVICE.md proposes; a field that asserts reachability is not where an aspiration goes, so they live here and not in services[]."

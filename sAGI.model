@@ -13,7 +13,7 @@
 # savante.persona mirrors this at token.intelligence.model (null) with the same
 # reason. The persona's fourth desire — "To learn whether the discipline
 # survives an engine swap — and to record that finding like any other,
-# whichever way it falls" (savante.persona:67) — is the experiment this facet
+# whichever way it falls" (savante.persona:68) — is the experiment this facet
 # exists to run: pinned stays false so the engine can change under the charter
 # and the verdict discipline can be graded against each one. Whether it
 # survives is not_yet_known; no swap has been recorded.
@@ -21,4 +21,4 @@ model_facet: blockchain.sAGI
 task_class: reasoning        # general | reasoning | code_generation | simple_chat
 logical_model: auto          # 'auto' => selector decides; never hard-pin a provider
 pinned: false
-note: "resolved by the self-aware selector; cascades to local Ollama; no `model:` key in the charter by design (technical.md:48-50); the engine-swap desire (savante.persona:67) is the experiment"
+note: "resolved by the self-aware selector; cascades to local Ollama; no `model:` key in the charter by design (technical.md:48-50); the engine-swap desire (savante.persona:68) is the experiment"
