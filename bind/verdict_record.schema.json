@@ -1,0 +1,150 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Savante verdict record",
+  "description": "One entry of the Savante verdict ledger: a rendered five-field verdict bound to the exact charter, persona and doctrine root that rendered it. Records chain by prev_record_cid into an append-only list a stranger can walk. HONEST LABEL: the ledger has ZERO entries. The first verdict (2026-07-26, parsec-wallet, APPROVE_WITH_CONDITIONS) is asserted in prose (README.md:134-136) with no artifact committed, so it is not yet a ledger entry. countersignature is null because no signing executor exists: today a forged record is detectable by the digests it fails to match, not by a signature it cannot forge. That gap is named here; the deciding action is an executor holding an unexpired RENDER_VERDICT grant, at which point this schema is revised to admit a signature. verdict is a closed enum of exactly four values so a fifth value fails validation mechanically rather than by prose.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "record",
+    "prev_record_cid",
+    "token",
+    "target",
+    "charter_sha256",
+    "persona_sha256",
+    "doctrine_root",
+    "engine",
+    "findings",
+    "verdict",
+    "rationale",
+    "conditions",
+    "risks_watched",
+    "rendered_at",
+    "record_cid",
+    "countersignature"
+  ],
+  "properties": {
+    "record": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "1-based position in the append-only list. No record 1 exists yet."
+    },
+    "prev_record_cid": {
+      "type": ["string", "null"],
+      "pattern": "^b[a-z2-7]+$",
+      "description": "CIDv1 (raw, sha2-256, base32) of the previous record's canonical bytes; null only for record 1."
+    },
+    "token": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["chain", "contract", "token_id"],
+      "properties": {
+        "chain": {
+          "type": ["string", "null"],
+          "description": "eip155:<chainId> of the registry the office is bound to; null while nothing is minted."
+        },
+        "contract": {
+          "type": ["string", "null"],
+          "pattern": "^0x[0-9a-fA-F]{40}$",
+          "description": "identity registry address; null while nothing is minted."
+        },
+        "token_id": {
+          "type": ["integer", "string", "null"],
+          "pattern": "^[0-9]+$",
+          "description": "agentId (ERC-721 tokenId); a decimal string when it exceeds 2^53; null while nothing is minted."
+        }
+      }
+    },
+    "target": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["repo", "ref", "commit"],
+      "properties": {
+        "repo": {"type": "string", "description": "the repository reviewed (URL or path)"},
+        "ref": {"type": "string", "description": "branch or tag reviewed"},
+        "commit": {"type": "string", "pattern": "^[0-9a-f]{40}$", "description": "the exact commit read"}
+      }
+    },
+    "charter_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$",
+      "description": "sha256 of the raw bytes of .claude/agents/savante.md that rendered this verdict."
+    },
+    "persona_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$",
+      "description": "sha256 of the raw bytes of savante.persona that rendered this verdict."
+    },
+    "doctrine_root": {
+      "type": "string",
+      "pattern": "^0x[0-9a-f]{64}$",
+      "description": "keccak256 over the fifteen doctrine pointers in fixed order (savante.commitments.json doctrine_root.construction)."
+    },
+    "engine": {
+      "type": "string",
+      "minLength": 1,
+      "description": "the model that carried the session — recorded, never pinned (technical.md:48-50)"
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["finding", "epistemic_state"],
+        "properties": {
+          "finding": {"type": "string", "minLength": 1},
+          "evidence": {
+            "type": "array",
+            "items": {"type": "string"},
+            "description": "file:line citations, test counts, transaction hashes — what was read, not what was inferred"
+          },
+          "epistemic_state": {
+            "type": "string",
+            "enum": ["known", "not_yet_known"],
+            "description": "the persona's closed vocabulary (savante.persona:94-97); there is no third state"
+          },
+          "deciding_experiment": {
+            "type": "string",
+            "description": "required in substance whenever epistemic_state is not_yet_known"
+          }
+        },
+        "if": {"properties": {"epistemic_state": {"const": "not_yet_known"}}},
+        "then": {"required": ["deciding_experiment"]}
+      }
+    },
+    "verdict": {
+      "type": "string",
+      "enum": ["APPROVE", "APPROVE_WITH_CONDITIONS", "REJECT", "DEFER"]
+    },
+    "rationale": {
+      "type": "string",
+      "minLength": 1,
+      "description": "2-5 sentences, board-minute style, citing the deciding doctrine or constraint."
+    },
+    "conditions": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1},
+      "description": "numbered by position; each independently verifiable by someone who is not the officer."
+    },
+    "risks_watched": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1}
+    },
+    "rendered_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "RFC 3339 timestamp of the rendering session."
+    },
+    "record_cid": {
+      "type": ["string", "null"],
+      "pattern": "^b[a-z2-7]+$",
+      "description": "CIDv1 of this record's canonical bytes with this field set to null; null during canonicalization."
+    },
+    "countersignature": {
+      "type": "null",
+      "description": "null until a signing executor exists; no such executor or key exists today. Admitting a signature is a schema revision, not a value change."
+    }
+  },
+  "if": {"properties": {"record": {"const": 1}}},
+  "then": {"properties": {"prev_record_cid": {"type": "null"}}},
+  "else": {"properties": {"prev_record_cid": {"type": "string"}}}
+}

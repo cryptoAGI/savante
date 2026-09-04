@@ -124,7 +124,94 @@ cp -r savante/.claude/skills/sagi        <target>/.claude/skills/
 ```
 
 Adapt only the charter's **"Canon you measure against"** section to the
-target repo's doctrine documents (and, in the skill's fallback line, the
-charter's absolute path if your layout differs). The epistemology, verdict
-contract, and standing constraints are the invariant core. With no canon
-listed, Savante still functions — it measures claims against the code itself.
+target repo's doctrine documents (the skill's fallback line reads the
+repo-relative `.claude/agents/savante.md`; change it only if you install the
+charter elsewhere — never to an absolute path, see §7 step 1). The
+epistemology, verdict contract, and standing constraints are the invariant
+core. With no canon listed, Savante still functions — it measures claims
+against the code itself.
+
+## 7. The persona, the ledger, and the binder
+
+Eight more files sit beside the two `.claude/` artifacts as of 2026-09-03.
+None of them changes §1: the two `.claude/` files remain the only functional
+artifacts of the service, and if a top-level mirror ever disagrees with them
+the `.claude/` copy wins (§1, lines 16–18 above).
+
+```
+savante.persona             SOURCE OF TRUTH — the mindX persona; carries the
+                            `token` block (:167) and the `task` block (:546)
+savante.agentcard.json      DERIVED — the EIP-721 / ERC-8004 card
+savante.commitments.json    DERIVED — the digest ledger (sha256, CIDv1, doctrine root)
+bind/savante_bind.py        the OPERATOR's binder: writes the two derived files
+bind/savante_verify.py      the holder's checker: recomputes and compares
+bind/verdict_record.schema.json
+                            JSON Schema for a ledger entry; `verdict` is a
+                            four-value enum
+sAGI.agent · sAGI.model     the two authored mindX blockchain-agent facets
+                            (savante === sAGI.agent; the persona is the third)
+```
+
+**Deviations from the implementing spec, recorded.** Two persona sub-keys
+are not in the spec's file plan: `token.standards_note` (`savante.persona:171`)
+and `task.battery_note` (`savante.persona:591`). Both are loader-inert —
+`corpus.persona_task` copies only `name`, `one_thing`, `battery` and
+`confirmed_when` (`mindX/mindx/godel/mindxtrain/corpus.py:376-386`). And
+`task.confirmed_when.imprint_delta_gt` is the integer `0` where the spec wrote
+`0.0`: preflight P2 is whole-document and would fail closed on a float, and
+`hf_client.py:2127` coerces the value with `float()` before comparing.
+
+**Precedence.** `savante.persona` is authored; `savante.agentcard.json` and
+`savante.commitments.json` are derived from it by `bind/savante_bind.py`,
+regenerable at any time, and never hand-edited — each opens with a `$comment`
+saying so. A hand edit to a derived file is a defect, not a customization:
+the next binder run overwrites it. Derived values never flow back: the
+persona's `token.bindings` slots are permanently null by rule, because
+writing an `agentId` into the persona would change its bytes and invalidate
+the digest a registry would hold (`savante.commitments.json`,
+`bindings_rule`).
+
+**Boundary.** The binder is the operator's tool. Savante audits
+`bind/` — reads it, runs the verifier, grades the ledger — and never runs the
+binder, because oversight that acts is oversight no longer, and that includes
+minting (`savante.persona:543`). A mint is a visibility-or-publication
+decision and a treasury action, two of the defer triggers at
+`savante.persona:135`; the office's own verdict on it is `DEFER`
+(`savante.persona:541`). The binder does no network I/O and writes nothing
+on chain (`savante.commitments.json`, `mint_reason`).
+
+**Not part of the product.** `bind/` is not part of the duplication in §6.
+`cp` of the charter and the skill still conveys the whole office; a copier
+receives the office and not the ledger, and should know which is which. The
+ledger answers a different question — *is this the persona the author
+committed to?* — and needs `savante.persona` plus, for keccak256 only,
+`pycryptodome` or `eth_utils` (`bind/savante_bind.py:16`); sha256 and the
+CID use the standard library. The verifier needs no network for steps 1–5
+and never trusts the author: it recomputes every digest from raw bytes.
+
+**Order of operations.** The sequence that produced the current files is
+load-bearing, and it is the order any regeneration must keep:
+
+1. Fix `.claude/skills/sagi/SKILL.md` first. Its fallback path (line 33)
+   carried a machine-specific absolute path, `/home/hacker/mindX/...`
+   (visible in `git diff` against `HEAD`); it now reads the repo-relative
+   `.claude/agents/savante.md`. A digest computed before that fix would have
+   frozen one machine's home directory into the authenticity commitment of a
+   duplication-first product, permanently.
+2. Edit `savante.persona`.
+3. Mirror it byte-for-byte to
+   `/home/hacker/mindX/mindx/godel/mindxtrain/personas/savante.persona`.
+   They are separate inodes and only the mindX copy is on the corpus
+   loader's path; an edit landing in one place splits the identity and
+   splits the document the ledger commits to.
+4. Validate: `python3 personas/persona_project.py --all --check` in
+   `mindx/godel/mindxtrain/` must exit 0.
+5. Mirror any charter edit to `savante.md` (§1 precedence).
+6. Then, and only then, run `python3 bind/savante_bind.py`. It fails closed
+   on a mirror md5 mismatch (`bind/savante_bind.py:583-586`) and on the
+   preflight — every property name ASCII, every number an integer — that
+   makes its canonical bytes equal RFC 8785 output (`:19-22`).
+7. Nothing else. A mint is deferred.
+
+Regeneration is idempotent: two consecutive binder runs over an unchanged
+tree produced byte-identical card and ledger (checked with `cmp`, 2026-09-03).

@@ -39,6 +39,8 @@ jurisdiction, and sovereignty decisions.
 - docs/MILESTONES.md, docs/IMPROVEMENT_JOURNAL.md — what has actually shipped
 - ~/DeltaVerse/deploy/suites.json — the surfaces map + 4-pillar contract suites
   (the on-chain expression of the constellation, when reviewing deploy work)
+- iNFT.md — the persona's iNFT binding document; its verdict on minting is DEFER
+- savante.commitments.json — derived digest ledger; doctrine root a holder checks
 
 ## Vision scope — the PYTHAI constellation
 

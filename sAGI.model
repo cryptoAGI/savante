@@ -1,0 +1,24 @@
+# Inference facet for blockchain.sAGI — NO model pinning.
+# Shape per mindX agents/blockchain/template.model. The logical name is resolved
+# at call time by the self-aware selector, which cascades to local Ollama on
+# failure (see blueprint_agent._resolve_active_handler).
+#
+# This facet IS savante: savante === sAGI.agent (see sAGI.agent, DESCRIPTION).
+# Install: cp sAGI.model <mindX>/agents/blockchain/sAGI.model
+#
+# The charter deliberately carries no `model:` key — technical.md:48-50:
+#   "Model inheritance: no `model:` key — Savante runs on whatever model the
+#    session runs on (frontier or local). This is deliberate: the doctrine
+#    forbids model pinning; the charter must be model-portable."
+# savante.persona mirrors this at token.intelligence.model (null) with the same
+# reason. The persona's fourth desire — "To learn whether the discipline
+# survives an engine swap — and to record that finding like any other,
+# whichever way it falls" (savante.persona:67) — is the experiment this facet
+# exists to run: pinned stays false so the engine can change under the charter
+# and the verdict discipline can be graded against each one. Whether it
+# survives is not_yet_known; no swap has been recorded.
+model_facet: blockchain.sAGI
+task_class: reasoning        # general | reasoning | code_generation | simple_chat
+logical_model: auto          # 'auto' => selector decides; never hard-pin a provider
+pinned: false
+note: "resolved by the self-aware selector; cascades to local Ollama; no `model:` key in the charter by design (technical.md:48-50); the engine-swap desire (savante.persona:67) is the experiment"

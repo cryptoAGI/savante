@@ -135,6 +135,72 @@ engineer and platform architect of the PYTHAI constellation. First verdict
 rendered 2026-07-26 — parsec-wallet production readiness:
 APPROVE_WITH_CONDITIONS.
 
+The `token` and `task` blocks of `savante.persona` were authored 2026-09-03.
+The standards the token block cites are listed in `token.standards[]`, each
+with the URL recorded as its `status_source` where one was fetched (the two
+RFCs and the two non-standard entries carry `null`); the block records that
+its author transcribed those statuses and did not itself fetch the pages
+(`token.standards_note`).
+
+## The persona as an iNFT
+
+Savante's identity is also a mindX persona, `savante.persona`, and that file
+now carries two additional top-level blocks: `token` — the whole iNFT surface
+as inert data (standards, public metadata, grants, permanently-null binding
+slots, rights, and the office's own verdict on minting) — and `task` — the
+imprint battery a trainer grades it against. Around it sit the artifacts
+below. None of them is part of the two-file install above: `cp` of the
+charter and the skill conveys the office; these convey the office's ledger.
+
+| Artifact | Role |
+|---|---|
+| `savante.persona` | The mindX persona — source of truth; carries the `token` (line 167) and `task` (line 546) blocks. Mirrored byte-for-byte into mindX. |
+| `iNFT.md` | The binding document, rendered in the five-field contract. Its verdict heading reads `## VERDICT: DEFER`. |
+| `sAGI.agent` · `sAGI.model` | The two authored facets of mindX's six-facet blockchain-agent class (`agents/blockchain/facets.py:14-15,29`); `savante.persona` is the third authored facet, and the wallet/bankon/iNFT facets are written only by a mint pipeline. savante === sAGI.agent. |
+| `savante.agentcard.json` | Derived public card — one document that is both an EIP-721 metadata instance and an ERC-8004 registration file. Built from `token.public_metadata` plus what the binder derives itself: the first-commit date read from `git log`, the digest pointers, and the mint status. Never hand-edited. |
+| `savante.commitments.json` | Derived integrity ledger — raw-byte sha256 and CIDv1 per component, the doctrine root, the card digest, every binding slot null with its reason. The only place binding values ever live. |
+| `bind/savante_bind.py` | The operator's binder — writes the two derived files. Savante audits it and never runs it. |
+| `bind/savante_verify.py` | The holder's checker — recomputes every digest from raw bytes and prints the verdict block; exits 0 only on `VERDICT: APPROVE`. |
+| `bind/verdict_record.schema.json` | JSON Schema for a ledger entry; `verdict` is a four-value enum, so a fifth verdict fails mechanically. |
+
+Plain facts, kept on the front page because they are the ones a buyer would
+most want elsewhere:
+
+- **Nothing is minted** — not even a dry run. Evidence: no `savante.*` facet
+  exists in mindX `agents/blockchain/` (the directory holds `abi_codec.py`,
+  `agent_factory.py`, `algorand_verifier.py`, `contracts.py`, `facets.py`,
+  `__init__.py`, `template.agent`, `template.model` and a `__pycache__/`;
+  `ls`, 2026-09-03), and `/home/hacker/mindX/data/godel/thot/` does not exist
+  (`ls`: No such file or directory, 2026-09-03). The ledger records
+  `"mint": null`.
+- **No LICENSE.** The repository carries no LICENSE file and no copyright
+  header (`ls -la`, 2026-09-03), while duplication by `cp` is the stated
+  commercial model. That is load-bearing: a token purporting to convey rights
+  the repository does not grant would fail its own charter. The terms under
+  which this persona may be copied, forked, sold or bound are *not yet known*
+  until the author commits one (`savante.persona:529-530`).
+- **The binding document is `iNFT.md`, and its verdict is `DEFER`.** A mint
+  is a visibility-or-publication decision and a treasury action — two of the
+  office's own defer triggers (`savante.persona:135`) — so the decision is
+  the operator's, not Savante's (`savante.persona:541-543`).
+
+Verify the binding yourself, trusting nothing the author wrote:
+
+```bash
+git clone https://github.com/cryptoAGI/savante && cd savante
+python3 bind/savante_verify.py .
+python3 bind/savante_verify.py . | grep -qx 'VERDICT: APPROVE' && echo bound
+```
+
+Steps 1–5 need no network: raw-byte sha256 and CIDv1 of the persona, charter
+and skill against the ledger; the preflight and the doctrine root over its
+fifteen pointers; the charter allowlist exactly `Read, Grep, Glob, Bash`; and
+the mindX mirror's md5. On a machine without mindX the mirror step is
+reported as a condition, not a rejection (`bind/savante_verify.py:13-14`), so
+expect `APPROVE_WITH_CONDITIONS` (exit 1) there and `APPROVE` (exit 0) on
+the author's host. The `--onchain` step 6 has nothing to compare against
+today: no registry address exists in this repository, and none is invented.
+
 ---
 
 *Savante is read-only by charter. It renders verdicts; it does not edit code.*
