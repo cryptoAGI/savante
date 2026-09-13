@@ -1,0 +1,37 @@
+{
+ "format": "voaice/1",
+ "id": "sAGI",
+ "label": "SAVANTE",
+ "engine": "voaice",
+ "model": "",
+ "sampleRate": null,
+ "measured": null,
+ "vprint": null,
+ "provenance": {
+  "text": "",
+  "source": "",
+  "measuredAt": "",
+  "tool": "voaice/1 — nothing measured",
+  "reason": "No recording of this office has ever been measured. measured and vprint stay null until `voaice.py measure` runs against a real capture.",
+  "deciding_experiment": "Record a capture of the office speaking its own verdict contract, run `python3 ~/voaice/tools/voaice.py measure <wav>`, and record the eight metrics with their params. Only that fills these fields."
+ },
+ "render": {
+  "engine": "espeak-ng",
+  "voice": "sAGI",
+  "source": "mindX/utils/docspeech — an espeak voice named sAGI exists; utils/docspeech/engines.py:362 uses `savante` as the default voice persona",
+  "note": "HOW TO SPEAK this office — not who it sounds like. A render hint is not an identity: synthesised output measured into a vprint would fingerprint the synthesiser, not the office."
+ },
+ "synthesis": null,
+ "_why": [
+  "A vprint is a fingerprint OF A MEASUREMENT, not of a speaker. Measuring the espeak",
+  "voice above would produce a real number that means the wrong thing: it would identify",
+  "espeak-ng's rendering, and any reader would take it for the office's own voice.",
+  "",
+  "The persona's embodiment block is pointer 14 of the doctrine root, and the office's own",
+  "binding document names filling an embodiment field with an unearned value as a voiding",
+  "edit. So the honest state is null, and null is what ships.",
+  "",
+  "render and synthesis are kept apart on purpose: render says how to say the words,",
+  "synthesis is the seam a cloner would satisfy. Nothing here implements one."
+ ]
+}
