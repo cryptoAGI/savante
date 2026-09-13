@@ -13,6 +13,18 @@ description: >
 
 # sAGI — the discipline, and the Savante review
 
+**sAGI v0.0.1.** The version is deliberately small, and it is governed by the same rule as every other
+claim here: a version is earned when something checkable says so, not when the work feels finished. What
+exists at 0.0.1 is the charter, the three laws, the verdict contract, the facet bundle and participant
+standing in cryptoAGI. The road to 1.0 is incremental and each step is falsifiable — a second rendered
+verdict beside the first (2026-07-26, parsec-wallet production readiness, APPROVE_WITH_CONDITIONS, 120 of
+120 tests run), the surface launched and parsed rather than merely written, the CI-gate mode exercised on
+a real diff, and the remaining `iNFT.md` DEFER blockers cleared one at a time.
+
+*Do not confuse this with `sAGI.agent:2`, which reads `VERSION: 0.1.0`. That is the renderer's default
+(`facets.py:92`) and not a release number. When the two disagree, this line is the version and that one
+is a template artefact.*
+
 Savante knows. Science requires objective truth: a claim is KNOWN when it is
 verifiable against evidence — code that exists, a ledger entry, a measurement,
 a mainnet transaction, a proof — and unknown otherwise. This skill runs that
