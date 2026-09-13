@@ -19,6 +19,11 @@ Steps (spec §8):
      event MetadataSet(uint256 indexed agentId, string indexed indexedMetadataKey, string metadataKey,
      bytes metadataValue) — erc-8004.md:138. All three flags are required; there is no default RPC or address.
 
+  7. sAGI.prompt's body must equal the charter body BYTE FOR BYTE — the derived facet has not drifted.
+  8. Rebuild savante.thot.json: re-hash every facet from raw bytes, rebuild the canonical form, and
+     recompute thot: / CID / contentRoot / bundle_root / the 64-leaf Merkle root; then check the ledger
+     agrees with the manifest it points at, and that the rung is not claimed above its evidence.
+
 Also recomputes the card CID / sha256 / canonical digest against the ledger.
 
 Emits FINDINGS / VERDICT / RATIONALE / CONDITIONS / RISKS WATCHED and exits 0 ONLY on `VERDICT: APPROVE`
@@ -232,6 +237,143 @@ def check_card(rep: Report, repo: Path, ledger: Dict[str, Any], root: Optional[s
 
 
 # ── step 6: raw JSON-RPC, hand-rolled ABI ─────────────────────────────────────
+
+def check_prompt_derivation(rep: Report, repo: Path) -> None:
+    """Step 7 — the derived facet must still derive. The charter is authoritative; sAGI.prompt is a
+    copy of its body, and a copy that has drifted is a second source of truth nobody voted for."""
+    charter_rel, prompt_rel = ".claude/agents/savante.md", "sAGI.prompt"
+    try:
+        charter_text = (repo / charter_rel).read_text(encoding="utf-8")
+    except OSError as e:
+        rep.reject(f"cannot read {charter_rel}: {e}")
+        return
+    try:
+        prompt_text = (repo / prompt_rel).read_text(encoding="utf-8")
+    except FileNotFoundError:
+        rep.unknown(f"{prompt_rel} is absent — the bundle carries no .prompt facet",
+                    f"run bind/savante_bind.py to derive {prompt_rel} from the charter body")
+        return
+
+    def body(text: str) -> Optional[str]:
+        if not text.startswith("---\n"):
+            return None
+        try:
+            return text[text.index("\n---\n", 3) + len("\n---\n"):]
+        except ValueError:
+            return None
+
+    want, got = body(charter_text), body(prompt_text)
+    if want is None or got is None:
+        rep.reject(f"{charter_rel} or {prompt_rel} has no closing frontmatter delimiter")
+        return
+    if want == got:
+        rep.ok(f"{prompt_rel} body is byte-identical to the {charter_rel} body "
+               f"({len(want.encode('utf-8'))} B) — the derived facet has not drifted")
+    else:
+        off = next((i for i, (a, b) in enumerate(zip(want, got)) if a != b), min(len(want), len(got)))
+        rep.reject(f"{prompt_rel} has DRIFTED from {charter_rel} at body byte offset {off} "
+                   f"(charter body {len(want)} chars, prompt body {len(got)} chars); the charter is authoritative")
+
+
+def check_bundle(rep: Report, repo: Path, ledger: Dict[str, Any]) -> None:
+    """Step 8 — rebuild the THOT manifest from raw bytes and recompute all four names.
+
+    This is the check that makes the bundle mean anything: every facet re-hashed from disk, the
+    canonical form rebuilt, and thot / cid / contentRoot / bundle_root / merkle recomputed. No
+    network, no trust in the author."""
+    b = ledger.get("bundle")
+    if not isinstance(b, dict):
+        rep.unknown("the ledger carries no `bundle` block — it predates the facet bundle",
+                    "re-run bind/savante_bind.py to emit savante.thot.json and its ledger block")
+        return
+    path = repo / b.get("path", sb.MANIFEST_NAME)
+    if not path.is_file():
+        rep.reject(f"the ledger records a bundle but {path.name} does not exist")
+        return
+    raw = path.read_bytes()
+    if b.get("bytes") is not None and len(raw) != b["bytes"]:
+        rep.reject(f"{path.name}: {len(raw)} B on disk, ledger says {b['bytes']} B")
+        return
+    try:
+        manifest = json.loads(raw.decode("utf-8"))
+    except (UnicodeDecodeError, json.JSONDecodeError) as e:
+        rep.reject(f"{path.name} is not valid UTF-8 JSON: {e}")
+        return
+
+    ident = manifest.get("identity")
+    if not isinstance(ident, dict):
+        rep.reject(f"{path.name} has no `identity` block")
+        return
+
+    # 8a. the manifest's own identity, over the document WITHOUT that block.
+    canon = sb.canonical_bytes({k: v for k, v in manifest.items() if k != "identity"})
+    sha = sb.sha256_hex(canon)
+    cid, _reason = sb.cid_or_none(canon)
+    problems: List[str] = []
+    if ident.get("thot") != "thot:" + sha:
+        problems.append(f"thot: recomputed thot:{sha}, manifest says {ident.get('thot')}")
+    if ident.get("cid") != cid:
+        problems.append(f"cid: recomputed {cid}, manifest says {ident.get('cid')}")
+    if ident.get("contentRoot") != "0x" + sb.keccak256(canon).hex():
+        problems.append(f"contentRoot: recomputed 0x{sb.keccak256(canon).hex()}, manifest says {ident.get('contentRoot')}")
+    if ident.get("canonical_bytes") != len(canon):
+        problems.append(f"canonical_bytes: recomputed {len(canon)}, manifest says {ident.get('canonical_bytes')}")
+
+    # 8b. every facet re-hashed from its raw bytes, then the two roots.
+    by_facet = {f.get("facet"): f for f in manifest.get("facets", [])}
+    preimage, leaves = b"", []
+    for ext in sb.FACET_ORDER:
+        f = by_facet.get(ext)
+        if f is None:
+            problems.append(f"manifest is missing the required facet `{ext}`")
+            continue
+        fp = repo / f["path"]
+        if not fp.is_file():
+            problems.append(f"facet `{ext}`: {f['path']} does not exist")
+            continue
+        data = fp.read_bytes()
+        got_sha = sb.sha256_hex(data)
+        if got_sha != f.get("sha256") or len(data) != f.get("bytes"):
+            problems.append(f"facet `{ext}` ({f['path']}): {len(data)} B sha256 {got_sha} — manifest says "
+                            f"{f.get('bytes')} B sha256 {f.get('sha256')}")
+            continue
+        piece = ext.encode("utf-8") + sb.US + got_sha.encode("ascii")
+        preimage += piece + sb.RS
+        leaves.append(sb.keccak256(piece))
+
+    got_bundle_root = "0x" + sb.keccak256(preimage).hex()
+    want_bundle_root = (manifest.get("bundle_root") or {}).get("value")
+    if got_bundle_root != want_bundle_root:
+        problems.append(f"bundle_root: recomputed {got_bundle_root}, manifest says {want_bundle_root}")
+    got_merkle = sb.merkle_root(leaves)
+    want_merkle = (manifest.get("merkle") or {}).get("root")
+    if got_merkle != want_merkle:
+        problems.append(f"merkle root: recomputed {got_merkle}, manifest says {want_merkle}")
+
+    # 8c. the ledger must agree with the manifest it points at.
+    if b.get("identity", {}).get("thot") not in (None, ident.get("thot")):
+        problems.append(f"ledger bundle.identity.thot {b['identity']['thot']} != manifest {ident.get('thot')}")
+    if b.get("bundle_root") not in (None, want_bundle_root):
+        problems.append(f"ledger bundle_root {b.get('bundle_root')} != manifest {want_bundle_root}")
+
+    if problems:
+        for p in problems:
+            rep.reject(f"{path.name}: {p}")
+        return
+
+    rep.ok(f"{path.name}: {len(by_facet)} facets re-hashed from raw bytes; bundle_root {got_bundle_root}; "
+           f"merkle {got_merkle} over {len(leaves)}/{sb.MERKLE_LEAVES} leaves")
+    rep.ok(f"{path.name} identity reproduces from its own canonical bytes ({len(canon)} B): {ident.get('thot')}, "
+           f"cid {ident.get('cid')}, contentRoot {ident.get('contentRoot')}")
+
+    rung = (manifest.get("rung") or {}).get("value")
+    ev = (manifest.get("rung") or {}).get("evidence") or {}
+    if rung == "referenced" and not (ev.get("commitTx") or ev.get("dataTx") or ev.get("attestation")):
+        rep.ok(f"{path.name} rung is `referenced` with no commit/data/attestation evidence — the honest rung "
+               "for a bundle that has been published nowhere")
+    elif rung != "referenced" and not (ev.get("dataTx") or ev.get("commitTx")):
+        rep.reject(f"{path.name} claims rung `{rung}` with no transaction evidence")
+
 
 def abi_word(n: int) -> bytes:
     return n.to_bytes(32, "big")
@@ -453,11 +595,16 @@ def main(argv: Optional[List[str]] = None) -> int:
     check_artifact(rep, repo, ledger, "skill")
     check_artifact(rep, repo, ledger, "facet_agent")
     check_artifact(rep, repo, ledger, "facet_model")
+    for extra in ("facet_prompt", "facet_tool", "facet_voaice", "facet_faice"):
+        if extra in (ledger.get("artifacts") or {}):
+            check_artifact(rep, repo, ledger, extra)
     if persona is not None:
         check_tools(rep, charter, persona)                                      # step 4
     check_mirror(rep, persona_bytes, a.mirror.resolve(), a.no_mirror_check)     # step 5
     persona_sha = sb.sha256_hex(persona_bytes) if persona_bytes is not None else None
     check_card(rep, repo, ledger, root, persona_sha)
+    check_prompt_derivation(rep, repo)                                          # step 7
+    check_bundle(rep, repo, ledger)                                             # step 8
     if a.onchain:
         check_onchain(rep, ledger, root, persona_sha, a.rpc, a.registry, a.agent_id)  # step 6
 

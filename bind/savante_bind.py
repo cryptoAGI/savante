@@ -87,10 +87,40 @@ COMPONENTS: List[Tuple[str, str]] = [
     ("skill", ".claude/skills/sagi/SKILL.md"),
     ("facet_agent", "sAGI.agent"),
     ("facet_model", "sAGI.model"),
+    ("facet_prompt", "sAGI.prompt"),
+    ("facet_tool", "sAGI.tool"),
+    ("facet_voaice", "sAGI.voaice"),
+    ("facet_faice", "sAGI.faice"),
 ]
+
+# Ledger component name → facet extension. `charter` is deliberately absent: it is the SOURCE of the
+# derived .prompt facet, not a facet of the bundle (sagi/engine/FACET_BUNDLE.md §5).
+COMPONENT_FACET: Dict[str, str] = {
+    "identity": "persona",
+    "facet_agent": "agent",
+    "facet_model": "model",
+    "facet_prompt": "prompt",
+    "facet_tool": "tool",
+    "skill": "skill",
+    "facet_voaice": "voaice",
+    "facet_faice": "faice",
+}
+
+# Registry order (sagi/engine/facet_registry.json). ORDER IS LOAD-BEARING: it fixes the bundle_root
+# preimage and the Merkle leaf indices. Never reorder; only append.
+FACET_ORDER: List[str] = ["persona", "agent", "model", "prompt", "tool", "skill", "voaice", "faice"]
+
+# Core facets this bundle does not author, recorded as absent WITH a reason rather than stubbed.
+FACETS_ABSENT: List[Tuple[str, str]] = [
+    ("attribute", "no attribute facet is authored; the office's attributes live in the persona's bdi/skills blocks"),
+    ("reputation", "no reputation facet is authored; the verdict ledger has zero entries, so there is nothing earned to record"),
+]
+
+MERKLE_LEAVES = 64          # THOTCommitmentRegistry.issueTHOT4096 documents a 64-leaf tree
 
 CARD_NAME = "savante.agentcard.json"
 LEDGER_NAME = "savante.commitments.json"
+MANIFEST_NAME = "savante.thot.json"
 
 ONCHAIN_METADATA_KEYS = ["savantePersonaDigest", "savanteDoctrineRoot"]
 
@@ -559,6 +589,219 @@ def digest_file(path: Path) -> Dict[str, Any]:
     return d
 
 
+# ── the facet bundle ──────────────────────────────────────────────────────────
+# sagi/engine/FACET_BUNDLE.md (what the facets are) and THOT_MANIFEST.md (how they become one
+# content-addressed thing). Every check here FAILS CLOSED: a derived facet that has drifted is not a
+# warning, because the whole point of deriving it was that it cannot drift silently.
+
+US, RS = b"\x1f", b"\x1e"
+
+
+def frontmatter_body(text: str, what: str) -> str:
+    """Everything after the closing '---' of the YAML frontmatter."""
+    if not text.startswith("---\n"):
+        fail(f"{what}: no YAML frontmatter (expected a leading '---' line)", EXIT_POINTER)
+    try:
+        return text[text.index("\n---\n", 3) + len("\n---\n"):]
+    except ValueError:
+        fail(f"{what}: frontmatter is never closed (no second '---' line)", EXIT_POINTER)
+        raise  # unreachable; fail() exits
+
+
+def frontmatter_tools(text: str, what: str) -> List[str]:
+    """The `tools:` allowlist from a charter's frontmatter, in declared order."""
+    for line in text.splitlines()[1:]:
+        if line.strip() == "---":
+            break
+        if line.startswith("tools:"):
+            return [t.strip() for t in line.split(":", 1)[1].split(",") if t.strip()]
+    fail(f"{what}: frontmatter has no `tools:` line", EXIT_POINTER)
+    raise  # unreachable
+
+
+def check_prompt_derivation(repo: Path) -> Dict[str, Any]:
+    """sAGI.prompt's body must equal the charter body BYTE FOR BYTE. Fail closed on drift.
+
+    The error names the offending byte offset and the regeneration command, because a fail-closed
+    gate that only says 'mismatch' reads as a broken build to whoever meets it first."""
+    charter_rel, prompt_rel = ".claude/agents/savante.md", "sAGI.prompt"
+    charter_text = (repo / charter_rel).read_text(encoding="utf-8")
+    prompt_text = (repo / prompt_rel).read_text(encoding="utf-8")
+    want = frontmatter_body(charter_text, charter_rel)
+    got = frontmatter_body(prompt_text, prompt_rel)
+    if want != got:
+        off = next((i for i, (a, b) in enumerate(zip(want, got)) if a != b), min(len(want), len(got)))
+        fail(
+            f"{prompt_rel} has DRIFTED from {charter_rel}: bodies differ at byte offset {off} of the body "
+            f"(charter body {len(want)} B, prompt body {len(got)} B).\n"
+            f"  charter: {want[off:off + 60]!r}\n"
+            f"  prompt : {got[off:off + 60]!r}\n"
+            f"  The charter is authoritative (technical.md:16-18). Regenerate, never hand-edit:\n"
+            f"    python3 - <<'PY'\n"
+            f"    c = open('{charter_rel}').read(); p = open('{prompt_rel}').read()\n"
+            f"    i = c.index(chr(10)+'---'+chr(10), 3) + 5; j = p.index(chr(10)+'---'+chr(10), 3) + 5\n"
+            f"    open('{prompt_rel}', 'w').write(p[:j] + c[i:])\n"
+            f"    PY",
+            EXIT_POINTER,
+        )
+    return {"source": charter_rel, "derivation": "body after the closing frontmatter delimiter, byte-for-byte",
+            "body_bytes": len(want.encode("utf-8")), "equal": True}
+
+
+def check_tool_facet(repo: Path, persona: Dict[str, Any]) -> Dict[str, Any]:
+    """The allowlist must agree in all THREE places, or the bundle is lying somewhere."""
+    charter_text = (repo / ".claude/agents/savante.md").read_text(encoding="utf-8")
+    from_charter = frontmatter_tools(charter_text, ".claude/agents/savante.md")
+    from_persona = resolve(persona, "/token/intelligence/tool_allowlist")
+    tool = json.loads((repo / "sAGI.tool").read_text(encoding="utf-8"))
+    from_facet = [row["tool"] for row in tool.get("allowlist", [])]
+
+    if from_charter != from_persona:
+        fail(f"tool allowlist disagrees: charter {from_charter} != persona {from_persona}", EXIT_POINTER)
+    if from_charter != from_facet:
+        fail(f"tool allowlist disagrees: charter {from_charter} != sAGI.tool {from_facet}", EXIT_POINTER)
+
+    legal = {"harness", "nothing", "executor_that_does_not_exist"}
+    rows = list(tool.get("allowlist", [])) + list(tool.get("forbidden_tools", [])) \
+        + list(tool.get("grants", {}).get("mask", [])) + list(tool.get("grants", {}).get("forbidden", []))
+    for row in rows:
+        if row.get("enforced_by") not in legal:
+            fail(f"sAGI.tool row {row!r} has enforced_by={row.get('enforced_by')!r}; legal values are {sorted(legal)}. "
+                 "A capability surface that does not say what enforces it is worse than none.", EXIT_POINTER)
+    return {"allowlist": from_charter, "agrees": ["charter frontmatter", "persona /token/intelligence/tool_allowlist",
+                                                  "sAGI.tool allowlist[]"], "rows_checked": len(rows)}
+
+
+def check_embodiment_facet(repo: Path, rel: str, fmt: str, print_key: str) -> Dict[str, Any]:
+    """voaice/faice: the honest-null rule. A measured print without measurements, or a null print
+    without a reason, are both defects — the first claims, the second hides."""
+    doc = json.loads((repo / rel).read_text(encoding="utf-8"))
+    if doc.get("format") != fmt:
+        fail(f"{rel}: format is {doc.get('format')!r}, expected {fmt!r}", EXIT_POINTER)
+    measured, printed = doc.get("measured"), doc.get(print_key)
+    if (measured is None) != (printed is None):
+        fail(f"{rel}: measured and {print_key} must be null together or present together "
+             f"(measured={'null' if measured is None else 'present'}, "
+             f"{print_key}={'null' if printed is None else 'present'})", EXIT_POINTER)
+    state = "null_with_reason" if measured is None else "present"
+    if measured is None:
+        prov = doc.get("provenance") or {}
+        if not prov.get("reason") or not prov.get("deciding_experiment"):
+            fail(f"{rel}: unmeasured, so provenance.reason AND provenance.deciding_experiment are required. "
+                 "A null without a reason is a hole; a null with one is a finding.", EXIT_POINTER)
+    return {"format": fmt, "state": state, "measured": measured is not None}
+
+
+def merkle_root(leaves: List[bytes]) -> str:
+    """Pairwise keccak256 over exactly MERKLE_LEAVES leaves, padded with keccak256(b'')."""
+    pad = keccak256(b"")
+    level = (leaves + [pad] * MERKLE_LEAVES)[:MERKLE_LEAVES]
+    while len(level) > 1:
+        level = [keccak256(level[i] + level[i + 1]) for i in range(0, len(level), 2)]
+    return "0x" + level[0].hex()
+
+
+def build_manifest(repo: Path, digests: Dict[str, Any], root: Dict[str, Any],
+                   generated_from: Dict[str, Any], persona: Dict[str, Any],
+                   derivations: Dict[str, Any]) -> Tuple[Dict[str, Any], bytes]:
+    """N facets → one content-addressed THOT. No salt, no timestamp, no wall clock: a content root
+    that is not reproducible from the repository alone is a random number, not a content root."""
+    by_facet = {COMPONENT_FACET[name]: (name, d) for name, d in digests.items() if name in COMPONENT_FACET}
+
+    # What the LOCATOR actually holds. The rung is `referenced` because a locator exists — but a
+    # locator that resolves to a tree missing half the facets does not let a stranger retrieve them,
+    # and a rung that implies otherwise is the same defect one layer out from a ledger hashing bytes
+    # no commit contains. Measured from git, never assumed.
+    at_head = set()
+    listing = git(repo, "ls-tree", "-r", "--name-only", "HEAD")
+    if listing:
+        at_head = set(listing.splitlines())
+
+    facets, preimage, leaves = [], b"", []
+    for ext in FACET_ORDER:
+        name, d = by_facet[ext]
+        facets.append({"facet": ext, "path": d["path"], "bytes": d["bytes"], "sha256": d["sha256"],
+                       "cid": d["cid"], "state": "present", "custom": False, "added_in": 1,
+                       "component": name, "at_locator": d["path"] in at_head})
+        piece = ext.encode("utf-8") + US + d["sha256"].encode("ascii")
+        preimage += piece + RS
+        leaves.append(keccak256(piece))
+
+    manifest: Dict[str, Any] = {
+        "$comment": ("DERIVED OUTPUT — generated by bind/savante_bind.py; regenerable; never hand-edited. "
+                     "This file contains no digest of itself: `identity` is computed over the document WITHOUT "
+                     "the identity block. Spec: sagi/engine/THOT_MANIFEST.md."),
+        "schema": "sagi.thot_manifest/1",
+        "bundle": {"id": "sAGI", "officer": persona.get("name"), "generation": 1, "parent": None,
+                   "parent_reason": "genesis generation; there is no earlier manifest"},
+        "facets": facets,
+        "absent": [{"facet": f, "state": "absent", "reason": r} for f, r in FACETS_ABSENT],
+        "custom": [],
+        "custom_rule": ("an extension outside the core registry MUST match ^x-[a-z0-9]+\\.[a-z0-9_]+$ and declare "
+                        "{owner, spec_url, media, added_in} here; an unnamespaced unknown extension is a hard error"),
+        "charter": {"path": digests["charter"]["path"], "bytes": digests["charter"]["bytes"],
+                    "sha256": digests["charter"]["sha256"], "cid": digests["charter"]["cid"],
+                    "role": "SOURCE of the derived .prompt facet; binding, and not itself a facet"},
+        "derivations": derivations,
+        "doctrine_root": root["root_hex"],
+        "doctrine_root_note": ("the officer's immutable clauses — a DIFFERENT question from bundle_root. Adding a facet "
+                               "must not ring the doctrine alarm, or holders learn to ignore it."),
+        "bundle_root": {
+            "value": "0x" + keccak256(preimage).hex(),
+            "hash": "keccak256",
+            "construction": "concat over facets in registry order of (ext_utf8 + 0x1f + sha256_hex_ascii + 0x1e)",
+            "preimage_bytes": len(preimage),
+            "order": FACET_ORDER,
+        },
+        "merkle": {
+            "leaves": MERKLE_LEAVES,
+            "leaf_rule": "keccak256(ext_utf8 || 0x1f || sha256_hex_ascii), facets in registry order",
+            "padding": "keccak256(b'') for every unused leaf — a documented constant, never a repeat of the last leaf",
+            "populated": len(leaves),
+            "root": merkle_root(leaves),
+            "ternary_head": "persona",
+            "ternary_head_index": 0,
+            "why": ("THOTCommitmentRegistry.issueTHOT4096 documents `root` as a Merkle root over 64 leaves; passing a "
+                    "flat digest into that slot would verify and would mean something other than what the contract says"),
+        },
+        "rung": {
+            "value": "referenced",
+            "derived_by": "permanence/lib/rungs.js rungOf(evidence) — derived from evidence, never asserted",
+            "ladder": ["referenced", "committed", "stored", "attested"],
+            "evidence": {
+                "locator": f"github.com/cryptoAGI/savante@{generated_from.get('repo_head_commit')}",
+                "locator_holds": [f["facet"] for f in facets if f["at_locator"]],
+                "locator_lacks": [f["facet"] for f in facets if not f["at_locator"]],
+                "commitTx": None, "dataTx": None, "attestation": None,
+            },
+            "note": ("nothing is uploaded and nothing is on chain; `stored` requires a data transaction "
+                     "id, not an intention"),
+            "locator_caveat": ("`referenced` means a locator exists — NOT that the locator holds these "
+                               "bytes. Any facet in `locator_lacks` is absent from that commit's tree, so "
+                               "a stranger resolving the locator cannot retrieve it. The rung stays "
+                               "`referenced` because that is what the evidence supports; it becomes "
+                               "honest-in-full only once `locator_lacks` is empty, which a commit fixes."),
+        },
+        "license": resolve(persona, "/token/rights/license"),
+    }
+
+    canon = canonical_bytes(manifest)
+    sha = sha256_hex(canon)
+    cid, cid_reason = cid_or_none(canon)
+    manifest["identity"] = {
+        "thot": "thot:" + sha,
+        "cid": cid,
+        "name": ("thot-" + cid) if cid else None,
+        "contentRoot": "0x" + keccak256(canon).hex(),
+        "canonical_bytes": len(canon),
+        "construction": ("sha256 / cid_v1_raw / keccak256 over canonical_bytes(manifest WITHOUT this identity block); "
+                         "no salt, no timestamp — reproducible from the repository alone"),
+    }
+    if cid_reason:
+        manifest["identity"]["cid_reason"] = cid_reason
+    return manifest, dump_bytes(manifest)
+
+
 # ── main ──────────────────────────────────────────────────────────────────────
 
 def run_bind(repo: Path, out_dir: Path, mirror: Path, no_mirror_check: bool, image: Optional[Path]) -> int:
@@ -592,6 +835,15 @@ def run_bind(repo: Path, out_dir: Path, mirror: Path, no_mirror_check: bool, ima
 
     # PREFLIGHT over the whole persona — before any digest.
     pre = require_preflight(persona, "savante.persona")
+
+    # FACET CHECKS — before any digest, because a digest of a drifted facet is a true hash of a
+    # false claim. Each of these fails closed (sagi/engine/FACET_BUNDLE.md §5-§7).
+    derivations = {
+        "prompt": check_prompt_derivation(repo),
+        "tool": check_tool_facet(repo, persona),
+        "voaice": check_embodiment_facet(repo, "sAGI.voaice", "voaice/1", "vprint"),
+        "faice": check_embodiment_facet(repo, "sAGI.faice", "faice/1", "fprint"),
+    }
 
     # token.bindings must be null values — the persona never carries mint results.
     token = persona.get("token")
@@ -637,6 +889,9 @@ def run_bind(repo: Path, out_dir: Path, mirror: Path, no_mirror_check: bool, ima
         findings.append(f"--image supplied: {image.name} recorded as an UNCONFIRMED candidate (sha256 only)")
 
     chartered, generated_from = git_provenance(repo)
+
+    # The THOT manifest — N facets, one content-addressed identity (sagi/engine/THOT_MANIFEST.md).
+    manifest, manifest_bytes = build_manifest(repo, digests, root, generated_from, persona, derivations)
 
     # Card FIRST — its CID goes into the ledger.
     card = build_card(persona, chartered, generated_from, digests, root, image_candidate, findings)
@@ -687,6 +942,31 @@ def run_bind(repo: Path, out_dir: Path, mirror: Path, no_mirror_check: bool, ima
             "sha256_recovery": "base32-decode the CID after the leading 'b' and strip the 4-byte prefix 01 55 12 20",
         },
         "artifacts": digests,
+        "bundle": {
+            "path": MANIFEST_NAME,
+            "bytes": len(manifest_bytes),
+            "file": {
+                "sha256": sha256_hex(manifest_bytes),
+                "cid": cid_or_none(manifest_bytes)[0],
+                "thot": "thot:" + sha256_hex(manifest_bytes),
+                "note": ("the identity of the manifest FILE AS WRITTEN — pretty-printed, identity block included. "
+                         "This is what `permanence/dapp.mjs identify savante.thot.json` reports and what an Arweave "
+                         "upload would store. It NECESSARILY differs from manifest.identity, which is over the "
+                         "canonical form WITHOUT the identity block, because a document cannot contain a digest of "
+                         "itself. Two hashes, two questions: this one names the stored object, that one names the "
+                         "bundle. It lives here because it cannot live in the file it measures."),
+            },
+            "schema": manifest["schema"],
+            "facets": [f["facet"] for f in manifest["facets"]],
+            "absent": [a["facet"] for a in manifest["absent"]],
+            "identity": manifest["identity"],
+            "bundle_root": manifest["bundle_root"]["value"],
+            "merkle_root": manifest["merkle"]["root"],
+            "rung": manifest["rung"]["value"],
+            "derivations": derivations,
+            "note": ("the bundle answers `is this the same bundle?`; the doctrine root below answers `is the office "
+                     "still the office?`. Two roots, deliberately separate."),
+        },
         "doctrine_root": {
             "value": root["root_hex"],
             "hash": "keccak256",
@@ -750,10 +1030,12 @@ def run_bind(repo: Path, out_dir: Path, mirror: Path, no_mirror_check: bool, ima
 
     ledger_bytes = dump_bytes(ledger)
     (out_dir / LEDGER_NAME).write_bytes(ledger_bytes)
+    (out_dir / MANIFEST_NAME).write_bytes(manifest_bytes)
 
     # Summary.
     print(f"wrote {out_dir / CARD_NAME} ({len(card_bytes)} bytes)")
     print(f"wrote {out_dir / LEDGER_NAME} ({len(ledger_bytes)} bytes)")
+    print(f"wrote {out_dir / MANIFEST_NAME} ({len(manifest_bytes)} bytes)")
     for name, d in digests.items():
         print(f"{name:9s} {d['path']}  {d['bytes']} B  sha256 {d['sha256']}  cid {d['cid']}")
     print(f"doctrine_root {root['root_hex']}  (preimage {root['preimage_bytes']} B, {len(DOCTRINE_POINTERS)} pointers)")
