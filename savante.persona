@@ -545,8 +545,8 @@
       ]
     },
     "rights": {
-      "license": null,
-      "license_finding": "The repository has no LICENSE file and no copyright header (verified `ls -la /home/hacker/savante`, 2026-09-03), while duplication by `cp` is the stated commercial model. The terms under which this persona may be copied, forked, sold or bound to a token are NOT YET KNOWN. Deciding experiment: the author commits a LICENSE, or states one on github.com/cryptoAGI/savante.",
+      "license": "MIT",
+      "license_finding": "PARTLY KNOWN as of 2026-09-12. KNOWN: an MIT LICENSE (Copyright (c) 2026 cryptoAGI) exists at the root of the AUTHOR'S WORKING TREE, matching the house licence of ~/voaice, and duplication by `cp` is the stated commercial model that MIT grants explicitly. NOT YET TRUE OF THE PUBLISHED REPOSITORY: the file is untracked; github.com/cryptoAGI/savante is at ae15ca7, whose tree contains no LICENSE, and the GitHub API reports the repository's licence as none. Since `source` above names that URL, a stranger checking the only address they were given still finds no licence — so the condition at iNFT.md is closed locally and OPEN publicly. Deciding check, run against the URL and not the disk: `gh api repos/cryptoAGI/savante/contents` lists LICENSE, and the repository's `license` field reports MIT. Boundary unchanged: MIT governs the COPY of these files; it is not a statement about what a token conveys, which remains null below.",
       "royalty": {
         "erc2981": "iNFT_7857 inherits ERC2981 with MAX_ROYALTY_BPS = 2500 (/home/hacker/mindX/daio/contracts/inft/iNFT_7857.sol:139 — note: /home/hacker/mindX/daio/contracts/inft/iNFT_7857.sol:137 is MAX_URI_LENGTH = 2048)",
         "configured": null,

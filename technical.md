@@ -208,11 +208,24 @@ load-bearing, and it is the order any regeneration must keep:
 4. Validate: `python3 personas/persona_project.py --all --check` in
    `mindx/godel/mindxtrain/` must exit 0.
 5. Mirror any charter edit to `savante.md` (§1 precedence).
-6. Then, and only then, run `python3 bind/savante_bind.py`. It fails closed
-   on a mirror md5 mismatch (`bind/savante_bind.py:583-586`) and on the
-   preflight — every property name ASCII, every number an integer — that
-   makes its canonical bytes equal RFC 8785 output (`:19-22`).
-7. Nothing else. A mint is deferred.
+6. Derive the derived facets. `sAGI.prompt` is the charter body verbatim and
+   `sAGI.tool` is the allowlist plus the grant mask; the binder regenerates
+   both and **fails closed** on drift, printing the offending byte offset and
+   the regeneration command. A charter edit that skips this step is caught
+   here rather than shipping two disagreeing copies of the system prompt.
+7. Validate the embodiment facets. `sAGI.voaice` and `sAGI.faice` must satisfy
+   the honest-null rule: `measured` and the print are null together or present
+   together, and an unmeasured facet carries both a reason and its deciding
+   experiment. A plausible-looking value here would fill a doctrine-protected
+   embodiment null (pointer 14) with something nobody earned.
+8. Then, and only then, run `python3 bind/savante_bind.py`. It fails closed
+   on a mirror md5 mismatch (`bind/savante_bind.py`, the mirror check) and on
+   the preflight — every property name ASCII, every number an integer — that
+   makes its canonical bytes equal RFC 8785 output (`:19-22`). It writes the
+   card, the ledger, and `savante.thot.json`.
+9. Nothing else. A mint is deferred.
 
 Regeneration is idempotent: two consecutive binder runs over an unchanged
-tree produced byte-identical card and ledger (checked with `cmp`, 2026-09-03).
+tree produce byte-identical card, ledger **and manifest** (checked with `cmp`;
+first on 2026-09-03 for the card and ledger, and again on 2026-09-11 once the
+manifest joined them).

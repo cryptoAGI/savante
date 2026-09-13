@@ -175,12 +175,19 @@ most want elsewhere:
   `ls`, 2026-09-03), and `/home/hacker/mindX/data/godel/thot/` does not exist
   (`ls`: No such file or directory, 2026-09-03). The ledger records
   `"mint": null`.
-- **No LICENSE.** The repository carries no LICENSE file and no copyright
-  header (`ls -la`, 2026-09-03), while duplication by `cp` is the stated
-  commercial model. That is load-bearing: a token purporting to convey rights
-  the repository does not grant would fail its own charter. The terms under
-  which this persona may be copied, forked, sold or bound are *not yet known*
-  until the author commits one (`savante.persona:548-549`).
+- **MIT licensed in this working tree — NOT YET PUBLISHED** (2026-09-11). An MIT
+  `LICENSE`, © 2026 cryptoAGI, exists at the root of the working tree, matching
+  the house licence of `voaice`. It is **untracked**: the published repository at
+  github.com/cryptoAGI/savante is still at `ae15ca7`, whose tree contains no
+  LICENSE, and GitHub reports the repo's licence as none. So a stranger who
+  follows the only address this file prints finds no licence, and
+  `iNFT.md` condition 1 is **closed locally and open publicly** until the commit
+  is pushed. Deciding check, run against the URL rather than the disk:
+  `gh api repos/cryptoAGI/savante/contents | grep LICENSE`.
+  Note also the boundary the persona keeps: MIT governs the *copy* of these
+  files; it is not a statement about what a token conveys, and
+  `token.rights.conveyed_by_token` is still null with its reason
+  (`savante.persona`, `token.rights`).
 - **The binding document is `iNFT.md`, and its verdict is `DEFER`.** A mint
   is a visibility-or-publication decision and a treasury action — two of the
   office's own defer triggers (`savante.persona:136`) — so the decision is
