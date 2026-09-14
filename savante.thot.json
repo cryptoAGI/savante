@@ -208,7 +208,7 @@
       "attested"
     ],
     "evidence": {
-      "locator": "github.com/cryptoAGI/savante@1782d86edd10627148a462ec01af7209bcb6fb0a",
+      "locator": "github.com/cryptoAGI/savante@368c7322f2c66e470b28e1673bf5a0e5ced124d4",
       "locator_holds": [
         "persona",
         "agent",
@@ -229,10 +229,10 @@
   },
   "license": "MIT",
   "identity": {
-    "thot": "thot:5293a633643b3537ae1ae89567d485a3a692af9abb04c58dbbec0d8a3548d7a0",
-    "cid": "bafkreicssotdgzb3gu324gxisvt5jbndu2jk7gv3atcy3o7mbwfdksgxua",
-    "name": "thot-bafkreicssotdgzb3gu324gxisvt5jbndu2jk7gv3atcy3o7mbwfdksgxua",
-    "contentRoot": "0xfe8851c517840325bca0d3b9af7ffdc466931e479b254aa972f05e168c899671",
+    "thot": "thot:84899795262a65a373b22aeec25dcea77ec149ee0b04ecf1cdd49b24fa5e27e2",
+    "cid": "bafkreieerglzkjrkmwrxhmrk53bf3tvhp3aut3qlatwpdtoutmspuxrh4i",
+    "name": "thot-bafkreieerglzkjrkmwrxhmrk53bf3tvhp3aut3qlatwpdtoutmspuxrh4i",
+    "contentRoot": "0x455777232477d8d970077681d00d089ecabd309ab8aba4a596c9f46891435473",
     "canonical_bytes": 6621,
     "construction": "sha256 / cid_v1_raw / keccak256 over canonical_bytes(manifest WITHOUT this identity block); no salt, no timestamp — reproducible from the repository alone"
   }
