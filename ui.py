@@ -416,6 +416,51 @@ def cid_v1_raw(data: bytes) -> str:
     return "b" + "".join(out)
 
 
+EXPECTED_ALGORITHMS = {
+    "facet_digest": "sha256",
+    "cid": "cidv1-raw-sha2-256-base32",
+    "identity_thot": "sha256",
+}
+
+
+def manifest_check(root: Path) -> Dict[str, Any]:
+    """Refuse a manifest whose declared algorithms this verifier does not implement.
+
+    `savante.thot.json` states the rule itself, and it is not decorative: *a verifier MUST refuse a
+    manifest whose declared algorithms it does not implement, rather than verify with the functions
+    it happens to have. Silently checking the wrong digest is worse than not checking.*
+
+    This surface implements sha256 and CIDv1-raw-sha2-256-base32, and nothing else — notably **not**
+    keccak256, so it cannot check `bundle_root`, `merkle.root` (64 leaves, 8 populated, padded with
+    keccak256 of the empty string) or `doctrine_root`. Those are named as uncheckable rather than
+    passed over, because a green table that implies coverage it does not have is the failure this
+    office exists to catch in other people's work.
+    """
+    p = root / "savante.thot.json"
+    if not p.is_file():
+        return {"state": "absent", "note": "no savante.thot.json — nothing declares the algorithms"}
+    try:
+        m = json.loads(p.read_text(encoding="utf-8"))
+    except Exception as e:  # noqa: BLE001
+        return {"state": "unreadable", "note": str(e)[:160]}
+    declared = m.get("algorithms") or {}
+    mismatched = {k: declared.get(k) for k, want in EXPECTED_ALGORITHMS.items()
+                  if declared.get(k) and declared.get(k) != want}
+    unimplemented = sorted({v for k, v in declared.items()
+                            if k not in ("note", "canonicalisation") and v not in EXPECTED_ALGORITHMS.values()})
+    return {
+        "state": "refused" if mismatched else "ok",
+        "schema": m.get("schema"),
+        "generation": (m.get("bundle") or {}).get("generation"),
+        "declared": {k: v for k, v in declared.items() if k != "note"},
+        "mismatched": mismatched,
+        "not_implemented_here": unimplemented,
+        "uncheckable": [k for k in ("bundle_root", "merkle", "doctrine_root") if k in m],
+        "note": ("this verifier implements sha256 and CIDv1 only; the keccak256 roots above are NOT "
+                 "checked here and must not be read as verified"),
+    }
+
+
 def integrity() -> Tuple[List[List[Any]], str]:
     """Recompute every committed artefact from the bytes on disk and compare with the ledger."""
     root = savante_root()
@@ -619,12 +664,34 @@ def build(public: bool = False, extra_rooms=None):
                 gr.Markdown("**Recompute, do not trust.** Every committed artefact is hashed from the bytes on "
                             "disk and compared with the ledger. This is what a holder receives: the ability to "
                             "prove, without trusting the author, that DEFER is still in the vocabulary.")
+                gr.Markdown("**The manifest's own rule governs this room**, and it is not decorative: "
+                            "*a verifier MUST refuse a manifest whose declared algorithms it does not "
+                            "implement, rather than verify with the functions it happens to have — "
+                            "silently checking the wrong digest is worse than not checking.* So the "
+                            "declared algorithms are read first, and whatever this surface cannot check "
+                            "is named rather than passed over. It implements sha256 and CIDv1 only: the "
+                            "keccak256 roots — `bundle_root`, `merkle.root` over 64 leaves, and the "
+                            "separate `doctrine_root` — are **not** verified here.")
+                i_manifest = gr.Code(label="declared algorithms — and what is uncheckable here",
+                                     language="json", interactive=False)
                 i_note = gr.HTML("")
                 i_tbl = gr.Dataframe(headers=["artefact", "size", "sha256", "CIDv1 (raw)", "ledger"],
                                      value=[], interactive=False, wrap=True)
                 i_go = gr.Button("recompute the bundle", variant="primary")
-                i_go.click(lambda: integrity()[::-1], None, [i_note, i_tbl])
-                demo.load(lambda: integrity()[::-1], None, [i_note, i_tbl])
+
+                def _integrity_all():
+                    root = savante_root()
+                    manifest = ({"state": "no checkout", "note": "set SAVANTE_ROOT"} if root is None
+                                else manifest_check(root))
+                    rows, note = integrity()
+                    if manifest.get("state") == "refused":
+                        note = ("<div class='sv-warn'>manifest REFUSED — its declared algorithms are not "
+                                "the ones this verifier implements, so the table below is a recomputation "
+                                "and not a verification</div>" + note)
+                    return json.dumps(manifest, indent=1), note, rows
+
+                i_go.click(_integrity_all, None, [i_manifest, i_note, i_tbl])
+                demo.load(_integrity_all, None, [i_manifest, i_note, i_tbl])
 
             with gr.Tab("Rungs · Qwen3"):
                 gr.Markdown("**The ladder, as plan only.** The standing baseline is a 135M actor trained on "
