@@ -175,15 +175,12 @@ most want elsewhere:
   `ls`, 2026-09-03), and `/home/hacker/mindX/data/godel/thot/` does not exist
   (`ls`: No such file or directory, 2026-09-03). The ledger records
   `"mint": null`.
-- **MIT licensed in this working tree — NOT YET PUBLISHED** (2026-09-11). An MIT
-  `LICENSE`, © 2026 cryptoAGI, exists at the root of the working tree, matching
-  the house licence of `voaice`. It is **untracked**: the published repository at
-  github.com/cryptoAGI/savante is still at `ae15ca7`, whose tree contains no
-  LICENSE, and GitHub reports the repo's licence as none. So a stranger who
-  follows the only address this file prints finds no licence, and
-  `iNFT.md` condition 1 is **closed locally and open publicly** until the commit
-  is pushed. Deciding check, run against the URL rather than the disk:
-  `gh api repos/cryptoAGI/savante/contents | grep LICENSE`.
+- **MIT licensed, and published** (committed 2026-09-13 in `0853a34`; holder line
+  set in `29f03bd`). `LICENSE` at the repository root reads
+  `Copyright (c) 2026 cryptoAGI — Professor Codephreak`, and GitHub reports the
+  repo's licence as MIT, so `iNFT.md` condition 1 is closed publicly, not only on
+  the author's disk. Deciding check, run against the URL rather than the disk:
+  `gh api repos/cryptoAGI/savante/license --jq .license.spdx_id` prints `MIT`.
   Note also the boundary the persona keeps: MIT governs the *copy* of these
   files; it is not a statement about what a token conveys, and
   `token.rights.conveyed_by_token` is still null with its reason

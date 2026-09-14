@@ -253,7 +253,7 @@ def voaice_link(endpoint: str, text: str, persona: str, voice: str) -> str:
             + (" (the line was trimmed to the cap on a word boundary)" if over else ""))
     return (f"<div class='mx-card'><div class='sv-kv'>"
             f"<span>lane</span><span>{lane}</span>"
-            f"<span>voice</span><span><code>{q.get('voice', '(the persona\\'s own preset)')}</code></span>"
+            f"<span>voice</span><span><code>{q.get('voice', '(the persona’s own preset)')}</code></span>"
             f"<span>persona</span><span><code>{q.get('persona', '(none — the host decides)')}</code></span>"
             f"<span>bounds</span><span>240 characters · 20 a minute · one slot at a time</span>"
             f"<span>producer</span><span>named in the <code>X-Voaice-Backend</code> response header, so what "
@@ -538,8 +538,13 @@ def status_pills() -> str:
     ])
 
 
-def build():
-    """The six rooms. gradio is imported here so this module can be read, hashed and audited without it."""
+def build(public: bool = False, extra_rooms=None):
+    """The rooms. gradio is imported here so this module can be read, hashed and audited without it.
+
+    ``public=True`` is the Hugging Face Space edition: the Evidence room's executor is never
+    registered (on a public page a verification shell is remote code execution, whatever its
+    allowlist), and the Kimi room registers no event that could spend a host key. ``extra_rooms``
+    is a callable taking the gradio module, called inside the tab strip before The Office."""
     import inspect
 
     import gradio as gr
@@ -556,6 +561,8 @@ def build():
         pill_row = gr.HTML(status_pills())
 
         with gr.Tabs():
+            if extra_rooms is not None:
+                extra_rooms(gr)
             with gr.Tab("The Office"):
                 off = gr.HTML(office_html())
                 gr.Button("re-read the charter").click(lambda: (office_html(), status_pills()), None, [off, pill_row])
@@ -565,15 +572,25 @@ def build():
                             "them would claim an authority the charter does not hold.")
 
             with gr.Tab("Evidence"):
-                gr.Markdown("**Verification, executed.** A linter checks rules; Savante checks claims — run "
-                            "the tests and report the count, read the git state and report the drift, grep for "
-                            "the capability a document asserts. Read-only verbs only, and a refusal states its reason.")
-                with gr.Row():
-                    ev_cmd = gr.Textbox(value="git log --oneline -5", label="verification command", scale=3)
-                    ev_cwd = gr.Textbox(value="", label="working directory (blank = the canon)", scale=2)
-                    ev_go = gr.Button("run", variant="primary", scale=1)
-                ev_out = gr.Code(label="actual result", language="json", interactive=False)
-                ev_go.click(lambda c, w: json.dumps(run_evidence(c, w), indent=1), [ev_cmd, ev_cwd], [ev_out])
+                if public:
+                    # Not hidden — absent. A hidden tab's handler is still an API endpoint, and a
+                    # verification shell reachable by anyone is remote code execution.
+                    gr.Markdown("**Not on a public page.** The desktop edition executes read-only verification "
+                                "commands — tests, git state, grep — against a checkout. Reachable by anyone, "
+                                "even an allowlisted shell is remote code execution, so this edition registers no "
+                                "executor at all. Run it yourself: `git clone https://github.com/cryptoAGI/savante "
+                                "&& cd savante && python3 bind/savante_verify.py .`, or launch `ui.py` locally with "
+                                "`SAVANTE_ROOT` pointing at your checkout.")
+                else:
+                    gr.Markdown("**Verification, executed.** A linter checks rules; Savante checks claims — run "
+                                "the tests and report the count, read the git state and report the drift, grep for "
+                                "the capability a document asserts. Read-only verbs only, and a refusal states its reason.")
+                    with gr.Row():
+                        ev_cmd = gr.Textbox(value="git log --oneline -5", label="verification command", scale=3)
+                        ev_cwd = gr.Textbox(value="", label="working directory (blank = the canon)", scale=2)
+                        ev_go = gr.Button("run", variant="primary", scale=1)
+                    ev_out = gr.Code(label="actual result", language="json", interactive=False)
+                    ev_go.click(lambda c, w: json.dumps(run_evidence(c, w), indent=1), [ev_cmd, ev_cwd], [ev_out])
 
             with gr.Tab("Verdict"):
                 gr.Markdown("**The fixed contract.** Findings with citations, then one of four verdicts, a "
@@ -653,9 +670,14 @@ def build():
                     k_ask = gr.Button("ask (returns a DRAFT)", variant="primary")
                 k_out = gr.Textbox(label="draft — not a finding, not a verdict", lines=12, interactive=False, **copy_kw)
                 k_meta = gr.Code(label="meta", language="json", interactive=False)
-                k_list.click(kimi_models, [k_base], [k_models])
-                k_refresh.click(lambda: (kimi_status(), status_pills()), None, [k_note, pill_row])
-                k_ask.click(kimi_ask, [k_base, k_model, k_sys, k_prompt, k_temp, k_max], [k_out, k_meta])
+                if public:
+                    # A public page never spends a host key: no handler is registered, so no API exists.
+                    gr.Markdown("*Public edition: this room is configuration reading only. Nothing here calls "
+                                "Moonshot, because a key on a public Space would be spent by every visitor.*")
+                else:
+                    k_list.click(kimi_models, [k_base], [k_models])
+                    k_refresh.click(lambda: (kimi_status(), status_pills()), None, [k_note, pill_row])
+                    k_ask.click(kimi_ask, [k_base, k_model, k_sys, k_prompt, k_temp, k_max], [k_out, k_meta])
 
             with gr.Tab("Voice · voaice"):
                 gr.Markdown("**The verdict, read aloud.** Adapted from the rage player on "

@@ -55,7 +55,7 @@
       "custom": false,
       "added_in": 1,
       "component": "facet_prompt",
-      "at_locator": false
+      "at_locator": true
     },
     {
       "facet": "tool",
@@ -67,14 +67,14 @@
       "custom": false,
       "added_in": 1,
       "component": "facet_tool",
-      "at_locator": false
+      "at_locator": true
     },
     {
       "facet": "skill",
       "path": ".claude/skills/sagi/SKILL.md",
-      "bytes": 2861,
-      "sha256": "1179dfba8426938ecce75f5c24147a90949ce1914094797cf8050702b5c69990",
-      "cid": "bafkreiarphp3vbbgsohmzz27lqsbi6uqssoodekasr4xz6afa4bllruzsa",
+      "bytes": 8751,
+      "sha256": "350da6fcf3cc09eb60516317438f7d3f954a83a8d1f526d9f2e9268a0cf4d6fe",
+      "cid": "bafkreibvbwtpz46mbhvwauldc5by67j7svfihkgr6utnt4xje2faz5gw7y",
       "state": "present",
       "custom": false,
       "added_in": 1,
@@ -91,7 +91,7 @@
       "custom": false,
       "added_in": 1,
       "component": "facet_voaice",
-      "at_locator": false
+      "at_locator": true
     },
     {
       "facet": "faice",
@@ -103,7 +103,7 @@
       "custom": false,
       "added_in": 1,
       "component": "facet_faice",
-      "at_locator": false
+      "at_locator": true
     }
   ],
   "absent": [
@@ -162,7 +162,7 @@
   "doctrine_root": "0x92fe83eb0fb8fb6b9cbde75ee4bbb671032a849ee25d65592b86913d0ae137d0",
   "doctrine_root_note": "the officer's immutable clauses — a DIFFERENT question from bundle_root. Adding a facet must not ring the doctrine alarm, or holders learn to ignore it.",
   "bundle_root": {
-    "value": "0x5ae440d1593eb888c2e421906aaf7b862f040bf4779ee7a50c6c4551eb415f1e",
+    "value": "0x235da8e993dc8af2c077f50d698962446b872b17b1e5b033d5c5d976532b8880",
     "hash": "keccak256",
     "construction": "concat over facets in registry order of (ext_utf8 + 0x1f + sha256_hex_ascii + 0x1e)",
     "preimage_bytes": 571,
@@ -182,7 +182,7 @@
     "leaf_rule": "keccak256(ext_utf8 || 0x1f || sha256_hex_ascii), facets in registry order",
     "padding": "keccak256(b'') for every unused leaf — a documented constant, never a repeat of the last leaf",
     "populated": 8,
-    "root": "0x644554724c8139cb11d50f2b129eeb20b7ba75f7e73e87990a337cae96e2ee6e",
+    "root": "0xdc1d80957cf831aee6638fd569e22cf0f6e5a1ec99ddde91cfecb5a15408fbe1",
     "ternary_head": "persona",
     "ternary_head_index": 0,
     "why": "THOTCommitmentRegistry.issueTHOT4096 documents `root` as a Merkle root over 64 leaves; passing a flat digest into that slot would verify and would mean something other than what the contract says"
@@ -197,19 +197,18 @@
       "attested"
     ],
     "evidence": {
-      "locator": "github.com/cryptoAGI/savante@ae15ca742968c5be8b581ccffb0355b9d1cccc59",
+      "locator": "github.com/cryptoAGI/savante@5d53d86d15e50ba9893add2822e1f93701a59aab",
       "locator_holds": [
         "persona",
         "agent",
         "model",
-        "skill"
-      ],
-      "locator_lacks": [
         "prompt",
         "tool",
+        "skill",
         "voaice",
         "faice"
       ],
+      "locator_lacks": [],
       "commitTx": null,
       "dataTx": null,
       "attestation": null
@@ -219,11 +218,11 @@
   },
   "license": "MIT",
   "identity": {
-    "thot": "thot:42070382559b13d293d1fc107ceaf6ffe8bb557fdcaa85cbdfdf2bd8a4885314",
-    "cid": "bafkreicca4byevm3cpjjhup4cb6ov5x75c5vk764vkc4xx67fpmkjcctcq",
-    "name": "thot-bafkreicca4byevm3cpjjhup4cb6ov5x75c5vk764vkc4xx67fpmkjcctcq",
-    "contentRoot": "0xf5c29d3887baa74a893242d535ab93a29e9c8c653c11c3955c8f40c512694eaa",
-    "canonical_bytes": 6094,
+    "thot": "thot:d8e5214a3b329676bbf7c91271836ffbdf3a8e01fae31c39eede3f72d017b330",
+    "cid": "bafkreigy4uquuozssz3lx56jcjyyg373345i4ap24modt3w6h5znaf5tga",
+    "name": "thot-bafkreigy4uquuozssz3lx56jcjyyg373345i4ap24modt3w6h5znaf5tga",
+    "contentRoot": "0xdf9a78f2b1e38a09ae698079f1ff1dcab36abda21db835182eaaa527d9c9bde6",
+    "canonical_bytes": 6091,
     "construction": "sha256 / cid_v1_raw / keccak256 over canonical_bytes(manifest WITHOUT this identity block); no salt, no timestamp — reproducible from the repository alone"
   }
 }
