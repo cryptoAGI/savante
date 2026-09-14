@@ -732,6 +732,25 @@ def build_manifest(repo: Path, digests: Dict[str, Any], root: Dict[str, Any],
                      "This file contains no digest of itself: `identity` is computed over the document WITHOUT "
                      "the identity block. Spec: sagi/engine/THOT_MANIFEST.md."),
         "schema": "sagi.thot_manifest/1",
+        # HASH AGILITY. The algorithms are DATA, not assumptions baked into a reader. A manifest is
+        # immutable once anchored, and a 200-year format whose digests are all sha256/keccak256 with
+        # no in-band way to name a successor dies entirely on the day either one falls. Declaring them
+        # costs nothing now and is impossible to add later. Migration rule in THOT_MANIFEST.md: a new
+        # generation names the successor algorithm and carries the old manifest's CID as `parent`;
+        # the superseded digests are preserved as historical evidence and never recomputed in place.
+        "algorithms": {
+            "facet_digest": "sha256",
+            "cid": "cidv1-raw-sha2-256-base32",
+            "bundle_root": "keccak256",
+            "merkle_leaf": "keccak256",
+            "merkle_pad": "keccak256",
+            "identity_thot": "sha256",
+            "identity_content_root": "keccak256",
+            "canonicalisation": "json.dumps(sort_keys=True, separators=(',',':'), ensure_ascii=False).encode('utf-8')",
+            "note": ("A verifier MUST refuse a manifest whose declared algorithms it does not implement, "
+                     "rather than verify with the functions it happens to have. Silently checking the "
+                     "wrong digest is worse than not checking."),
+        },
         "bundle": {"id": "sAGI", "officer": persona.get("name"), "generation": 1, "parent": None,
                    "parent_reason": "genesis generation; there is no earlier manifest"},
         "facets": facets,

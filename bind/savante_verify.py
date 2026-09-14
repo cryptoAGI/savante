@@ -305,6 +305,35 @@ def check_bundle(rep: Report, repo: Path, ledger: Dict[str, Any]) -> None:
         rep.reject(f"{path.name} has no `identity` block")
         return
 
+    # HASH AGILITY — refuse rather than verify with the wrong function. This verifier implements
+    # exactly one algorithm set; a manifest written under a successor must be checked by a verifier
+    # that implements it, not by this one pretending the digests still mean what it expects.
+    IMPLEMENTED = {
+        "facet_digest": "sha256",
+        "cid": "cidv1-raw-sha2-256-base32",
+        "bundle_root": "keccak256",
+        "merkle_leaf": "keccak256",
+        "identity_thot": "sha256",
+        "identity_content_root": "keccak256",
+    }
+    algs = manifest.get("algorithms")
+    if not isinstance(algs, dict):
+        rep.unknown(f"{path.name} declares no `algorithms` block — the digests below were checked with "
+                    "sha256/keccak256 because that is what this verifier implements, not because the "
+                    "manifest said so",
+                    "re-run the binder to emit an `algorithms` block, so a future reader knows which "
+                    "functions these digests were computed with")
+    else:
+        mismatched = {k: (v, algs.get(k)) for k, v in IMPLEMENTED.items()
+                      if algs.get(k) is not None and algs.get(k) != v}
+        if mismatched:
+            for k, (mine, theirs) in mismatched.items():
+                rep.reject(f"{path.name} declares {k}={theirs!r}; this verifier implements {mine!r}. "
+                           "Refusing to verify — a digest checked with the wrong function is not a check.")
+            return
+        rep.ok(f"{path.name} declares its algorithms and they match this verifier: "
+               f"{algs.get('facet_digest')} facets, {algs.get('bundle_root')} roots")
+
     # 8a. the manifest's own identity, over the document WITHOUT that block.
     canon = sb.canonical_bytes({k: v for k, v in manifest.items() if k != "identity"})
     sha = sb.sha256_hex(canon)
