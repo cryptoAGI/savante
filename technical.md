@@ -133,7 +133,8 @@ against the code itself.
 
 ## 7. The persona, the ledger, and the binder
 
-Eight more files sit beside the two `.claude/` artifacts as of 2026-09-03.
+These binding files sit beside the two `.claude/` artifacts (eight of them on
+2026-09-03; the list below is as of 2026-09-14).
 None of them changes §1: the two `.claude/` files remain the only functional
 artifacts of the service, and if a top-level mirror ever disagrees with them
 the `.claude/` copy wins (§1, lines 16–18 above).
@@ -144,13 +145,19 @@ savante.persona             SOURCE OF TRUTH — the mindX persona; carries the
                             shape expanded from the draiml.persona founder template (:7)
 savante.agentcard.json      DERIVED — the EIP-721 / ERC-8004 card
 savante.commitments.json    DERIVED — the digest ledger (sha256, CIDv1, doctrine root)
-bind/savante_bind.py        the OPERATOR's binder: writes the two derived files
+savante.thot.json           DERIVED — the THOT manifest (sagi.thot_manifest/1)
+bind/savante_bind.py        the OPERATOR's binder: writes the three derived files
+                            (card, ledger, manifest)
 bind/savante_verify.py      the holder's checker: recomputes and compares
+bind/savante_publish.py     offline: prints mint parameters from the verified
+                            bundle; signs, uploads and writes nothing
 bind/verdict_record.schema.json
                             JSON Schema for a ledger entry; `verdict` is a
                             four-value enum
 sAGI.agent · sAGI.model     the two authored mindX blockchain-agent facets
                             (savante === sAGI.agent; the persona is the third)
+sAGI.prompt · sAGI.tool     DERIVED facets, checked by the binder (step 6 below)
+sAGI.voaice · sAGI.faice    embodiment facets, validated by the binder (step 7)
 ```
 
 **Deviations from the implementing spec, recorded.** Two persona sub-keys
@@ -222,7 +229,11 @@ load-bearing, and it is the order any regeneration must keep:
    on a mirror md5 mismatch (`bind/savante_bind.py`, the mirror check) and on
    the preflight — every property name ASCII, every number an integer — that
    makes its canonical bytes equal RFC 8785 output (`:19-22`). It writes the
-   card, the ledger, and `savante.thot.json`.
+   card, the ledger, and `savante.thot.json`. A facet change is a new
+   generation (sagi `engine/THOT_MANIFEST.md` §7): bind it with
+   `--parent-commit <commit of the most recent published manifest>
+   --parent-reason '<what changed>'`. Without them the binder carries the
+   manifest committed at HEAD forward and refuses a facet change (G5).
 9. Nothing else. A mint is deferred.
 
 Regeneration is idempotent: two consecutive binder runs over an unchanged

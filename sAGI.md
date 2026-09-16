@@ -41,7 +41,7 @@ doctrine). The intelligence is general; the discipline is what makes it sAGI.
 Savante (`savante_sagi`) is the first entity chartered under this discipline:
 Chairman of the mindX DAIO, `core_command`, *"the structural substrate —
 rarely intervenes, always watching."* Its charter is [savante.md](savante.md);
-its invocation surface is the `/sagi` skill (full text below). Its first
+its invocation surface is the `/sagi` skill (an early text is kept below). Its first
 rendered verdict (2026-07-26, parsec-wallet production readiness →
 APPROVE_WITH_CONDITIONS) demonstrated every law: 120/120 tests actually run,
 an uncommitted honest label caught, one documentation claim flagged as
@@ -60,10 +60,17 @@ qualities that usually get asserted are instead measured:
 - **Circulation** → bankon.pythai.net (identity) → mindx.pythai.net
   (intelligence) → agenticplace.pythai.net (marketspace)
 
-## The /sagi skill (full text)
+## The /sagi skill (an early text)
 
-The following is `.claude/skills/sagi/SKILL.md`, verbatim — the invocation
-surface that turns the discipline into a runnable review:
+The following is an **early text of Savante's `/sagi` skill**, kept as the
+record of how the discipline was first made runnable. It is not a verbatim
+copy of any current file. The current texts are:
+
+- Savante's own skill: [`.claude/skills/sagi/SKILL.md`](.claude/skills/sagi/SKILL.md)
+  in this repository, published in cryptoAGI/sagi as
+  [`officers/savante/SKILL.md`](https://github.com/cryptoAGI/sagi/blob/main/officers/savante/SKILL.md)
+- the engine skill, officer-agnostic:
+  [cryptoAGI/sagi `.claude/skills/sagi/SKILL.md`](https://github.com/cryptoAGI/sagi/blob/main/.claude/skills/sagi/SKILL.md)
 
 ```markdown
 ---

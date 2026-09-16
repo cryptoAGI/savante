@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
 """bind/savante_bind.py — the OPERATOR's binder. Savante audits this file and never runs it.
 
-Derives, from savante.persona, the two .claude/ files and the two sAGI class facets
-(sAGI.agent, sAGI.model — five components), the two DERIVED artifacts:
+Derives, from savante.persona, the two .claude/ files and the six sAGI class facets
+(sAGI.agent, sAGI.model, sAGI.prompt, sAGI.tool, sAGI.voaice, sAGI.faice — nine components), the three
+DERIVED artifacts:
 
     savante.agentcard.json    — the public face (EIP-721 metadata + ERC-8004 registration-v1)
     savante.commitments.json  — the integrity ledger (raw-byte digests + the doctrine root)
+    savante.thot.json         — the THOT manifest (sagi.thot_manifest/1: facets, algorithms, roots, identity)
 
 Rules this program enforces on itself:
 
@@ -30,6 +32,10 @@ Rules this program enforces on itself:
     produce byte-identical outputs.
   * Every slot whose value this program did not compute or read is explicit null with a
     stated reason. Nothing here is a claim about anything minted.
+  * GENERATIONS (sagi/engine/THOT_MANIFEST.md §7), from LOCAL git only: without --parent-commit the
+    manifest committed at HEAD is carried forward and a facet change is refused (G5); with
+    --parent-commit REV --parent-reason TEXT, P = savante.thot.json at REV, generation = P's + 1
+    and bundle.parent = P's own identity.cid, which P's file must reproduce.
 """
 from __future__ import annotations
 
@@ -37,6 +43,7 @@ import argparse
 import base64
 import hashlib
 import json
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -693,17 +700,239 @@ def check_embodiment_facet(repo: Path, rel: str, fmt: str, print_key: str) -> Di
 
 
 def merkle_root(leaves: List[bytes]) -> str:
-    """Pairwise keccak256 over exactly MERKLE_LEAVES leaves, padded with keccak256(b'')."""
+    """Pairwise keccak256 over exactly MERKLE_LEAVES leaves, padded with keccak256(b'') (THOT_MANIFEST.md §5).
+
+    More than MERKLE_LEAVES leaves is an error, never a truncation: a root over the first 64 would commit
+    to less than the bundle and still look like a root over all of it."""
+    if len(leaves) > MERKLE_LEAVES:
+        raise ValueError(f"{len(leaves)} leaves exceed the {MERKLE_LEAVES}-leaf tree; "
+                         "THOT_MANIFEST.md §5 fails rather than truncates")
     pad = keccak256(b"")
-    level = (leaves + [pad] * MERKLE_LEAVES)[:MERKLE_LEAVES]
+    level = list(leaves) + [pad] * (MERKLE_LEAVES - len(leaves))
     while len(level) > 1:
         level = [keccak256(level[i] + level[i + 1]) for i in range(0, len(level), 2)]
     return "0x" + level[0].hex()
 
 
+# ── hash agility: the closed algorithm vocabulary (sagi/engine/THOT_MANIFEST.md §3a) ─────────────────
+# sagi.thot_manifest/1 knows exactly these ten keys (plus the free-text `note`), each with exactly one
+# value, compared as exact strings after JSON decoding. The binder emits them; the verifier REFUSES a
+# missing block, a missing required key, an unknown key, or any other value. ui.py carries a literal copy
+# (it depends on nothing but gradio) and `savante_verify.py --self-test` fails if the two drift.
+CANONICALISATION = "json.dumps(sort_keys=True, separators=(',',':'), ensure_ascii=False).encode('utf-8')"
+ALGORITHMS_ALWAYS: Dict[str, str] = {
+    "facet_digest": "sha256",
+    "cid": "cidv1-raw-sha2-256-base32",
+    "bundle_root": "keccak256",
+    "merkle_leaf": "keccak256",
+    "merkle_pad": "keccak256",
+    "identity_thot": "sha256",
+    "identity_content_root": "keccak256",
+    "canonicalisation": CANONICALISATION,
+}
+ALGORITHMS_CONDITIONAL: Dict[str, str] = {
+    # required iff the manifest carries a non-null top-level `doctrine_root`
+    "doctrine_root": "keccak256",
+    # required iff condition G holds (git_blob_condition below; Savante's manifest does not trigger it)
+    "git_blob": "sha1 over b'blob <len>\\x00' + bytes (git's own object id; used only to name the referenced voice)",
+}
+ALGORITHMS_RESERVED = ("note",)
+
+
+def manifest_algorithms() -> Dict[str, str]:
+    """The block this binder emits: every always-key, plus doctrine_root because Savante has one."""
+    a = {k: ALGORITHMS_ALWAYS[k] for k in ("facet_digest", "cid", "bundle_root", "merkle_leaf", "merkle_pad")}
+    a["doctrine_root"] = ALGORITHMS_CONDITIONAL["doctrine_root"]
+    a.update({k: ALGORITHMS_ALWAYS[k] for k in ("identity_thot", "identity_content_root", "canonicalisation")})
+    a["note"] = ("A verifier MUST refuse a manifest whose algorithms block is missing, lacks a required key, "
+                 "carries a key outside the sagi.thot_manifest/1 vocabulary, or declares a value it does not "
+                 "implement (sagi/engine/THOT_MANIFEST.md §3a), rather than verify with the functions it "
+                 "happens to have. Silently checking the wrong digest is worse than not checking.")
+    return a
+
+
+SCHEMA = "sagi.thot_manifest/1"
+GIT_BLOB_KEY_PREFIX = "git_blob"     # §3a condition G: a case-sensitive key PREFIX, never a substring
+
+
+class DuplicateKey(ValueError):
+    """A JSON object names the same key twice. json.loads would keep the last value silently, so the bytes a
+    third-party parser reads could declare something other than what this program checked."""
+
+
+def _no_duplicates(pairs: List[Tuple[str, Any]]) -> Dict[str, Any]:
+    out: Dict[str, Any] = {}
+    for k, v in pairs:
+        if k in out:
+            raise DuplicateKey(f"duplicate key {k!r} in one JSON object")
+        out[k] = v
+    return out
+
+
+def loads_strict(text: str) -> Any:
+    """json.loads that refuses duplicate keys anywhere in the document (raises DuplicateKey, a ValueError)."""
+    return json.loads(text, object_pairs_hook=_no_duplicates)
+
+
+def git_blob_condition(manifest: Any) -> bool:
+    """§3a condition G, exactly as written — the ONE definition; savante_verify.py and ui.py import it.
+
+    Walk each element of the top-level `facets` and `custom` arrays (a missing or non-array value counts as
+    empty), through objects and arrays at any depth, the element included. G holds iff some object KEY
+    satisfies key.startswith("git_blob"), case-sensitive. Key values are never inspected (a null value still
+    triggers), string values are never tested, and nothing outside facets[]/custom[] is walked (not absent[],
+    relations[], references[], rung or algorithms). A verifier MUST NOT widen G: commit ids, 40-hex or 64-hex
+    values, and keys such as git_object / oid / sha1 / commit never trigger it. Savante names none: False."""
+    def walk(v: Any) -> bool:
+        if isinstance(v, dict):
+            return any((isinstance(k, str) and k.startswith(GIT_BLOB_KEY_PREFIX)) or walk(x) for k, x in v.items())
+        if isinstance(v, list):
+            return any(walk(x) for x in v)
+        return False
+    if not isinstance(manifest, dict):
+        return False
+    return any(walk(e) for k in ("facets", "custom") if isinstance(manifest.get(k), list) for e in manifest[k])
+
+
+def algorithms_refusals(manifest: Any) -> List[str]:
+    """Every reason §3a rule 1 refuses this manifest; empty means the declaration is exactly what this
+    program implements. Runs before any digest (§8 step 0)."""
+    schema = manifest.get("schema") if isinstance(manifest, dict) else None
+    out: List[str] = [] if schema == SCHEMA else [
+        f"schema = {schema!r}; this verifier implements only {SCHEMA!r}, and a successor vocabulary is a new "
+        "schema version (§3a) — its algorithms are not checked against the /1 table"]
+    algs = manifest.get("algorithms") if isinstance(manifest, dict) else None
+    if not isinstance(algs, dict):
+        return out + ["the `algorithms` block is missing or is not a JSON object (§3a rule 1a) — an absent "
+                      "declaration is an assumption, and a digest checked under an assumption is not a check"]
+    if "note" in algs and not isinstance(algs["note"], str):
+        out.append(f"algorithms.note is a {type(algs['note']).__name__}, not a string; `note` is reserved "
+                   "for free text (§3a)")
+    required = dict(ALGORITHMS_ALWAYS)
+    if manifest.get("doctrine_root") is not None:
+        required["doctrine_root"] = ALGORITHMS_CONDITIONAL["doctrine_root"]
+    if git_blob_condition(manifest):
+        required["git_blob"] = ALGORITHMS_CONDITIONAL["git_blob"]
+    out += [f"algorithms.{k} is missing; this verifier requires {v!r} (§3a rule 1b)"
+            for k, v in required.items() if k not in algs]
+    known = {**ALGORITHMS_ALWAYS, **ALGORITHMS_CONDITIONAL}
+    for k, v in algs.items():
+        if k in ALGORITHMS_RESERVED:
+            continue
+        if k not in known:
+            out.append(f"algorithms.{k} is not a sagi.thot_manifest/1 key (§3a rule 1c)")
+        elif v != known[k]:
+            out.append(f"algorithms.{k} = {v!r}; this verifier implements {known[k]!r} (§3a rule 1d)")
+    return out
+
+
+# ── lineage: generations (sagi/engine/THOT_MANIFEST.md §7) ────────────────────────────────────────────
+# P is the most recent manifest of this bundle. The binder reads it from LOCAL git only (`git show
+# <rev>:savante.thot.json`; no fetch, no network) and takes `bundle.parent` from P's own `identity.cid`,
+# after checking that P's file reproduces that CID — never from a local re-bind.
+BUNDLE_ID = "sAGI"
+CID_RE = re.compile(r"^bafkrei[a-z2-7]{52}$")
+LOCATOR_RE = re.compile(r"^[^/@\s]+/[^/@\s]+/[^/@\s]+@[0-9a-f]{40}$")
+GENESIS_REASON = "genesis generation; there is no earlier manifest"
+
+
+def git_bytes(repo: Path, rev: str, rel: str) -> Optional[bytes]:
+    """The raw bytes of `rel` in commit `rev` of the LOCAL clone, or None. Never fetches."""
+    try:
+        out = subprocess.run(["git", "-C", str(repo), "show", f"{rev}:{rel}"], capture_output=True, check=True)
+        return out.stdout
+    except (OSError, subprocess.CalledProcessError):
+        return None
+
+
+def manifest_identity_cid(m: Dict[str, Any]) -> Optional[str]:
+    """§2 under identity-only scope: cid_v1_raw over canonical_bytes(manifest WITHOUT its identity block)."""
+    return cid_or_none(canonical_bytes({k: v for k, v in m.items() if k != "identity"}))[0]
+
+
+def present_facet_digests(m: Dict[str, Any]) -> Dict[str, Any]:
+    """The §7 facet-change basis: {facet label: sha256} over the present facets, custom facets included."""
+    out: Dict[str, Any] = {}
+    for key in ("facets", "custom"):
+        arr = m.get(key)
+        for e in (arr if isinstance(arr, list) else []):
+            if isinstance(e, dict) and e.get("state", "present") == "present":
+                out[str(e.get("facet"))] = e.get("sha256")
+    return out
+
+
+def successor_change(prev: Dict[str, Any], new: Dict[str, Any]) -> bool:
+    """G3's other trigger: a `schema` change, or a changed value of an algorithms key both manifests declare
+    (`note` excluded). Adding or removing a conditional key with its v1 value is G4, not a successor."""
+    if prev.get("schema") != new.get("schema"):
+        return True
+    pa, na = prev.get("algorithms"), new.get("algorithms")
+    if not isinstance(pa, dict) or not isinstance(na, dict):
+        return True
+    return any(pa[k] != na[k] for k in pa.keys() & na.keys() if k != "note")
+
+
+def _is_generation(v: Any) -> bool:
+    return isinstance(v, int) and not isinstance(v, bool) and v >= 1
+
+
+def decide_bundle(new: Dict[str, Any], head_prev: Optional[Dict[str, Any]], parent_p: Optional[Dict[str, Any]],
+                  parent_reason: Optional[str]) -> Tuple[Optional[Dict[str, Any]], Optional[str]]:
+    """§7 G1-G5 as a pure decision: (generation/parent/parent_reason, None), or (None, the refusal).
+
+    `new` is the manifest being built; `head_prev` the manifest committed at HEAD (None if HEAD has none);
+    `parent_p` the manifest read from --parent-commit (None without the flag)."""
+    if parent_p is None:
+        if parent_reason is not None:
+            return None, "--parent-reason is meaningful only with --parent-commit (G2)"
+        if head_prev is None:
+            return {"generation": 1, "parent": None, "parent_reason": GENESIS_REASON}, None            # G1
+        hb = head_prev.get("bundle") if isinstance(head_prev.get("bundle"), dict) else {}
+        if hb.get("id") != BUNDLE_ID:
+            return None, f"HEAD's manifest is bundle {hb.get('id')!r}, not {BUNDLE_ID!r}"
+        if present_facet_digests(head_prev) != present_facet_digests(new) or successor_change(head_prev, new):
+            return None, ("G5: the facets (or the schema/algorithms) differ from HEAD's manifest, generation "
+                          f"{hb.get('generation')}; a facet change is never bound under an unchanged generation. "
+                          "Pass --parent-commit <commit whose savante.thot.json is the most recent published "
+                          "manifest> and --parent-reason '<what changed>'")
+        if ((head_prev.get("rung") or {}).get("value")) != "referenced":
+            return None, "G4: HEAD's manifest is anchored (rung above `referenced`); an anchored manifest is never re-bound"
+        if not _is_generation(hb.get("generation")) or not isinstance(hb.get("parent_reason"), str) \
+                or not hb["parent_reason"] or (hb["generation"] == 1) != (hb.get("parent") is None):
+            return None, "HEAD's manifest carries a malformed bundle block (V1-V4); refusing to carry it forward"
+        return {"generation": hb["generation"], "parent": hb.get("parent"),                          # G4
+                "parent_reason": hb["parent_reason"]}, None
+    pb = parent_p.get("bundle") if isinstance(parent_p.get("bundle"), dict) else {}
+    pcid = (parent_p.get("identity") or {}).get("cid") if isinstance(parent_p.get("identity"), dict) else None
+    if pb.get("id") != BUNDLE_ID:
+        return None, f"P is bundle {pb.get('id')!r}; a parent is never another bundle's manifest (G2)"
+    if not _is_generation(pb.get("generation")):
+        return None, f"P's bundle.generation {pb.get('generation')!r} is not an integer >= 1"
+    if not (isinstance(pcid, str) and CID_RE.match(pcid)):
+        return None, f"P's identity.cid {pcid!r} is not a bafkrei CID"
+    if manifest_identity_cid(parent_p) != pcid:
+        return None, "P's file does not reproduce its own identity.cid; it is not a published manifest to descend from"
+    if not (isinstance(parent_reason, str) and parent_reason.strip()):
+        return None, "G2: --parent-reason is required, a non-empty string saying what changed since P"
+    if present_facet_digests(parent_p) == present_facet_digests(new) and not successor_change(parent_p, new):
+        return None, ("G4: no facet change and no successor since P, so there is no new generation to bind; "
+                      "re-bind without --parent-commit")
+    if head_prev is not None and (head_prev.get("identity") or {}).get("cid") != pcid:
+        hb = head_prev.get("bundle") if isinstance(head_prev.get("bundle"), dict) else {}
+        if not (hb.get("generation") == pb["generation"] + 1 and hb.get("parent") == pcid):
+            return None, (f"HEAD's manifest (generation {hb.get('generation')}, parent {hb.get('parent')}) is neither P "
+                          "nor a generation of P, so P is not the most recent manifest of this bundle")
+        if present_facet_digests(head_prev) != present_facet_digests(new) or successor_change(head_prev, new):
+            return None, (f"G5: HEAD already carries generation {hb['generation']} of P and the facets differ from it; "
+                          "the next facet change is a new generation with --parent-commit HEAD")
+    return {"generation": pb["generation"] + 1, "parent": pcid, "parent_reason": parent_reason}, None     # G2/G3
+
+
 def build_manifest(repo: Path, digests: Dict[str, Any], root: Dict[str, Any],
                    generated_from: Dict[str, Any], persona: Dict[str, Any],
-                   derivations: Dict[str, Any]) -> Tuple[Dict[str, Any], bytes]:
+                   derivations: Dict[str, Any], head_prev: Optional[Dict[str, Any]] = None,
+                   parent_p: Optional[Dict[str, Any]] = None,
+                   parent_reason: Optional[str] = None) -> Tuple[Dict[str, Any], bytes]:
     """N facets → one content-addressed THOT. No salt, no timestamp, no wall clock: a content root
     that is not reproducible from the repository alone is a random number, not a content root."""
     by_facet = {COMPONENT_FACET[name]: (name, d) for name, d in digests.items() if name in COMPONENT_FACET}
@@ -711,21 +940,27 @@ def build_manifest(repo: Path, digests: Dict[str, Any], root: Dict[str, Any],
     # What the LOCATOR actually holds. The rung is `referenced` because a locator exists — but a
     # locator that resolves to a tree missing half the facets does not let a stranger retrieve them,
     # and a rung that implies otherwise is the same defect one layer out from a ledger hashing bytes
-    # no commit contains. Measured from git, never assumed.
-    at_head = set()
-    listing = git(repo, "ls-tree", "-r", "--name-only", "HEAD")
-    if listing:
-        at_head = set(listing.splitlines())
+    # no commit contains. Measured from git, never assumed. §6: being in the locator commit's tree is not
+    # enough — a facet is held only if its bytes AT that commit hash to the sha256 this manifest records.
+    head = generated_from.get("repo_head_commit")
+
+    def held(rel: str, sha: str) -> bool:
+        at = git_bytes(repo, head, rel) if head else None
+        return at is not None and sha256_hex(at) == sha
 
     facets, preimage, leaves = [], b"", []
     for ext in FACET_ORDER:
         name, d = by_facet[ext]
         facets.append({"facet": ext, "path": d["path"], "bytes": d["bytes"], "sha256": d["sha256"],
                        "cid": d["cid"], "state": "present", "custom": False, "added_in": 1,
-                       "component": name, "at_locator": d["path"] in at_head})
+                       "component": name, "at_locator": held(d["path"], d["sha256"])})
         piece = ext.encode("utf-8") + US + d["sha256"].encode("ascii")
         preimage += piece + RS
         leaves.append(keccak256(piece))
+
+    if len(leaves) > MERKLE_LEAVES:
+        fail(f"{len(leaves)} present facets exceed the {MERKLE_LEAVES}-leaf Merkle tree; "
+             "THOT_MANIFEST.md §5 fails rather than truncates")
 
     manifest: Dict[str, Any] = {
         "$comment": ("DERIVED OUTPUT — generated by bind/savante_bind.py; regenerable; never hand-edited. "
@@ -738,21 +973,10 @@ def build_manifest(repo: Path, digests: Dict[str, Any], root: Dict[str, Any],
         # costs nothing now and is impossible to add later. Migration rule in THOT_MANIFEST.md: a new
         # generation names the successor algorithm and carries the old manifest's CID as `parent`;
         # the superseded digests are preserved as historical evidence and never recomputed in place.
-        "algorithms": {
-            "facet_digest": "sha256",
-            "cid": "cidv1-raw-sha2-256-base32",
-            "bundle_root": "keccak256",
-            "merkle_leaf": "keccak256",
-            "merkle_pad": "keccak256",
-            "identity_thot": "sha256",
-            "identity_content_root": "keccak256",
-            "canonicalisation": "json.dumps(sort_keys=True, separators=(',',':'), ensure_ascii=False).encode('utf-8')",
-            "note": ("A verifier MUST refuse a manifest whose declared algorithms it does not implement, "
-                     "rather than verify with the functions it happens to have. Silently checking the "
-                     "wrong digest is worse than not checking."),
-        },
-        "bundle": {"id": "sAGI", "officer": persona.get("name"), "generation": 1, "parent": None,
-                   "parent_reason": "genesis generation; there is no earlier manifest"},
+        "algorithms": manifest_algorithms(),
+        # §7: filled in below by decide_bundle, once the facets it compares against P are known.
+        "bundle": {"id": BUNDLE_ID, "officer": persona.get("name"), "generation": None, "parent": None,
+                   "parent_reason": None},
         "facets": facets,
         "absent": [{"facet": f, "state": "absent", "reason": r} for f, r in FACETS_ABSENT],
         "custom": [],
@@ -804,6 +1028,18 @@ def build_manifest(repo: Path, digests: Dict[str, Any], root: Dict[str, Any],
         "license": resolve(persona, "/token/rights/license"),
     }
 
+    refusals = algorithms_refusals(manifest)
+    if refusals:
+        fail("the manifest this binder built would be refused by the verifier: " + "; ".join(refusals))
+    if not LOCATOR_RE.match(manifest["rung"]["evidence"]["locator"]):
+        fail(f"rung.evidence.locator {manifest['rung']['evidence']['locator']!r} is not "
+             "<host>/<owner>/<repo>@<40 lowercase hex> (§3 S10); the locator needs a readable git HEAD")
+
+    lineage, refusal = decide_bundle(manifest, head_prev, parent_p, parent_reason)
+    if refusal:
+        fail(f"lineage (THOT_MANIFEST.md §7): {refusal}")
+    manifest["bundle"].update(lineage)
+
     canon = canonical_bytes(manifest)
     sha = sha256_hex(canon)
     cid, cid_reason = cid_or_none(canon)
@@ -823,7 +1059,8 @@ def build_manifest(repo: Path, digests: Dict[str, Any], root: Dict[str, Any],
 
 # ── main ──────────────────────────────────────────────────────────────────────
 
-def run_bind(repo: Path, out_dir: Path, mirror: Path, no_mirror_check: bool, image: Optional[Path]) -> int:
+def run_bind(repo: Path, out_dir: Path, mirror: Path, no_mirror_check: bool, image: Optional[Path],
+             parent_commit: Optional[str] = None, parent_reason: Optional[str] = None) -> int:
     keccak_selftest()
     findings: List[str] = []
 
@@ -878,12 +1115,23 @@ def run_bind(repo: Path, out_dir: Path, mirror: Path, no_mirror_check: bool, ima
                  f"persona and live only in {LEDGER_NAME}", EXIT_CARD)
     if erc.get("metadata_keys") not in (None, ONCHAIN_METADATA_KEYS):
         fail(f"token.bindings.erc8004.metadata_keys {erc.get('metadata_keys')!r} != {ONCHAIN_METADATA_KEYS}", EXIT_CARD)
+    # The persona's declared components must be exactly the components this ledger binds — no more, no fewer.
+    try:
+        comps = resolve(persona, "/token/intelligence/components")
+    except PointerMissing as e:
+        fail(f"persona component list missing — {e}", EXIT_POINTER)
+    declared = [(c.get("component"), c.get("path")) for c in comps if isinstance(c, dict)] \
+        if isinstance(comps, list) else []
+    if not isinstance(comps, list) or len(declared) != len(comps) or len(set(declared)) != len(declared) \
+            or set(declared) != set(COMPONENTS):
+        fail(f"persona /token/intelligence/components {declared} != the {len(COMPONENTS)} components this ledger "
+             f"binds {COMPONENTS}", EXIT_POINTER)
     tc = token.get("commitments", {})
     if isinstance(tc, dict) and any(isinstance(v, str) and len(v) in (64, 66) and all(c in "0123456789abcdefx" for c in v)
                                     for v in tc.values()):
         fail("token.commitments appears to carry a digest value; it must hold the contract only", EXIT_CARD)
 
-    # Digests of the five components (raw bytes).
+    # Digests of the nine components (raw bytes).
     digests = {name: {"path": rel, **digest_file(repo / rel)} for name, rel in COMPONENTS}
 
     # Doctrine root — after preflight, all fifteen pointers required.
@@ -909,8 +1157,30 @@ def run_bind(repo: Path, out_dir: Path, mirror: Path, no_mirror_check: bool, ima
 
     chartered, generated_from = git_provenance(repo)
 
+    # §7 inputs, from LOCAL git only: the manifest committed at HEAD, and P when --parent-commit names it.
+    def manifest_at(rev: str) -> Optional[Dict[str, Any]]:
+        raw = git_bytes(repo, rev, MANIFEST_NAME)
+        if raw is None:
+            return None
+        try:
+            m = loads_strict(raw.decode("utf-8"))
+        except ValueError as e:
+            fail(f"{rev}:{MANIFEST_NAME} is not UTF-8 JSON with unique keys: {e}")
+        if not isinstance(m, dict):
+            fail(f"{rev}:{MANIFEST_NAME} is not a JSON object")
+        return m
+
+    head_prev = manifest_at("HEAD") if generated_from.get("repo_head_commit") else None
+    parent_p = None
+    if parent_commit is not None:
+        parent_p = manifest_at(parent_commit)
+        if parent_p is None:
+            fail(f"--parent-commit {parent_commit}: no {MANIFEST_NAME} at that revision in this clone "
+                 "(the binder never fetches; P must be on disk)")
+
     # The THOT manifest — N facets, one content-addressed identity (sagi/engine/THOT_MANIFEST.md).
-    manifest, manifest_bytes = build_manifest(repo, digests, root, generated_from, persona, derivations)
+    manifest, manifest_bytes = build_manifest(repo, digests, root, generated_from, persona, derivations,
+                                              head_prev, parent_p, parent_reason)
 
     # Card FIRST — its CID goes into the ledger.
     card = build_card(persona, chartered, generated_from, digests, root, image_candidate, findings)
@@ -976,6 +1246,8 @@ def run_bind(repo: Path, out_dir: Path, mirror: Path, no_mirror_check: bool, ima
                          "bundle. It lives here because it cannot live in the file it measures."),
             },
             "schema": manifest["schema"],
+            "generation": manifest["bundle"]["generation"],
+            "parent": manifest["bundle"]["parent"],
             "facets": [f["facet"] for f in manifest["facets"]],
             "absent": [a["facet"] for a in manifest["absent"]],
             "identity": manifest["identity"],
@@ -1061,6 +1333,8 @@ def run_bind(repo: Path, out_dir: Path, mirror: Path, no_mirror_check: bool, ima
     print(f"card_cid      {card_cid}")
     print(f"card_digest   {card_digest}")
     print(f"chartered     {chartered['date']}  head {generated_from['repo_head_commit']}")
+    print(f"generation    {manifest['bundle']['generation']}  parent {manifest['bundle']['parent']}  "
+          f"identity {manifest['identity']['cid']}")
     if generated_from["components_differing_from_head"]:
         print(f"note: working tree differs from HEAD for {generated_from['components_differing_from_head']}")
     for f in findings:
@@ -1156,27 +1430,185 @@ def self_test() -> int:
     check("preimage construction matches spec §3.2 literally", "0x" + keccak256(pre_i).hex() == r1)
     check("canonical_bytes sorts keys and strips whitespace", canonical_bytes({"b": 1, "a": [1, "é"]}) == b'{"a":[1,"\xc3\xa9"],"b":1}')
 
+    # 6. §5 Merkle and bundle_root: the spec's test vector (savante.thot.json @ 1fcca89), and fail > 64
+    if KECCAK is not None:
+        v1 = [("persona", "5c2402cc01b4fc4137f3f3ad34710fc0ffc6361faaa32c0251d4849327006009"),
+              ("agent", "3cdd31d9734d5815da53411fa31650665b7dde0c348da4ac50ad7bf686fc75f0"),
+              ("model", "03dbbf5069cfdbcd67747eff1a513217b8139e16e0b4cc74aa71015adb9d3581"),
+              ("prompt", "baf5a302bf591b977d45ff21c484cc1279c9693e0f65ae9541db42c042bdcffe"),
+              ("tool", "ebd3ec9342801ae3dc72840db55e7052b33ff487b6b1fa2e3145e69d9da9ece4"),
+              ("skill", "350da6fcf3cc09eb60516317438f7d3f954a83a8d1f526d9f2e9268a0cf4d6fe"),
+              ("voaice", "d4619d4c6fcf0913ed0e2a1616eb219d2bff9a22efbb323a7e579cf44e25862e"),
+              ("faice", "6e2d33f8e6ad06e56c254549020643ab70b55cb61a6cb0328751ba33b7e3991f")]
+        recs = [f.encode("utf-8") + b"\x1f" + h.encode("ascii") for f, h in v1]
+        check("§5 test vector bundle_root (savante @ 1fcca89)",
+              "0x" + keccak256(b"".join(r + b"\x1e" for r in recs)).hex()
+              == "0x235da8e993dc8af2c077f50d698962446b872b17b1e5b033d5c5d976532b8880")
+        check("§5 test vector merkle root (savante @ 1fcca89)",
+              merkle_root([keccak256(r) for r in recs])
+              == "0xdc1d80957cf831aee6638fd569e22cf0f6e5a1ec99ddde91cfecb5a15408fbe1")
+        try:
+            merkle_root([keccak256(b"x")] * (MERKLE_LEAVES + 1))
+            check("merkle_root fails on 65 leaves rather than truncating", False)
+        except ValueError:
+            check("merkle_root fails on 65 leaves rather than truncating", True)
+
+    # 7. §3a closed vocabulary: the emitted block passes; every refusal case refuses
+    base = {"schema": SCHEMA, "algorithms": manifest_algorithms(), "doctrine_root": "0x" + "00" * 32,
+            "facets": [], "custom": []}
+    check("emitted algorithms block is accepted", algorithms_refusals(base) == [], str(algorithms_refusals(base)))
+
+    def mutated(fn: Callable[[Dict[str, Any]], None]) -> Dict[str, Any]:
+        m = json.loads(json.dumps(base))
+        fn(m)
+        return m
+
+    cases: List[Tuple[str, Callable[[Dict[str, Any]], None]]] = [
+        ("missing block", lambda m: m.pop("algorithms")),
+        ("block not an object", lambda m: m.__setitem__("algorithms", ["sha256"])),
+        ("unknown key", lambda m: m["algorithms"].__setitem__("facet_digest_v2", "blake3")),
+        ("canonicalisation without .encode('utf-8')", lambda m: m["algorithms"].__setitem__(
+            "canonicalisation", "json.dumps(sort_keys=True, separators=(',',':'), ensure_ascii=False)")),
+        ("doctrine_root missing while the manifest carries one", lambda m: m["algorithms"].pop("doctrine_root")),
+        ("git_blob missing while a facet is named by a git blob",
+         lambda m: m["facets"].append({"facet": "voaice", "git_blob": "0" * 40})),
+        ("git_blob with a different value", lambda m: m["algorithms"].__setitem__("git_blob", "sha1")),
+        ("schema missing", lambda m: m.pop("schema")),
+        ("schema sagi.thot_manifest/2", lambda m: m.__setitem__("schema", "sagi.thot_manifest/2")),
+        ("note is not a string", lambda m: m["algorithms"].__setitem__("note", {"x": 1})),
+        ("note is null", lambda m: m["algorithms"].__setitem__("note", None)),
+        ("G +1 facets[5].reference.git_blob_sha1 without the declaration",
+         lambda m: m["facets"].extend([{"facet": f"f{i}"} for i in range(5)] + [{"facet": "voaice", "reference": {"git_blob_sha1": "bf" * 20}}])),
+        ("G +2 facets[0].git_blob (value null still counts)",
+         lambda m: m["facets"].append({"facet": "persona", "git_blob": None})),
+        ("G +3 custom[0].source.git_blob_id", lambda m: m["custom"].append({"facet": "x-a.b", "source": {"git_blob_id": "x"}})),
+        ("G +4 facets[2].renderings[1].git_blob_sha1",
+         lambda m: m["facets"].extend([{}, {}, {"renderings": [{}, {"git_blob_sha1": "ab" * 20}]}])),
+    ]
+    for k in ALGORITHMS_ALWAYS:
+        cases.append((f"{k} missing", lambda m, k=k: m["algorithms"].pop(k)))
+        cases.append((f"{k} = sha3-256", lambda m, k=k: m["algorithms"].__setitem__(k, "sha3-256")))
+    cases.append(("doctrine_root = sha3-256", lambda m: m["algorithms"].__setitem__("doctrine_root", "sha3-256")))
+    for label, fn in cases:
+        r = algorithms_refusals(mutated(fn))
+        check(f"algorithms refused: {label}", bool(r), r[0] if r else "NOT refused")
+    no_root = mutated(lambda m: (m.pop("doctrine_root"), m["algorithms"].pop("doctrine_root")))
+    check("doctrine_root key not required when the manifest carries no doctrine_root", algorithms_refusals(no_root) == [])
+    check("a changed note is not an algorithm", algorithms_refusals(mutated(
+        lambda m: m["algorithms"].__setitem__("note", "anything"))) == [])
+    check("git_blob declared with the exact §3a value is accepted", algorithms_refusals(mutated(
+        lambda m: m["algorithms"].__setitem__("git_blob", ALGORITHMS_CONDITIONAL["git_blob"]))) == [])
+    check("a facet named by sha256 under `sha256` does not require git_blob", algorithms_refusals(mutated(
+        lambda m: m["facets"].append({"facet": "persona", "sha256": "ab" * 32}))) == [])
+    # §3a condition G negatives: none may require git_blob (a verifier MUST NOT widen G).
+    for label, fn in [
+        ("G -1 facets[5].reference.commit = 40-hex", lambda m: m["facets"].extend(
+            [{} for _ in range(5)] + [{"reference": {"commit": "3f7412" + "0" * 30 + "6c76"}}])),
+        ("G -2 rung.evidence.locator names a commit", lambda m: m.__setitem__(
+            "rung", {"evidence": {"locator": "github.com/cryptoAGI/savante@368c7322f2c66e470b28e1673bf5a0e5ced124d4"}})),
+        ("G -3 relations[0].manifest_commit", lambda m: m.__setitem__("relations", [{"manifest_commit": "8b57ccf"}])),
+        ("G -4 facets[1].reference.git_object and facets[1].oid = 40 hex", lambda m: m["facets"].extend(
+            [{}, {"reference": {"git_object": "ab" * 20}, "oid": "cd" * 20}])),
+        ("G -5 absent[0].git_blob_sha1 and references[0].git_blob_sha1", lambda m: (
+            m.__setitem__("absent", [{"git_blob_sha1": "ab" * 20}]), m.__setitem__("references", [{"git_blob_sha1": "ab" * 20}]))),
+        ("G -6 algorithms.git_blob does not trigger itself", lambda m: m["algorithms"].__setitem__(
+            "git_blob", ALGORITHMS_CONDITIONAL["git_blob"])),
+        ("G -7 facets[0].note = 'git_blob_sha1 bfcc5e…' (a value, not a key)",
+         lambda m: m["facets"].append({"note": "git_blob_sha1 bfcc5e"})),
+        ("G substring only: facets[0].x_git_blob", lambda m: m["facets"].append({"x_git_blob": "ab" * 20})),
+        ("G case-sensitive: facets[0].GIT_BLOB", lambda m: m["facets"].append({"GIT_BLOB": "ab" * 20})),
+    ]:
+        mm = mutated(fn)
+        check(f"not required: {label}", not git_blob_condition(mm) and algorithms_refusals(mm) == [],
+              str(algorithms_refusals(mm)))
+
+    # 8. §7 generations: decide_bundle (G1-G5), pure, against synthetic manifests.
+    def mf(facets: Dict[str, str], gen: int = 1, parent: Optional[str] = None, rung: str = "referenced",
+           reason: str = GENESIS_REASON, bid: str = BUNDLE_ID) -> Dict[str, Any]:
+        m = {"schema": SCHEMA, "algorithms": manifest_algorithms(),
+             "bundle": {"id": bid, "officer": "Savante", "generation": gen, "parent": parent, "parent_reason": reason},
+             "facets": [{"facet": k, "sha256": v, "state": "present"} for k, v in facets.items()], "custom": [],
+             "rung": {"value": rung}}
+        m["identity"] = {"cid": manifest_identity_cid(m)}
+        return m
+    g1 = mf({"persona": "aa", "agent": "bb"})
+    edited = mf({"persona": "cc", "agent": "bb"})
+    blk, why = decide_bundle(edited, None, None, None)
+    check("G1 no manifest at HEAD, no parent: genesis", why is None and blk == {"generation": 1, "parent": None,
+                                                                              "parent_reason": GENESIS_REASON}, str(why))
+    blk, why = decide_bundle(mf({"persona": "aa", "agent": "bb"}), g1, None, None)
+    check("G4 no facet change since HEAD: generation and parent carried", why is None and blk["generation"] == 1, str(why))
+    blk, why = decide_bundle(edited, g1, None, None)
+    check("G5 facet change without --parent-commit is refused", blk is None and why.startswith("G5"), str(why))
+    blk, why = decide_bundle(edited, g1, g1, "persona edited")
+    check("G2 facet change with P: generation 2, parent = P.identity.cid",
+          why is None and blk == {"generation": 2, "parent": g1["identity"]["cid"], "parent_reason": "persona edited"}, str(why))
+    check("G2 parent_reason required", decide_bundle(edited, g1, g1, " ")[0] is None)
+    check("G2 --parent-reason without --parent-commit refused", decide_bundle(edited, g1, None, "x")[0] is None)
+    check("G4 --parent-commit with no facet change refused", decide_bundle(mf({"persona": "aa", "agent": "bb"}), g1, g1, "x")[0] is None)
+    check("G2 P of another bundle refused", decide_bundle(edited, g1, mf({"persona": "aa"}, bid="jaimla"), "x")[0] is None)
+    tampered = json.loads(json.dumps(g1))
+    tampered["identity"]["cid"] = "bafkrei" + "a" * 52
+    check("G2 P whose file does not reproduce its identity.cid refused", decide_bundle(edited, g1, tampered, "x")[0] is None)
+    g2 = mf({"persona": "cc", "agent": "bb"}, gen=2, parent=g1["identity"]["cid"], reason="persona edited")
+    blk, why = decide_bundle(mf({"persona": "cc", "agent": "bb"}), g2, g1, "persona edited")
+    check("re-bind of generation 2 at a later HEAD with the same P keeps generation 2",
+          why is None and blk["generation"] == 2 and blk["parent"] == g1["identity"]["cid"], str(why))
+    blk, why = decide_bundle(mf({"persona": "cc", "agent": "bb"}), g2, None, None)
+    check("G4 plain re-bind over a committed generation 2 carries it forward",
+          why is None and blk == {"generation": 2, "parent": g1["identity"]["cid"], "parent_reason": "persona edited"}, str(why))
+    check("G5 a further facet change over a committed generation 2 with P = genesis refused",
+          decide_bundle(mf({"persona": "dd", "agent": "bb"}), g2, g1, "x")[0] is None)
+    check("P that is not the most recent manifest refused",
+          decide_bundle(edited, mf({"persona": "zz"}, gen=3, parent="bafkrei" + "b" * 52, reason="r"), g1, "x")[0] is None)
+    check("G4 anchored manifest at HEAD is never re-bound",
+          decide_bundle(mf({"persona": "aa", "agent": "bb"}), mf({"persona": "aa", "agent": "bb"}, rung="committed"), None, None)[0] is None)
+    succ = json.loads(json.dumps(g1))
+    succ["algorithms"]["facet_digest"] = "blake3"
+    check("G3 a changed algorithm value is a successor", successor_change(g1, succ) and not successor_change(g1, g1))
+    no_dr = json.loads(json.dumps(g1))
+    no_dr["algorithms"].pop("doctrine_root")
+    check("G4 adding algorithms.doctrine_root with its v1 value is not a successor", not successor_change(no_dr, g1))
+    check("locator form S10", bool(LOCATOR_RE.match("github.com/cryptoAGI/savante@" + "1f" * 20))
+          and not LOCATOR_RE.match("github.com/cryptoAGI/savante@1fcca89") and not LOCATOR_RE.match("github.com/x/y@None"))
+    try:
+        loads_strict('{"algorithms": {"merkle_pad": "sha3-256", "merkle_pad": "keccak256"}}')
+        check("loads_strict refuses a duplicate key", False)
+    except DuplicateKey:
+        check("loads_strict refuses a duplicate key", True)
+    check("loads_strict accepts the same key in two different objects",
+          loads_strict('{"a": {"k": 1}, "b": {"k": 2}}') == {"a": {"k": 1}, "b": {"k": 2}})
+
     print("self-test:", "OK" if ok else "FAILED")
     return EXIT_OK if ok else EXIT_GENERIC
 
 
 def main(argv: Optional[List[str]] = None) -> int:
     here = Path(__file__).resolve().parent.parent
-    ap = argparse.ArgumentParser(description="Derive savante.agentcard.json and savante.commitments.json. Operator tool; no network.")
+    ap = argparse.ArgumentParser(description="Derive savante.agentcard.json, savante.commitments.json and savante.thot.json. Operator tool; no network.")
     ap.add_argument("--repo", type=Path, default=here, help=f"repo root (default: {here})")
-    ap.add_argument("--out-dir", type=Path, default=None, help="where to write the two derived files (default: repo root)")
+    ap.add_argument("--out-dir", type=Path, default=None, help="where to write the three derived files (default: repo root)")
     ap.add_argument("--mirror", type=Path, default=DEFAULT_MIRROR, help=f"mindX mirror of savante.persona (default: {DEFAULT_MIRROR})")
     ap.add_argument("--no-mirror-check", action="store_true", help="skip the mirror md5 check; recorded in the output as a finding")
     ap.add_argument("--image", type=Path, default=None, help="candidate artwork: sha256 recorded as UNCONFIRMED; never an ipfs:// URI")
-    ap.add_argument("--self-test", action="store_true", help="run the keccak / CID / preflight / pointer self-tests and exit")
+    ap.add_argument("--parent-commit", default=None, metavar="REV",
+                    help="bind the next generation (THOT_MANIFEST.md §7): P = savante.thot.json at REV in this LOCAL "
+                         "clone (never fetched); bundle.parent = P's identity.cid, generation = P's + 1. Without it, "
+                         "HEAD's manifest is carried forward (G4) and a facet change is refused (G5)")
+    ap.add_argument("--parent-reason", default=None, metavar="TEXT",
+                    help="with --parent-commit: bundle.parent_reason, what changed since P (required, never compared)")
+    ap.add_argument("--self-test", action="store_true", help="run the keccak / CID / preflight / pointer / §3a / §7 self-tests and exit")
     a = ap.parse_args(argv)
     if a.self_test:
         return self_test()
+    if a.parent_reason is not None and a.parent_commit is None:
+        ap.error("--parent-reason requires --parent-commit")
     repo = a.repo.resolve()
     out_dir = (a.out_dir or repo).resolve()
     if out_dir == repo and (repo / "savante.persona").resolve() in ((out_dir / CARD_NAME).resolve(), (out_dir / LEDGER_NAME).resolve()):
         fail("refusing to write over savante.persona")  # structurally impossible, kept as a stated invariant
-    return run_bind(repo, out_dir, a.mirror.resolve() if a.mirror else DEFAULT_MIRROR, a.no_mirror_check, a.image)
+    return run_bind(repo, out_dir, a.mirror.resolve() if a.mirror else DEFAULT_MIRROR, a.no_mirror_check, a.image,
+                    a.parent_commit, a.parent_reason)
 
 
 if __name__ == "__main__":

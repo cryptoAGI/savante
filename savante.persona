@@ -388,6 +388,26 @@
           "component": "facet_model",
           "path": "sAGI.model",
           "authority": "the inference facet of the same class (facets.py:1-17); logical_model auto, pinned false — no model: key in the charter (technical.md:48-50)"
+        },
+        {
+          "component": "facet_prompt",
+          "path": "sAGI.prompt",
+          "authority": "DERIVED from the charter: its body is the charter body after the closing frontmatter delimiter, byte for byte (bind/savante_bind.py check_prompt_derivation fails closed on drift); the charter is authoritative"
+        },
+        {
+          "component": "facet_tool",
+          "path": "sAGI.tool",
+          "authority": "DERIVED: the allowlist plus the grant mask; its allowlist must equal the charter frontmatter and tool_allowlist below (bind/savante_bind.py check_tool_facet fails closed on disagreement)"
+        },
+        {
+          "component": "facet_voaice",
+          "path": "sAGI.voaice",
+          "authority": "voaice/1, null_with_reason: measured and vprint are null together, and provenance carries the reason and the deciding experiment (bind/savante_bind.py check_embodiment_facet)"
+        },
+        {
+          "component": "facet_faice",
+          "path": "sAGI.faice",
+          "authority": "faice/1, null_with_reason: measured and fprint are null together, and provenance carries the reason and the deciding experiment (bind/savante_bind.py check_embodiment_facet)"
         }
       ],
       "tool_allowlist": [
@@ -546,7 +566,7 @@
     },
     "rights": {
       "license": "MIT",
-      "license_finding": "PARTLY KNOWN as of 2026-09-12. KNOWN: an MIT LICENSE (Copyright (c) 2026 cryptoAGI) exists at the root of the AUTHOR'S WORKING TREE, matching the house licence of ~/voaice, and duplication by `cp` is the stated commercial model that MIT grants explicitly. NOT YET TRUE OF THE PUBLISHED REPOSITORY: the file is untracked; github.com/cryptoAGI/savante is at ae15ca7, whose tree contains no LICENSE, and the GitHub API reports the repository's licence as none. Since `source` above names that URL, a stranger checking the only address they were given still finds no licence — so the condition at iNFT.md is closed locally and OPEN publicly. Deciding check, run against the URL and not the disk: `gh api repos/cryptoAGI/savante/contents` lists LICENSE, and the repository's `license` field reports MIT. Boundary unchanged: MIT governs the COPY of these files; it is not a statement about what a token conveys, which remains null below.",
+      "license_finding": "CLOSED. The repository is licensed MIT: LICENSE at its root reads 'MIT License' and 'Copyright (c) 2026 cryptoAGI — Professor Codephreak', committed in 29f03bd and published at github.com/cryptoAGI/savante (the tree of 1fcca89 carries it as blob 0dde0396934914648133a245b13ff2252424f4c4), so a stranger checking the address `source` names finds the licence there, not only on the author's disk. Duplication by `cp` is the stated commercial model, which MIT grants explicitly. Deciding check, run against the URL and not the disk: `gh api repos/cryptoAGI/savante/license` reports MIT for LICENSE. Boundary unchanged: MIT governs the COPY of these files; it is not a statement about what a token conveys, which remains null below.",
       "royalty": {
         "erc2981": "iNFT_7857 inherits ERC2981 with MAX_ROYALTY_BPS = 2500 (/home/hacker/mindX/daio/contracts/inft/iNFT_7857.sol:139 — note: /home/hacker/mindX/daio/contracts/inft/iNFT_7857.sol:137 is MAX_URI_LENGTH = 2048)",
         "configured": null,

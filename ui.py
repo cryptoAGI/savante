@@ -7,7 +7,7 @@ structural substrate — rarely intervenes, always watching.* Its epistemology h
 third: a claim is **known** when it survives verification against evidence, and **unknown** otherwise.
 It holds no opinions; it holds findings.
 
-So this surface is not an agent console. Six rooms, each something the office may actually do:
+So this surface is not an agent console. Seven rooms, each something the office may actually do:
 
 - **The Office** — the charter itself, read from `savante.persona`: mantra, oath, the four verdicts,
   the tool allowlist, and the mint status, which is `not_yet_minted` and stays that way here.
@@ -17,13 +17,17 @@ So this surface is not an agent console. Six rooms, each something the office ma
 - **Verdict** — the fixed five-field contract (FINDINGS · VERDICT · RATIONALE · CONDITIONS · RISKS
   WATCHED). The composer **refuses to render APPROVE with no evidence rows**, because "I never approve
   what I have not read" is the oath.
-- **Integrity** — recompute the bundle's sha256 and CIDv1 from the bytes on disk and compare them with
-  `savante.commitments.json`. What a holder receives is the ability to prove, without trusting the
-  author, that DEFER is still in the vocabulary.
+- **Integrity** — check the manifest's declared algorithms against the closed vocabulary first, then
+  recompute each artefact's sha256 from the bytes on disk and compare it with `savante.commitments.json`.
+  What it cannot recompute here (the keccak256 roots, the identity) it names as not verified. What a
+  holder receives is the ability to prove, without trusting the author, that DEFER is still in the
+  vocabulary.
 - **Rungs** — the training ladder as *plan only*: Qwen3 8B and the 27B mid-grade, with the hardware each
   needs, what it would cost, and the ceiling and flag that stand between the plan and a charge.
 - **Kimi** — a provider configuration tab: base URL, model id, whether a key is present (never the key),
   and a live model list, because model identifiers rot and the provider's own endpoint is the authority.
+- **Voice** — the verdict read aloud through voaice: a pre-rendered line plays for free, and synthesised
+  text is bounded at 240 characters rather than refused.
 
 **There is no mint button, and its absence is the feature.** `iNFT.md` renders `VERDICT: DEFER` on
 binding this office to a token, and minting, listing on AgenticPlace, binding a vault and registering on
@@ -31,7 +35,8 @@ an ERC-8004 registry are factory steps that wait on the operator's signature (`s
 
 **Lineage of the look.** The palette, the pill strip and the Gradio-compat guards come from the house's
 own Space, `mindXhfgradio` (<https://gregory-l-mindxhfgradio.hf.space/>), inlined here rather than
-imported so this repository depends on nothing but `gradio`. Three of those guards exist because three
+imported so this repository depends on nothing but `gradio` (the Integrity room loads the manifest vocabulary
+from `bind/savante_bind.py`, stdlib only, rather than keep a copy). Three of those guards exist because three
 separate versions broke: Gradio 6 moved `theme`/`css` to `launch()`, dropped `type=` from `Chatbot`, and
 dropped `show_copy_button` from `Textbox`. The rule learned: **read the installed signature, never pin a
 major.**
@@ -41,6 +46,7 @@ major.**
 from __future__ import annotations
 
 import hashlib
+import importlib.util
 import json
 import os
 import shlex
@@ -416,48 +422,67 @@ def cid_v1_raw(data: bytes) -> str:
     return "b" + "".join(out)
 
 
-EXPECTED_ALGORITHMS = {
-    "facet_digest": "sha256",
-    "cid": "cidv1-raw-sha2-256-base32",
-    "identity_thot": "sha256",
-}
+# The only declared algorithm this room actually recomputes: each artefact's sha256, against the ledger.
+VERIFIED_HERE = ("facet_digest",)
+
+
+def _binder() -> Optional[Any]:
+    """bind/savante_bind.py (stdlib only at import) — the ONE definition of the sagi.thot_manifest/1 vocabulary,
+    the §8 step-0 pre-checks and condition G (sagi/engine/THOT_MANIFEST.md §3a). Loaded from beside this file,
+    else from the checkout; this room keeps no copy of its own, so it cannot drift from the verifier."""
+    for base in (Path(__file__).resolve().parent, savante_root()):
+        p = base / "bind" / "savante_bind.py" if base is not None else None
+        if p is None or not p.is_file():
+            continue
+        try:
+            spec = importlib.util.spec_from_file_location("savante_bind_for_ui", p)
+            mod = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(mod)  # type: ignore[union-attr]
+            return mod
+        except Exception:  # noqa: BLE001
+            continue
+    return None
 
 
 def manifest_check(root: Path) -> Dict[str, Any]:
-    """Refuse a manifest whose declared algorithms this verifier does not implement.
+    """Refuse a manifest whose algorithms block fails the closed vocabulary, and never call the rest 'ok'.
 
-    `savante.thot.json` states the rule itself, and it is not decorative: *a verifier MUST refuse a
-    manifest whose declared algorithms it does not implement, rather than verify with the functions
-    it happens to have. Silently checking the wrong digest is worse than not checking.*
+    The rule is sagi/engine/THOT_MANIFEST.md §3a, the same one `bind/savante_verify.py` enforces: refuse
+    when the block is missing or not an object, lacks a required key (doctrine_root too, when the
+    manifest carries one), carries a key outside the vocabulary, or declares any other value.
 
-    This surface implements sha256 and CIDv1-raw-sha2-256-base32, and nothing else — notably **not**
-    keccak256, so it cannot check `bundle_root`, `merkle.root` (64 leaves, 8 populated, padded with
-    keccak256 of the empty string) or `doctrine_root`. Those are named as uncheckable rather than
-    passed over, because a green table that implies coverage it does not have is the failure this
-    office exists to catch in other people's work.
+    Passing that check is NOT verification. Of the declared algorithms this surface recomputes only
+    `facet_digest` (each artefact's sha256 against the ledger). The keccak256 `bundle_root`, `merkle.root`
+    and `doctrine_root`, the identity (thot / cid / contentRoot) and the canonicalisation are not computed
+    here, so the state is `partial` and every such key is listed under `not_verified_here` — a green table
+    that implies coverage it does not have is the failure this office catches in other people's work.
     """
+    sb = _binder()
+    if sb is None:
+        return {"state": "refused", "refusals": ["bind/savante_bind.py is not loadable beside ui.py or in the checkout, "
+                                                 "so the vocabulary this room checks against is absent; nothing is checked"]}
     p = root / "savante.thot.json"
     if not p.is_file():
-        return {"state": "absent", "note": "no savante.thot.json — nothing declares the algorithms"}
+        return {"state": "refused", "refusals": ["no savante.thot.json — nothing declares the algorithms"]}
     try:
-        m = json.loads(p.read_text(encoding="utf-8"))
+        m = sb.loads_strict(p.read_text(encoding="utf-8"))
     except Exception as e:  # noqa: BLE001
-        return {"state": "unreadable", "note": str(e)[:160]}
-    declared = m.get("algorithms") or {}
-    mismatched = {k: declared.get(k) for k, want in EXPECTED_ALGORITHMS.items()
-                  if declared.get(k) and declared.get(k) != want}
-    unimplemented = sorted({v for k, v in declared.items()
-                            if k not in ("note", "canonicalisation") and v not in EXPECTED_ALGORITHMS.values()})
+        return {"state": "refused", "refusals": [f"savante.thot.json unreadable or has a duplicate key: {str(e)[:160]}"]}
+    refusals: List[str] = sb.algorithms_refusals(m)
+    m = m if isinstance(m, dict) else {}
+    algs = m.get("algorithms") if isinstance(m.get("algorithms"), dict) else {}
+    declared = {k: v for k, v in algs.items() if k != "note"}
     return {
-        "state": "refused" if mismatched else "ok",
+        "state": "refused" if refusals else "partial",
         "schema": m.get("schema"),
         "generation": (m.get("bundle") or {}).get("generation"),
-        "declared": {k: v for k, v in declared.items() if k != "note"},
-        "mismatched": mismatched,
-        "not_implemented_here": unimplemented,
-        "uncheckable": [k for k in ("bundle_root", "merkle", "doctrine_root") if k in m],
-        "note": ("this verifier implements sha256 and CIDv1 only; the keccak256 roots above are NOT "
-                 "checked here and must not be read as verified"),
+        "declared": declared,
+        "refusals": refusals,
+        "verified_here": [] if refusals else [k for k in VERIFIED_HERE if k in declared],
+        "not_verified_here": sorted(k for k in declared if k not in VERIFIED_HERE),
+        "note": ("the declared vocabulary was checked; of the algorithms themselves this room recomputes only "
+                 "each artefact's sha256 against the ledger. Everything under not_verified_here is NOT verified "
+                 "here and must not be read as verified — run `python3 bind/savante_verify.py .`"),
     }
 
 
@@ -669,9 +694,15 @@ def build(public: bool = False, extra_rooms=None):
                             "implement, rather than verify with the functions it happens to have — "
                             "silently checking the wrong digest is worse than not checking.* So the "
                             "declared algorithms are read first, and whatever this surface cannot check "
-                            "is named rather than passed over. It implements sha256 and CIDv1 only: the "
-                            "keccak256 roots — `bundle_root`, `merkle.root` over 64 leaves, and the "
-                            "separate `doctrine_root` — are **not** verified here.")
+                            "is named rather than passed over. The declaration is refused when the schema "
+                            "is not `sagi.thot_manifest/1`, or the `algorithms` block is missing, lacks a "
+                            "required key, carries an unknown key or a duplicate key, or declares any other "
+                            "value (THOT_MANIFEST.md §3a). Passing that is not verification: of the "
+                            "declared algorithms this room recomputes only `facet_digest` (each artefact's "
+                            "sha256 against the ledger), listed under `verified_here`. Everything else — "
+                            "`cid`, the keccak256 roots, `merkle_pad`, the identity and the "
+                            "canonicalisation — is listed under `not_verified_here` and is **not** "
+                            "verified here; `python3 bind/savante_verify.py .` is the full check.")
                 i_manifest = gr.Code(label="declared algorithms — and what is uncheckable here",
                                      language="json", interactive=False)
                 i_note = gr.HTML("")
@@ -684,10 +715,19 @@ def build(public: bool = False, extra_rooms=None):
                     manifest = ({"state": "no checkout", "note": "set SAVANTE_ROOT"} if root is None
                                 else manifest_check(root))
                     rows, note = integrity()
-                    if manifest.get("state") == "refused":
-                        note = ("<div class='sv-warn'>manifest REFUSED — its declared algorithms are not "
-                                "the ones this verifier implements, so the table below is a recomputation "
-                                "and not a verification</div>" + note)
+                    if manifest.get("state") == "no checkout":
+                        note = ("<div class='sv-warn'>no checkout — SAVANTE_ROOT is not set, so there is no "
+                                "manifest to read and nothing below is verified</div>" + note)
+                    elif manifest.get("state") != "partial":
+                        note = ("<div class='sv-warn'>manifest REFUSED — its schema is not "
+                                "sagi.thot_manifest/1, or its algorithms block is missing, incomplete, or "
+                                "declares keys or values outside the closed vocabulary, so the table below is "
+                                "a recomputation and not a verification</div>" + note)
+                    else:
+                        note = ("<div class='sv-warn'>manifest vocabulary accepted, but this room verifies only "
+                                "each artefact's sha256; " + ", ".join(manifest.get("not_verified_here") or [])
+                                + " are NOT verified here — run <code>python3 bind/savante_verify.py .</code> "
+                                "for the full check</div>" + note)
                     return json.dumps(manifest, indent=1), note, rows
 
                 i_go.click(_integrity_all, None, [i_manifest, i_note, i_tbl])

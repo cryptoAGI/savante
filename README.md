@@ -161,7 +161,7 @@ charter and the skill conveys the office; these convey the office's ledger.
 | `sAGI.agent` · `sAGI.model` | The two authored facets of mindX's six-facet blockchain-agent class (`agents/blockchain/facets.py:14-15,29`); `savante.persona` is the third authored facet, and the wallet/bankon/iNFT facets are written only by a mint pipeline. savante === sAGI.agent. |
 | `savante.agentcard.json` | Derived public card — one document that is both an EIP-721 metadata instance and an ERC-8004 registration file. Built from `token.public_metadata` plus what the binder derives itself: the first-commit date read from `git log`, the digest pointers, and the mint status. Never hand-edited. |
 | `savante.commitments.json` | Derived integrity ledger — raw-byte sha256 and CIDv1 per component, the doctrine root, the card digest, every binding slot null with its reason. The only place binding values ever live. |
-| `bind/savante_bind.py` | The operator's binder — writes the two derived files. Savante audits it and never runs it. |
+| `bind/savante_bind.py` | The operator's binder — writes the three derived files (the card, the ledger and the THOT manifest `savante.thot.json`). Savante audits it and never runs it. |
 | `bind/savante_verify.py` | The holder's checker — recomputes every digest from raw bytes and prints the verdict block; exits 0 only on `VERDICT: APPROVE`. |
 | `bind/verdict_record.schema.json` | JSON Schema for a ledger entry; `verdict` is a four-value enum, so a fifth verdict fails mechanically. |
 
@@ -175,8 +175,9 @@ most want elsewhere:
   `ls`, 2026-09-03), and `/home/hacker/mindX/data/godel/thot/` does not exist
   (`ls`: No such file or directory, 2026-09-03). The ledger records
   `"mint": null`.
-- **MIT licensed, and published** (committed 2026-09-13 in `0853a34`; holder line
-  set in `29f03bd`). `LICENSE` at the repository root reads
+- **MIT licensed, and published** (committed in `0853a34`, author and commit date
+  2026-09-12T23:58:37-06:00, which is 2026-09-13 05:58 UTC; holder line set in
+  `29f03bd`). `LICENSE` at the repository root reads
   `Copyright (c) 2026 cryptoAGI — Professor Codephreak`, and GitHub reports the
   repo's licence as MIT, so `iNFT.md` condition 1 is closed publicly, not only on
   the author's disk. Deciding check, run against the URL rather than the disk:

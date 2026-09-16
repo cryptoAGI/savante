@@ -106,7 +106,10 @@ NOTHING IS MINTED, AND THAT IS LOAD-BEARING
   supportedTrust[] in the card are EMPTY, which under ERC-8004 reads as: this record is used for
   discovery, not for trust. That is precisely true today.
 
-  iNFT.md renders VERDICT: DEFER on binding the office to a token. Minting (mintAgent), listing
+  iNFT.md renders VERDICT: DEFER on binding the office to a token. Minting (bind/savante_publish.py
+  prints offline parameters for mintOpenAgent, the open unsealed mint in mindX's
+  daio/contracts/iNFT2 folder, not the inft/ template's mintAgent, which reverts on a zero
+  sealedKeyHash; no deployment is claimed and nothing is signed), listing
   (offerOnAgenticPlace), binding a vault (bindBankonVault) and registering on an ERC-8004 registry
   are FACTORY steps — treasury acts and publication decisions that wait on the operator's
   signature. They are not capabilities of this office. Do not add a button for any of them, and do
@@ -121,8 +124,10 @@ ui.py — THE SURFACE, AND WHY IT REFUSES THINGS
   Seven rooms, each something the office may actually do: the Office (the charter read from the
   persona), Evidence (verification that actually runs, under a read-only verb allowlist, refusing
   with its reason), Verdict (the five-field contract, refusing APPROVE with zero findings),
-  Integrity (recompute each artefact's sha256 and CIDv1 from the bytes on disk and compare with
-  the commitments ledger), Rungs (Qwen3 8B and the 27B mid-grade as PLAN ONLY, with the hardware,
+  Integrity (first refuse a savante.thot.json outside the sagi.thot_manifest/1 vocabulary, using
+  bind/savante_bind.py's own step-0 checks; then recompute only each artefact's sha256 against the
+  commitments ledger, and name the keccak256 roots, the identity and the canonicalisation as NOT
+  verified here; bind/savante_verify.py is the full check), Rungs (Qwen3 8B and the 27B mid-grade as PLAN ONLY, with the hardware,
   the cost, and the ceiling and flag that stand between a plan and a charge), Kimi (Moonshot
   provider configuration; the key is never printed and the provider's list endpoint is the
   authority, because model identifiers rot), and Voice (the verdict read aloud through voaice,
@@ -130,8 +135,10 @@ ui.py — THE SURFACE, AND WHY IT REFUSES THINGS
 
   It has no mint button. Its model answers are labelled DRAFTS, never findings. Its verification
   verbs are an allowlist and the forbidden list wins ties. Run it with SAVANTE_ROOT pointing at
-  this checkout. NOT YET VERIFIED: no parser ran over it and it has never been launched, so
-  syntax-check and launch it before serving it.
+  this checkout. It parses: `python3 -c "import ast;ast.parse(open('ui.py').read())"` and
+  `python3 -m py_compile ui.py` both pass under Python 3.10.12 (checked 2026-09-14), and its
+  manifest_check was exercised on scratch manifests. NOT YET VERIFIED: it has never been launched,
+  so launch it before serving it.
 
 WHAT TO DO IF YOU ARE ASKED TO HELP HERE
 

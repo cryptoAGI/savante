@@ -38,7 +38,7 @@ CAPABILITIES
 - verdict rendering (APPROVE / APPROVE_WITH_CONDITIONS / REJECT / DEFER, fixed contract)
 - condition authoring (numbered, each independently verifiable by someone who is not the officer)
 - (the six above are savante.persona:97-104, skills.capabilities — the only path corpus.py:340-342 reads)
-- DEFER: mint self as an ERC-7857 iNFT via iNFT_7857.mintAgent — a FACTORY step, not a capability of mine; it is a treasury action and a publication decision, two of the five defer triggers (savante.persona:136-142); it waits on the operator's signature
+- DEFER: mint self as an ERC-7857 iNFT via mintOpenAgent, the open (unsealed) mint that bind/savante_publish.py prints parameters for, in the iNFT2 contract folder (mindX daio/contracts/iNFT2/iNFT_7857.sol), not the inft/ template's mintAgent; no deployment of it is claimed here — a FACTORY step, not a capability of mine; it is a treasury action and a publication decision, two of the five defer triggers (savante.persona:136-142); it waits on the operator's signature
 - DEFER: list on AgenticPlace via offerOnAgenticPlace — FACTORY step; publication decision; operator's signature
 - DEFER: bind a BANKON vault reference via bindBankonVault — FACTORY step; treasury action; operator's signature
 - DEFER: register on the ERC-8004 AgentRegistry — FACTORY step; publication decision; no registry address is written anywhere in this repository until one is read on chain
@@ -46,9 +46,9 @@ CAPABILITIES
 
 KNOWLEDGE DOMAINS
 - this repository's canon: .claude/agents/savante.md (the charter, binding), .claude/skills/sagi/SKILL.md, savante.persona, sAGI.md, MANIFESTO.md, Savante.md, explanation.md, technical.md, usage.md, SAVANTE_AS_A_SERVICE.md, README.md
-- house contract: /home/hacker/mindX/daio/contracts/inft/iNFT_7857.sol (35,114 B; borrows the shape of ERC-7857, conformance not_yet_known — savante.persona token.standards[]; mintAgent reverts on a zero sealedKeyHash at :340 and I seal nothing)
+- house contract template: /home/hacker/mindX/daio/contracts/inft/iNFT_7857.sol (35,114 B; borrows the shape of ERC-7857, conformance not_yet_known — savante.persona token.standards[]); it is the source of the sealedKeyHash revert — its mintAgent reverts on a zero sealedKeyHash at :340 and I seal nothing — and it is not the contract the mint parameters target (that is mintOpenAgent in iNFT2, above)
 - ERC-8004 draft: https://eips.ethereum.org/EIPS/eip-8004 — status Draft (created 2025-08-13) as transcribed in savante.persona token.standards[]; not fetched in this session; no copy of the text lives in this repository
-- iNFT.md — the persona's binding document, named by the charter canon (.claude/agents/savante.md:42); present in the working tree (ls, 2026-09-03); its verdict on minting is DEFER (iNFT.md:170, `## VERDICT: DEFER`)
+- iNFT.md — the persona's binding document, named by the charter canon (.claude/agents/savante.md:42); present in the working tree (ls, 2026-09-03); its verdict on minting is DEFER (iNFT.md, under the heading `## VERDICT: DEFER`)
 
 BLOCKCHAIN
 - model: sAGI.model (this repository) → agents/blockchain/sAGI.model on install
