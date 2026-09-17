@@ -16,9 +16,9 @@
   "bundle": {
     "id": "sAGI",
     "officer": "Savante",
-    "generation": 2,
-    "parent": "bafkreieerglzkjrkmwrxhmrk53bf3tvhp3aut3qlatwpdtoutmspuxrh4i",
-    "parent_reason": "persona token.intelligence.components names all nine ledgered components and token.rights.license_finding records the published MIT licence (doctrine root unchanged); sAGI.agent names mintOpenAgent in iNFT2 as the mint route and cites iNFT.md's VERDICT: DEFER heading instead of a line number; algorithms.doctrine_root is declared"
+    "generation": 3,
+    "parent": "bafkreih6hxlflmxjecx5o6oq246jpyd4argxjrfrn7qfxdmvsdmftujyum",
+    "parent_reason": "sAGI v0.0.2: .claude/skills/sagi/SKILL.md records the version earned by the surface launched and parsed (savante.js integrity() nine of nine agreeing against the bytes the public Space serves, 2026-09-16) over generation 2 approved 25 of 25 from a fresh clone; it also names ui.py VERSION 0.2.0 as the Gradio surface's version, not the office's. Doctrine root unchanged."
   },
   "facets": [
     {
@@ -31,7 +31,7 @@
       "custom": false,
       "added_in": 1,
       "component": "identity",
-      "at_locator": false
+      "at_locator": true
     },
     {
       "facet": "agent",
@@ -43,7 +43,7 @@
       "custom": false,
       "added_in": 1,
       "component": "facet_agent",
-      "at_locator": false
+      "at_locator": true
     },
     {
       "facet": "model",
@@ -84,14 +84,14 @@
     {
       "facet": "skill",
       "path": ".claude/skills/sagi/SKILL.md",
-      "bytes": 8751,
-      "sha256": "350da6fcf3cc09eb60516317438f7d3f954a83a8d1f526d9f2e9268a0cf4d6fe",
-      "cid": "bafkreibvbwtpz46mbhvwauldc5by67j7svfihkgr6utnt4xje2faz5gw7y",
+      "bytes": 9264,
+      "sha256": "e580808137ecf949ff45ef4b9ab201eff76484d153d729ec49d2c061682f1b34",
+      "cid": "bafkreihfqcaicn7m7fe76rppjonleapp65sijukt24u6ysosybqwqly3gq",
       "state": "present",
       "custom": false,
       "added_in": 1,
       "component": "skill",
-      "at_locator": true
+      "at_locator": false
     },
     {
       "facet": "voaice",
@@ -174,7 +174,7 @@
   "doctrine_root": "0x92fe83eb0fb8fb6b9cbde75ee4bbb671032a849ee25d65592b86913d0ae137d0",
   "doctrine_root_note": "the officer's immutable clauses — a DIFFERENT question from bundle_root. Adding a facet must not ring the doctrine alarm, or holders learn to ignore it.",
   "bundle_root": {
-    "value": "0x97fe9a4b5f07d520be65e178000cfe4afec42a64168185a25128abfbab189ffb",
+    "value": "0x4eae6aa6d8f15089344487b143f358b41316d8a8d4c501c64fd80697a4397b4f",
     "hash": "keccak256",
     "construction": "concat over facets in registry order of (ext_utf8 + 0x1f + sha256_hex_ascii + 0x1e)",
     "preimage_bytes": 571,
@@ -194,7 +194,7 @@
     "leaf_rule": "keccak256(ext_utf8 || 0x1f || sha256_hex_ascii), facets in registry order",
     "padding": "keccak256(b'') for every unused leaf — a documented constant, never a repeat of the last leaf",
     "populated": 8,
-    "root": "0x507bb9917fffdf9a68031b19735d024df31c89495f01746ed6f28be9134f94d2",
+    "root": "0x357e90f8e4332a14e7ae7c3ee6ae4944340b3de0cde9fa4e6d663fcd795eb70c",
     "ternary_head": "persona",
     "ternary_head_index": 0,
     "why": "THOTCommitmentRegistry.issueTHOT4096 documents `root` as a Merkle root over 64 leaves; passing a flat digest into that slot would verify and would mean something other than what the contract says"
@@ -209,18 +209,18 @@
       "attested"
     ],
     "evidence": {
-      "locator": "github.com/cryptoAGI/savante@1fcca89f8033fe39fc7676409077279b6207cfc2",
+      "locator": "github.com/cryptoAGI/savante@3740e663c27d939bf4ca6fba21bdf428aa6a0e0b",
       "locator_holds": [
+        "persona",
+        "agent",
         "model",
         "prompt",
         "tool",
-        "skill",
         "voaice",
         "faice"
       ],
       "locator_lacks": [
-        "persona",
-        "agent"
+        "skill"
       ],
       "commitTx": null,
       "dataTx": null,
@@ -231,11 +231,11 @@
   },
   "license": "MIT",
   "identity": {
-    "thot": "thot:fe3dd655b2e920afd779d0d73c97e07c044d74c4b16fe05b8d9590d859d138a3",
-    "cid": "bafkreih6hxlflmxjecx5o6oq246jpyd4argxjrfrn7qfxdmvsdmftujyum",
-    "name": "thot-bafkreih6hxlflmxjecx5o6oq246jpyd4argxjrfrn7qfxdmvsdmftujyum",
-    "contentRoot": "0x27134fc20c479985ac86c881e25a42c2576155c953cfe868d3f5529d22f16992",
-    "canonical_bytes": 7135,
+    "thot": "thot:52afa07928c490a78160f450479989dbae3a268ab7d38b7247bb3fd886a765b9",
+    "cid": "bafkreicsv6qhskgesctycyhukbdztco3vy5cncvx2ofxer53h7minj3fxe",
+    "name": "thot-bafkreicsv6qhskgesctycyhukbdztco3vy5cncvx2ofxer53h7minj3fxe",
+    "contentRoot": "0x47848d52674747ec209dce002630edef4845da27a107d069ebc096f201012381",
+    "canonical_bytes": 7174,
     "construction": "sha256 / cid_v1_raw / keccak256 over canonical_bytes(manifest WITHOUT this identity block); no salt, no timestamp — reproducible from the repository alone"
   }
 }

@@ -13,17 +13,22 @@ description: >
 
 # sAGI — the discipline, and the Savante review
 
-**sAGI v0.0.1.** The version is deliberately small, and it is governed by the same rule as every other
+**sAGI v0.0.2.** The version is deliberately small, and it is governed by the same rule as every other
 claim here: a version is earned when something checkable says so, not when the work feels finished. What
-exists at 0.0.1 is the charter, the three laws, the verdict contract, the facet bundle and participant
-standing in cryptoAGI. The road to 1.0 is incremental and each step is falsifiable — a second rendered
-verdict beside the first (2026-07-26, parsec-wallet production readiness, APPROVE_WITH_CONDITIONS, 120 of
-120 tests run), the surface launched and parsed rather than merely written, the CI-gate mode exercised on
-a real diff, and the remaining `iNFT.md` DEFER blockers cleared one at a time.
+existed at 0.0.1 was the charter, the three laws, the verdict contract, the facet bundle and participant
+standing in cryptoAGI. 0.0.2 is earned by one step on the road, checked rather than asserted: the surface
+launched and parsed. The public office (huggingface.co/spaces/Gregory-L/Savante) serves the canon, and the
+page's own `integrity()` in `savante.js`, run against the bytes that Space serves, reports nine of nine
+ledgered components agreeing and none disagreeing (2026-09-16) — over generation 2, which
+`bind/savante_verify.py` approves from a fresh clone with 25 of 25 checks known. The rest of the road stays
+incremental and each step falsifiable: a second rendered verdict beside the first (2026-07-26,
+parsec-wallet production readiness, APPROVE_WITH_CONDITIONS, 120 of 120 tests run; the verdict ledger
+still holds zero records), the CI-gate mode exercised on a real diff, and the remaining `iNFT.md` DEFER
+blockers cleared one at a time.
 
 *Do not confuse this with `sAGI.agent:2`, which reads `VERSION: 0.1.0`. That is the renderer's default
-(`facets.py:92`) and not a release number. When the two disagree, this line is the version and that one
-is a template artefact.*
+(`facets.py:92`) and not a release number. Nor with `ui.py`, whose `VERSION = "0.2.0"` versions the Gradio
+surface rather than the office. When they disagree, this line is the version.*
 
 Savante knows. Science requires objective truth: a claim is KNOWN when it is
 verifiable against evidence — code that exists, a ledger entry, a measurement,
