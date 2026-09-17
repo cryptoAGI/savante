@@ -1,0 +1,17 @@
+base: main 4fd21d5350a9c457ebb89e952d8736a5def11071
+head: todo-and-ci-gate 8674b6a3e2a727027ecdfcc0eb30f174f4279417
+claude: 2.1.274 (Claude Code)
+started: 2026-09-17T02:26:29Z
+claude_exit: 0
+gate_exit (usage.md grep, blocks on REJECT/DEFER): 0
+strict_gate_exit (APPROVE$, also blocks on conditions): 1
+finished: 2026-09-17T02:30:50Z
+output_sha256 (unredacted, as the gate printed it): 31d29fb9a1fe08c0ffc9e866ce2da09744e5352ec7f77d231e54c190bad3ba7a
+redactions: 6 production host path(s) replaced with the marker '[production host path withheld pending the ledger-visibility policy]' in verdict.md;
+  the unredacted output is held by the operator, and its sha256 above lets anyone holding it confirm this copy.
+command (usage.md, 'CI gate (headless)', unmodified):
+  claude -p "Invoke the sagi skill: review this branch's diff
+    against the base branch. Print ONLY the verdict block." --allowedTools "Read,Grep,Glob,Bash"
+  gate:   grep -qE 'VERDICT.*APPROVE'      (usage.md; blocks on REJECT/DEFER)
+  strict: grep -qE 'VERDICT.*: *APPROVE$'  (usage.md; also blocks on conditions)
+note: the branch was named todo-and-ci-gate for this run and renamed `todo` per the verdict's condition 7.
