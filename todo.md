@@ -13,7 +13,8 @@ bytes the Space serves, reported 9 of 9 ledgered components agreeing.
 
 Releases since: generation 3, `3d0402c` (sAGI v0.0.2, the surface launched and parsed) · generation 4,
 `45d2114` (SKILL.md stopped saying the verdict ledger holds zero records) · generation 5, `4fd21d5`
-(sAGI v0.0.3, a second rendered verdict). Doctrine root unchanged throughout:
+(sAGI v0.0.3, a second rendered verdict) · generation 6, `4372cb2` (sAGI v0.0.4, the CI-gate mode exercised; the
+first ledger to hash a committed tree). Doctrine root unchanged throughout:
 `0x92fe83eb0fb8fb6b9cbde75ee4bbb671032a849ee25d65592b86913d0ae137d0`.
 
 Findings from that audit:
@@ -100,13 +101,14 @@ history can be erased by hand.
       imprint gate for Savante; confirm every teaching row survives `build_corpus` at a stated `persona_share`;
       fetch RFC 8785 and RFC 6901 statuses with recorded URLs.
 
-- [ ] **`iNFT.md` condition 7 — unmet in generations 2, 3, 4 and 5.** Each ledger records a non-empty
+- [x] **`iNFT.md` condition 7 — unmet in generations 2, 3, 4 and 5; met from generation 6.** Each ledger records a non-empty
       `generated_from.components_differing_from_head` (generation 2: `sAGI.agent`, `savante.persona`; generations
       3 to 5: `.claude/skills/sagi/SKILL.md`): the binder ran before the change was committed, so each ledger hashes
       an uncommitted tree — by the condition's own words, a working note rather than a record. `savante_verify.py`
-      does not check this field, so its APPROVE on those generations says nothing about condition 7. **Planned from
-      generation 6:** commit the facet change first, then bind. **Verified by:** that field being empty in the
-      generation-6 ledger.
+      does not check this field, so its APPROVE on those generations says nothing about condition 7. **Met in generation
+      6:** the facet change was committed first (`fe5cf13`) and bound afterwards (`4372cb2`); that ledger records the
+      field as `[]` with `repo_head_commit` `fe5cf13`. Generations 2 to 5 stay as they were: their ledgers are
+      published history and are not rewritten.
 
 ## 5. Waiting on the operator (DEFER)
 
