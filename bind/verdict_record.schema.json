@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Savante verdict record",
-  "description": "One entry of the Savante verdict ledger: a rendered five-field verdict bound to the exact charter, persona and doctrine root that rendered it. Records chain by prev_record_cid into an append-only list a stranger can walk. HONEST LABEL: the ledger has ZERO entries. The first verdict (2026-07-26, parsec-wallet, APPROVE_WITH_CONDITIONS) is asserted in prose (README.md:134-136) with no artifact committed, so it is not yet a ledger entry. countersignature is null because no signing executor exists: today a forged record is detectable by the digests it fails to match, not by a signature it cannot forge. That gap is named here; the deciding action is an executor holding an unexpired RENDER_VERDICT grant, at which point this schema is revised to admit a signature. verdict is a closed enum of exactly four values so a fifth value fails validation mechanically rather than by prose.",
+  "description": "One entry of the Savante verdict ledger: a rendered five-field verdict bound to the exact charter, persona and doctrine root that rendered it. Records chain by prev_record_cid into an append-only list a stranger can walk. HONEST LABEL: the ledger has ONE entry, verdicts/record-0001.json (rendered 2026-09-17, APPROVE_WITH_CONDITIONS, on a private target labelled as private evidence). Records live at verdicts/record-NNNN.json; a record's record_cid is recomputed by loading it, setting record_cid to null, and taking bind/savante_bind.py cid_v1_raw(canonical_bytes(record)). The first verdict ever rendered (2026-07-26, parsec-wallet, APPROVE_WITH_CONDITIONS) is still asserted in prose (README.md:134-136) with no artifact committed, so it is not a ledger entry and record 1 is the second verdict rendered. countersignature is null because no signing executor exists: today a forged record is detectable by the digests it fails to match, not by a signature it cannot forge. That gap is named here; the deciding action is an executor holding an unexpired RENDER_VERDICT grant, at which point this schema is revised to admit a signature. verdict is a closed enum of exactly four values so a fifth value fails validation mechanically rather than by prose.",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -26,7 +26,7 @@
     "record": {
       "type": "integer",
       "minimum": 1,
-      "description": "1-based position in the append-only list. No record 1 exists yet."
+      "description": "1-based position in the append-only list. Record 1 exists (verdicts/record-0001.json)."
     },
     "prev_record_cid": {
       "type": ["string", "null"],

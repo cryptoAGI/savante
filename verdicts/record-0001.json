@@ -1,0 +1,198 @@
+{
+  "record": 1,
+  "prev_record_cid": null,
+  "token": {
+    "chain": null,
+    "contract": null,
+    "token_id": null
+  },
+  "target": {
+    "repo": "github.com/AgenticPlace/mindX",
+    "ref": "docs/ario-to-blockchain",
+    "commit": "dad6d6f6d4fe5a9b1ef6ffc90828c301d3977d68"
+  },
+  "charter_sha256": "2cf2d3b6a42c9438f89c6dc3bae833486e356795a997e8a0f932205d2fe18c3a",
+  "persona_sha256": "b05357c3be212c116e9b4fd3784d12615984e0b2fba5fa598ddf6a12c3f0df3c",
+  "doctrine_root": "0x92fe83eb0fb8fb6b9cbde75ee4bbb671032a849ee25d65592b86913d0ae137d0",
+  "engine": "claude-opus-5 (Claude Opus 5, 1M context), inherited by the savante subagent of a Claude Code session; recorded, not pinned",
+  "findings": [
+    {
+      "finding": "dad6d6f6d changes 4 files (+211/-9). run_until_stalled() kills piper on no CPU progress for 600 s, on a CPU-seconds budget, or on a wall ceiling of max(4 h, 8x budget); Piper.synth and render_jaimla.synth both call it; render_rage_queue.sh runs rm -f \"$W/current\" right after the flock. The commit is what it claims.",
+      "epistemic_state": "known",
+      "evidence": [
+        "git show --stat dad6d6f6d",
+        "utils/docspeech/engines.py:199-303 (function), :405-406 (call site)",
+        "render_jaimla.py hunk @@ -66,13 +72,16",
+        "scripts/render/render_rage_queue.sh:46"
+      ]
+    },
+    {
+      "finding": "The committed tests pass, 7 of 7. The default invocation exits 1 only because the repo-wide coverage gate fails (0% of mindx/, fail-under 70); the test docstring prescribes -o addopts=''.",
+      "epistemic_state": "known",
+      "evidence": [
+        ".mindx_env/bin/python -m pytest tests/test_docspeech_run_until_stalled.py -q -o addopts='' -> 7 passed in 14.70s",
+        "same without -o -> exit 1, 'Coverage failure: total of 0 is less than fail-under=70'",
+        "pyproject.toml:166 --cov=mindx in addopts",
+        "worktree md5 of all 4 files equals the commit blobs; no later commit touches them"
+      ]
+    },
+    {
+      "finding": "Three of the four files on prod are byte-identical to the commit (render_jaimla.py 45089bbb, /root/render_rage_queue.sh 96217fc7, the test file 1e8f151b); engines.py differs (prod 101998bb, commit 8af12c63).",
+      "epistemic_state": "known",
+      "evidence": [
+        "md5sum on prod against git show dad6d6f6d:<file> | md5sum locally"
+      ]
+    },
+    {
+      "finding": "The engines.py drift is not divergence: prod engines.py is exactly 32718c009's engines.py plus this commit's hunks. Lines 1-562, which hold run_until_stalled and the whole Piper class, are identical to the commit; the rest lacks later unrelated Layered-recipe work from ad46ef91a. The code that governs piper on prod is the committed code; prod engines.py as a whole matches no commit.",
+      "epistemic_state": "known",
+      "evidence": [
+        "/root/deploy_backups/render_progress_timeout_20260916_192353/ backup == git show 32718c009:utils/docspeech/engines.py (fe36099b)",
+        "diff(backup, prod) == diff(parent, commit), 115 lines each, diff of diffs empty",
+        "run_until_stalled md5 cfdeeba0 on both",
+        "deployed 19:23:54-55Z (ls --time-style=full-iso)"
+      ]
+    },
+    {
+      "finding": "The stale-marker fix is deployed but has not yet run: the queue pass started 09:42:42Z (PID 3160585) still executes the old script through a deleted inode. The bug it fixes is real in code: render_ledger.py sorts the doc named in current first, whatever its id.",
+      "epistemic_state": "known",
+      "evidence": [
+        "ls -la /proc/3160585/fd -> 10 -> /root/render_rage_queue.sh (deleted)",
+        "systemctl status rage-render-queue.service -> activating since 2026-09-16 09:42:42 UTC",
+        "render_ledger.py:428-434",
+        "prod render_ledger.py md5 == local (08c0e8fd)"
+      ]
+    },
+    {
+      "finding": "The symptom is confirmed: four piper wall timeouts on rage-1509, neural at 1800.0 s (attempts started 09:47:46Z and 12:32:14Z), jaimla at 980 s (11:30:46Z) and 920 s (15:26:06Z). RETRIES_INCOMPLETE = 3; failed_for counts only <voice>.failed.* directories with a matching docHash.",
+      "epistemic_state": "known",
+      "evidence": [
+        "/var/log/rage-render-queue.log lines 173-188",
+        "render_ledger.py:68, :373-387"
+      ]
+    },
+    {
+      "finding": "When rage-1509 was published and last modified is not established: the block index records modified_gmt 2026-09-16T08:43:10 and the dump flagged it NEW between 08:31:46Z and 09:41:03Z, but WordPress REST answered 403.",
+      "epistemic_state": "not_yet_known",
+      "evidence": [
+        "/root/blocks_now/index.json entry 1509",
+        "log lines 170-172",
+        "curl .../wp-json/wp/v2/posts/1509 -> 403"
+      ],
+      "deciding_experiment": "Read date_gmt for post 1509 from the WordPress database or an authenticated REST call."
+    },
+    {
+      "finding": "Both rage-1509 renders succeeded, passed measurement and are served: neural 650 s for 1351 words in 54 blocks, 0.96x predicted, rendered in 12787 s; jaimla 591 s, 0.97x predicted, rendered in 10091 s. Both public manifests return 200 and their docHash ea495558 matches the page.",
+      "epistemic_state": "known",
+      "evidence": [
+        "log lines 189-195",
+        "curl https://deltaverse.pythai.net/audio/rage-1509/{neural,jaimla}/manifest.json -> 200; generated 2026-09-16T19:45:56Z and 22:35:36Z"
+      ]
+    },
+    {
+      "finding": "The neural success is not evidence for the code fix. That process started about 16:13Z and imports engines.py once at startup, so it ran the old 1800 s wall timeout, about 3 h 08 m under the 30% policy and only its last ~24 min after the 19:21 burst. It shows only that no block took 1800 s of wall time between 16:13Z and 19:21Z under the cap that failed twice that morning.",
+      "epistemic_state": "known",
+      "evidence": [
+        "render_neural.py:50 from utils.docspeech.engines import Piper",
+        "timings.jsonl neural 09-16T16:13 -> 19:46",
+        "journalctl: restore timer started Sep 16 19:21:23",
+        "engines.py deployed 19:23:54Z"
+      ]
+    },
+    {
+      "finding": "The jaimla success cannot be credited to the code fix, the burst, or both. It ran on the new code inside the burst window with no per-block wall or CPU time recorded. The record argues against crediting the burst: 187 s per block (10091 s / 54) versus 185 s per block for rage-1059 jaimla under the 30% cap (6860 s / 37); its 7.47 s per word is the slowest jaimla figure recorded.",
+      "epistemic_state": "not_yet_known",
+      "evidence": [
+        "/root/rage-render/timings.jsonl (31 rows, whole-render wall time only, no per-block fields)"
+      ],
+      "deciding_experiment": "Log wall seconds, CPU seconds (utime+stime) and kill reason for each piper call; then render the same doc with the burst off (cpu.max 30000/100000) twice, old wall limit versus run_until_stalled, while the trainer is active. Credit the fix only if the old-code run dies, or the new-code run completes a block whose wall time exceeded the old limit while CPU kept rising."
+    },
+    {
+      "finding": "The claimed root cause (the 30% speak-slice cap) is not established, and the record partly argues against it: 26 of 31 recorded renders completed under the same cap at 0.80-5.51 s per word, so the cap is a standing condition rather than what made the morning attempts fail. The 9-12% CPU and 74-88% steal figures have no stored record (sysstat holds only sa09). One live sample: a neural piper block used 81 CPU-s in 1324 s of wall time (6.1% of a core) at 02:00Z.",
+      "epistemic_state": "not_yet_known",
+      "evidence": [
+        "cat .../mindx-slot-speak.slice/cpu.max -> 30000 100000",
+        "cpu.stat nr_periods 5938531 nr_throttled 4547207 throttled_usec 483028501217",
+        "ls /var/log/sysstat -> sa09",
+        "ps -p 3248715 -> ELAPSED 22:04 TIME 00:01:21"
+      ],
+      "deciding_experiment": "Sample /proc/stat steal, speak-slice cpu.stat deltas and trainer-scope usage_usec every minute across a render; show that blocks slow toward the old limit when steal or trainer load rises, not when the cap changes."
+    },
+    {
+      "finding": "The burst restore happened: mindx-shares-restore-192122.timer started 19:21:23Z, its service fired 01:21:23Z and applied shared at 01:25:22-01:26:34Z; the speak slice now reads cpu.max 30000 100000. /root/apply_processor_shares.sh (36d92294) differs from the repo's scripts/apply_processor_shares.sh (0058dad4).",
+      "epistemic_state": "known",
+      "evidence": [
+        "journalctl: Sep 16 19:21:23 Started mindx-shares-restore-192122.timer; Sep 17 01:25:22 restore: applying shared; slot speak: cpu.max=30000 100000",
+        "md5sum /root/apply_processor_shares.sh scripts/apply_processor_shares.sh"
+      ]
+    },
+    {
+      "finding": "The actual speak-slice cpu.max between 19:21 and 01:25 and the exact burst command line have no stored record.",
+      "epistemic_state": "not_yet_known",
+      "evidence": [
+        "journalctl carries the timer and the restore, not the burst's before/after values"
+      ],
+      "deciding_experiment": "Have apply_processor_shares.sh burst and restore log the before and after cpu.max of every slot to the journal."
+    },
+    {
+      "finding": "The *.failed.* -> *.timedout.* rename happened and was not needed for the successes: each voice had 2 incomplete failures, fewer than 3, so a third attempt was allowed anyway. Its effect is that the failure history no longer counts toward failed_for.",
+      "epistemic_state": "known",
+      "evidence": [
+        "ls rage-1509/ -> neural.timedout.1789557855, neural.timedout.1789571974, jaimla.timedout.1789561241, jaimla.timedout.1789574682",
+        "render_ledger.py:376 glob '%s.failed.*/failed.json'"
+      ]
+    },
+    {
+      "finding": "When the rename was made is not known: ctime 22:35:46Z coincides with the queue's own chown -R, which also updates ctime.",
+      "epistemic_state": "not_yet_known",
+      "evidence": [
+        "stat -c %z -> 22:35:46.69-.78",
+        "render_rage_queue.sh:89 chown -R"
+      ],
+      "deciding_experiment": "Read the deploying session's shell history, root's .bash_history, or auditd for the mv timestamp."
+    },
+    {
+      "finding": "Kills are mislabelled in the log. The raised TimeoutExpired carries cpu_budget_s as its timeout and holds the kill reason only in exc.reason, which str(exc) omits, so a stall or wall-ceiling kill still logs 'timed out after 1800.0 seconds', the very wording this commit calls misleading.",
+      "epistemic_state": "known",
+      "evidence": [
+        "engines.py:291-298",
+        "python3 -c: TimeoutExpired(['piper'],1800.0) with .reason set prints \"Command '['piper']' timed out after 1800.0 seconds\"",
+        "render_rage_queue.sh:80 keeps only tail -2 of renderer output"
+      ]
+    },
+    {
+      "finding": "The CPU accounting has no blind spot for piper as deployed: piper is one python3 process with 3 threads and no children, so /proc/<pid>/stat utime+stime captures its onnxruntime work. The new code is live for the current render (rage-1053 neural started 01:11:55Z, after the deploy).",
+      "epistemic_state": "known",
+      "evidence": [
+        "ps -o pid,ppid,nlwp -p 3248715 -> NLWP 3; ps --ppid 3248715 -> none",
+        "log 2026-09-17T01:11:55Z rage-1053 neural: rendering"
+      ]
+    },
+    {
+      "finding": "This record's target cannot be checked by a stranger. The target repository is private, the commit exists only on the AgenticPlace remote, and prod is not publicly readable; the only publicly checkable artifacts are the two rage-1509 manifests and their docHash. Ruling: this is PRIVATE EVIDENCE. The commit id and file md5s fix the state reviewed, but only readers with repository access can verify them; the remedy is labelling, not publishing.",
+      "epistemic_state": "known",
+      "evidence": [
+        "gh repo view AgenticPlace/mindX --json isPrivate -> true",
+        "anonymous https://github.com/AgenticPlace/mindX/commit/dad6d6f6d... -> 404",
+        "gh api repos/abaracadabra/mindX/commits/dad6d6f6d... -> 422 No commit found"
+      ]
+    }
+  ],
+  "verdict": "APPROVE_WITH_CONDITIONS",
+  "rationale": "The fix is sound: a wall-clock timeout on a throttled process measures contention, not a hang, and the committed runner passes its 7 tests and runs on prod as committed in every line that governs piper. Under the law of verification or unknown, however, rage-1509's recovery is not evidence that the fix works: neural succeeded on the old code, and jaimla ran on the new code at the same seconds per block as a render under the 30% cap, with nothing recorded to show a block would have crossed the old limit. The claimed root cause is likewise unproven, since 26 of 31 renders completed under the same cap. The code is approved; the causal claims remain not yet known, and the conditions are the experiments that would decide them.",
+  "conditions": [
+    "Per-call telemetry: each piper invocation in render_neural/docspeech and render_jaimla appends doc, voice, block, words, wall_s, cpu_s and kill reason; verifiable when the next render of any article adds one row per block.",
+    "Honest kill labels: a kill writes exc.reason into the queue log, so a stall kill's line contains 'hung', 'CPU budget' or 'wall ceiling'; verifiable by grepping /var/log/rage-render-queue.log after any kill, or by a unit test asserting the reason appears in the rendered message.",
+    "Attribution recorded (requires condition 1): an entry in docs/IMPROVEMENT_JOURNAL.md or the render log states whether at least one block whose wall time exceeded the old limit (1800 s neural, max(900, 20*words) jaimla) completed with CPU still progressing and no burst active, or says 'fix not yet exercised'; verifiable against the telemetry rows.",
+    "Stale-marker fix confirmed live: after PID 3160585's pass ends on its own (no restart ordered), the next pass's fd 10 points to a non-deleted /root/render_rage_queue.sh with md5 96217fc7f6d895981916354417b624b2; verifiable with ls -la /proc/<pid>/fd and md5sum.",
+    "Deploy drift reconciled or labelled: either deploy ad46ef91a's engines.py changes to prod, or record in the deploy notes that prod engines.py = 32718c009 + dad6d6f6d's hunks; verifiable by md5 or by the note's presence.",
+    "Manual record edits logged: any hand reset of failure records (such as the *.failed.* -> *.timedout.* rename) is written to /var/log/rage-render-queue.log with a UTC timestamp and reason, and /root/apply_processor_shares.sh (36d92294) is reconciled with scripts/apply_processor_shares.sh (0058dad4); verifiable by grep and md5."
+  ],
+  "risks_watched": [
+    "Wall-time headroom: with a per-block wall ceiling of at least 4 h, a chronically starved slice (the live sample ran at 6.1% of a core) no longer fails fast, so a real contention episode can hold the single queue for hours per block, silently, behind newer publishes; watch speak-slice throttled_usec deltas and the per-block wall time from condition 1.",
+    "History erased by hand: render-ledger failure history is now editable outside the ledger (the .timedout rename), so a 'store complete' state is only as true as the untouched *.failed.* records."
+  ],
+  "rendered_at": "2026-09-17T02:00:00Z",
+  "record_cid": "bafkreibke7n3v5ykztl4xpyltf4grhslddpcl3diwavrqpibbh3onqmdhi",
+  "countersignature": null
+}
