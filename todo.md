@@ -40,9 +40,10 @@ re-copied here while the ledger-visibility policy (§5) is unwritten.
 
 - [ ] **C1 Per-call telemetry** — one timing and kill-reason row per piper call.
 - [ ] **C2 Honest kill labels** — the kill reason reaches the queue log.
-- [ ] **C3 Attribution recorded** (needs C1) — whether a block beyond the old wall limit completed, or
-      "fix not yet exercised".
-- [ ] **C4 Stale-marker fix confirmed live** — the first queue pass started after the deploy runs the new script.
+- [ ] **C3 Attribution recorded** (needs C1) — whether a block beyond the old wall limit completed with CPU
+      still progressing and no burst active, or "fix not yet exercised".
+- [ ] **C4 Stale-marker fix confirmed live** — after the pre-deploy pass ends on its own, with no restart ordered,
+      the next pass runs the new script.
 - [ ] **C5 Deploy drift reconciled or labelled.**
 - [ ] **C6 Manual record edits logged**, and the deployed shares script reconciled with the repository copy.
 
@@ -73,36 +74,49 @@ history can be erased by hand.
   `embodiment.face.cloneProportions` are null, each with its reason and deciding experiment; the voice and
   face objects themselves exist. The card's image is null and waits on the operator naming the artwork
   (`iNFT.md` condition 4), not on an experiment.
-- **No verdict-word scorer exists, and the imprint gate has never run for Savante** (`iNFT.md` §14).
+- **The scorer wired to Savante cannot tell its verdicts apart, and the imprint gate has never run for it.**
+  mindX `mindx/godel/mindxtrain/scorers.py:137-138` maps `savante` to `score_judgedread`, whose ruling regex
+  (`:20-21`) matches the word "verdict" and none of APPROVE, APPROVE_WITH_CONDITIONS, REJECT or DEFER, so a
+  DEFER answer scores 1.0 against an expected APPROVE. `iNFT.md:169`, which says no verdict-word scorer exists,
+  is stale.
 
 ## 4. Road to 1.0 — remaining steps
 
-- [x] The CI-gate mode exercised on a real diff (`usage.md` "CI gate (headless)"). Run 0001, 2026-09-17: the
-      documented `claude -p` command, unmodified, reviewed this branch's diff (`todo.md`) against `main` and
-      returned APPROVE_WITH_CONDITIONS — `usage.md`'s grep passed (exit 0), the strict `APPROVE$` grep did not
-      (exit 1). Its output and metadata are in `ci/gate-runs/0001/`. Every condition it set is addressed in this
-      revision, which is then put through the gate again. Stated limit: no `.github/workflows/` file exists —
-      the mode was exercised headless from an operator checkout, not wired into pull requests. Wiring it in
-      would run paid inference on every PR, and that recurring cost has not been justified against the
-      one-VPS budget.
+- [x] The CI-gate mode exercised on a real diff (`usage.md` "CI gate (headless)"). The documented `claude -p`
+      command ran unmodified twice against this repository's `todo` branch versus `main`: **run 0001** reviewed
+      `8674b6a` (`ci/gate-runs/0001/`) and **run 0002** reviewed `6fa3234` (`ci/gate-runs/0002/`). Both returned
+      APPROVE_WITH_CONDITIONS, and each run's conditions were worked into the diff; run 0002's conditions were
+      then checked with the check commands it named, not by a third run. Stated limit: no `.github/workflows/`
+      file exists — the mode runs headless from an operator checkout and is not wired into pull requests, which
+      would run paid inference on every PR against the one-VPS budget.
+- [ ] **The documented gate grep is unanchored and can pass a REJECT.** `usage.md:97` (and the sketch in
+      `technical.md`) uses `grep -qE 'VERDICT.*APPROVE'`, which matches any line containing both words, including a
+      finding that quotes an earlier verdict: run 0002 showed it exiting 0 with the verdict line changed to REJECT,
+      because `ci/gate-runs/0001/verdict.md:7` quotes "VERDICT: APPROVE". A gate exit of 0 therefore says nothing
+      about the verdict; both runs' verdicts above were read from the verdict line. **Decided by:** anchoring the
+      pattern to the verdict line itself and showing it exits non-zero on REJECT and DEFER.
 - [ ] The remaining `iNFT.md` DEFER blockers cleared one at a time (§14), among them: read the intended
       ERC-8004 registry's ABI on chain; diff `iNFT_7857.sol` against ERC-7857 function by function; run the
       imprint gate for Savante; confirm every teaching row survives `build_corpus` at a stated `persona_share`;
       fetch RFC 8785 and RFC 6901 statuses with recorded URLs.
 
-- [ ] **`iNFT.md` condition 7 — unmet in generations 3, 4 and 5.** Each ledger records
-      `generated_from.components_differing_from_head = ['.claude/skills/sagi/SKILL.md']`: the binder ran before
-      the SKILL.md change was committed, so each ledger hashes an uncommitted tree — by the condition's own
-      words, a working note rather than a record. **Fixed from generation 6 on** by committing the facet change
-      first and binding afterwards. **Verified by:** that field being empty in the generation-6 ledger.
+- [ ] **`iNFT.md` condition 7 — unmet in generations 2, 3, 4 and 5.** Each ledger records a non-empty
+      `generated_from.components_differing_from_head` (generation 2: `sAGI.agent`, `savante.persona`; generations
+      3 to 5: `.claude/skills/sagi/SKILL.md`): the binder ran before the change was committed, so each ledger hashes
+      an uncommitted tree — by the condition's own words, a working note rather than a record. `savante_verify.py`
+      does not check this field, so its APPROVE on those generations says nothing about condition 7. **Planned from
+      generation 6:** commit the facet change first, then bind. **Verified by:** that field being empty in the
+      generation-6 ledger.
 
 ## 5. Waiting on the operator (DEFER)
 
 - [ ] **Verdict ledger visibility — `iNFT.md` condition 9 was BREACHED, not merely made stale.** The condition
       (`iNFT.md:198`) requires the operator to state, *before the first verdict record is written*, whether the
       ledger is public, private or hash-only, with the schema reporting zero entries until then. Record 1 was
-      written and published first, and the schema now reports one entry. Operator direction not recorded: it
-      was given in an interactive session on 2026-09-17, and no written artifact of it exists. Now false as a
+      written and published first, and the schema now reports one entry. The operator's instruction to publish
+      is in the Claude Code session named by `bd6b9a5`'s `Claude-Session:` trailer, given at 2026-09-17T01:51:02Z,
+      fourteen minutes before `bd6b9a5` (02:05:00Z); that session transcript is not public. It was an instruction
+      to publish, not a written ledger-visibility policy, so the condition remains breached. Now false as a
       result: `iNFT.md:150` and `:152` (the ledger "has zero entries"). Record 1 also carries production host
       paths and digests into this public repository. **Decided by:** the operator writing the policy (public,
       private or hash-only, and how records with private targets are handled); then `iNFT.md` §11, §14 and

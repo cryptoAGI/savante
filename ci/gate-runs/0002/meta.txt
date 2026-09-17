@@ -1,0 +1,12 @@
+base: main 4fd21d5350a9c457ebb89e952d8736a5def11071
+head: todo 6fa32342e85d4af5006c7ba64cb6d4079d1a203b
+claude: 2.1.274 (Claude Code)
+started: 2026-09-17T02:33:21Z
+claude_exit: 0
+gate_exit (usage.md grep, blocks on REJECT/DEFER): 0
+strict_gate_exit (APPROVE$, also blocks on conditions): 1
+finished: 2026-09-17T02:39:10Z
+output_sha256 (unredacted, as the gate printed it): b394d63fd88e39992a5b5d30b8a0b7811f013679c658c73c2f19fd1967efa771
+redactions: 3 production host path(s) replaced with '[production host path withheld pending the ledger-visibility policy]' in verdict.md.
+command: identical to ci/gate-runs/0001/meta.txt (usage.md 'CI gate (headless)', unmodified).
+note: this run's own finding 12 shows gate_exit 0 does not establish the verdict; read the verdict line.

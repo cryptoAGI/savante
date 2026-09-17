@@ -15,3 +15,7 @@ command (usage.md, 'CI gate (headless)', unmodified):
   gate:   grep -qE 'VERDICT.*APPROVE'      (usage.md; blocks on REJECT/DEFER)
   strict: grep -qE 'VERDICT.*: *APPROVE$'  (usage.md; also blocks on conditions)
 note: the branch was named todo-and-ci-gate for this run and renamed `todo` per the verdict's condition 7.
+redaction side effect (run 0002 condition 7): condition 6's check command at verdict.md:53 was altered by the
+  redaction and cannot be run as copied; the unredacted command is recoverable only from the original output.
+author check of the redaction (not independent — it needs the original): sha256 of the held original =
+  31d29fb9a1fe08c0ffc9e866ce2da09744e5352ec7f77d231e54c190bad3ba7a (matches output_sha256 above); verdict.md carries 6 markers, one per substitution.
