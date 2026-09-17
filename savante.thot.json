@@ -16,9 +16,9 @@
   "bundle": {
     "id": "sAGI",
     "officer": "Savante",
-    "generation": 3,
-    "parent": "bafkreih6hxlflmxjecx5o6oq246jpyd4argxjrfrn7qfxdmvsdmftujyum",
-    "parent_reason": "sAGI v0.0.2: .claude/skills/sagi/SKILL.md records the version earned by the surface launched and parsed (savante.js integrity() nine of nine agreeing against the bytes the public Space serves, 2026-09-16) over generation 2 approved 25 of 25 from a fresh clone; it also names ui.py VERSION 0.2.0 as the Gradio surface's version, not the office's. Doctrine root unchanged."
+    "generation": 4,
+    "parent": "bafkreicsv6qhskgesctycyhukbdztco3vy5cncvx2ofxer53h7minj3fxe",
+    "parent_reason": "sAGI v0.0.2, unchanged: .claude/skills/sagi/SKILL.md corrects a statement made false by verdicts/record-0001.json. The verdict ledger no longer holds zero records; the second rendered verdict now stands as record 1 (APPROVE_WITH_CONDITIONS, 2026-09-17), noted as a reached road step with no version taken for it. Doctrine root unchanged."
   },
   "facets": [
     {
@@ -84,9 +84,9 @@
     {
       "facet": "skill",
       "path": ".claude/skills/sagi/SKILL.md",
-      "bytes": 9264,
-      "sha256": "e580808137ecf949ff45ef4b9ab201eff76484d153d729ec49d2c061682f1b34",
-      "cid": "bafkreihfqcaicn7m7fe76rppjonleapp65sijukt24u6ysosybqwqly3gq",
+      "bytes": 9570,
+      "sha256": "1c0a23159c0b61f135fa5623f4fe10c870b12ae5e3174b42a31fe870ef1dfa08",
+      "cid": "bafkreia4birrlhalmhytl6swep2p4egiocysvzpdc5fufiy75byo6hp2ba",
       "state": "present",
       "custom": false,
       "added_in": 1,
@@ -174,7 +174,7 @@
   "doctrine_root": "0x92fe83eb0fb8fb6b9cbde75ee4bbb671032a849ee25d65592b86913d0ae137d0",
   "doctrine_root_note": "the officer's immutable clauses — a DIFFERENT question from bundle_root. Adding a facet must not ring the doctrine alarm, or holders learn to ignore it.",
   "bundle_root": {
-    "value": "0x4eae6aa6d8f15089344487b143f358b41316d8a8d4c501c64fd80697a4397b4f",
+    "value": "0x1437372c16bc12e322d71b0907f94de7cbe5d523d0d25ba435896ce9df92defe",
     "hash": "keccak256",
     "construction": "concat over facets in registry order of (ext_utf8 + 0x1f + sha256_hex_ascii + 0x1e)",
     "preimage_bytes": 571,
@@ -194,7 +194,7 @@
     "leaf_rule": "keccak256(ext_utf8 || 0x1f || sha256_hex_ascii), facets in registry order",
     "padding": "keccak256(b'') for every unused leaf — a documented constant, never a repeat of the last leaf",
     "populated": 8,
-    "root": "0x357e90f8e4332a14e7ae7c3ee6ae4944340b3de0cde9fa4e6d663fcd795eb70c",
+    "root": "0x4a971e2799e14d8e73edba3262e4afca2a566a9fa536d551f3f37478c042d0bf",
     "ternary_head": "persona",
     "ternary_head_index": 0,
     "why": "THOTCommitmentRegistry.issueTHOT4096 documents `root` as a Merkle root over 64 leaves; passing a flat digest into that slot would verify and would mean something other than what the contract says"
@@ -209,7 +209,7 @@
       "attested"
     ],
     "evidence": {
-      "locator": "github.com/cryptoAGI/savante@3740e663c27d939bf4ca6fba21bdf428aa6a0e0b",
+      "locator": "github.com/cryptoAGI/savante@bd6b9a501fbbf534180b1b616f601810cc9885c8",
       "locator_holds": [
         "persona",
         "agent",
@@ -231,11 +231,11 @@
   },
   "license": "MIT",
   "identity": {
-    "thot": "thot:52afa07928c490a78160f450479989dbae3a268ab7d38b7247bb3fd886a765b9",
-    "cid": "bafkreicsv6qhskgesctycyhukbdztco3vy5cncvx2ofxer53h7minj3fxe",
-    "name": "thot-bafkreicsv6qhskgesctycyhukbdztco3vy5cncvx2ofxer53h7minj3fxe",
-    "contentRoot": "0x47848d52674747ec209dce002630edef4845da27a107d069ebc096f201012381",
-    "canonical_bytes": 7174,
+    "thot": "thot:7034ec6eb0cbd1bea516f9241f0894e2c7fb8731f3f7d7ae275717353b9e9c9f",
+    "cid": "bafkreidqgtwg5mgl2g7kkfxzeqpqrfhcy75yompt67l24j2xc42txhu4t4",
+    "name": "thot-bafkreidqgtwg5mgl2g7kkfxzeqpqrfhcy75yompt67l24j2xc42txhu4t4",
+    "contentRoot": "0xf5703eca86f3bb8ca88f1a3b0e76ea1479ad7c1c28fba8ee936e7cf10eabaed1",
+    "canonical_bytes": 7141,
     "construction": "sha256 / cid_v1_raw / keccak256 over canonical_bytes(manifest WITHOUT this identity block); no salt, no timestamp — reproducible from the repository alone"
   }
 }
