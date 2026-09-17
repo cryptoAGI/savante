@@ -1060,7 +1060,8 @@ def build_manifest(repo: Path, digests: Dict[str, Any], root: Dict[str, Any],
 # ── main ──────────────────────────────────────────────────────────────────────
 
 def run_bind(repo: Path, out_dir: Path, mirror: Path, no_mirror_check: bool, image: Optional[Path],
-             parent_commit: Optional[str] = None, parent_reason: Optional[str] = None) -> int:
+             parent_commit: Optional[str] = None, parent_reason: Optional[str] = None,
+             image_named: Optional[str] = None) -> int:
     keccak_selftest()
     findings: List[str] = []
 
@@ -1144,16 +1145,31 @@ def run_bind(repo: Path, out_dir: Path, mirror: Path, no_mirror_check: bool, ima
             fail(f"--image {image} is not a file")
         idata = image.read_bytes()
         icid, ireason = cid_or_none(idata)
+        try:
+            image_path: Optional[str] = image.resolve().relative_to(repo).as_posix()
+        except ValueError:
+            image_path = None  # outside the repo: the name only, never a host path
         image_candidate = {
             "file": image.name,
+            "path": image_path,
             "bytes": len(idata),
             "sha256": sha256_hex(idata),
             "cid": icid,
             "status": "unconfirmed by the operator — a candidate, not the artwork; no ipfs:// URI is synthesised",
         }
+        if icid:
+            image_candidate["cid_note"] = ("predicted locally (CIDv1 raw, single block); iNFT.md condition 4 takes "
+                                           "only the CID an IPFS node returns once pinned, so the card's image "
+                                           "stays null until then")
         if ireason:
             image_candidate["cid_reason"] = ireason
-        findings.append(f"--image supplied: {image.name} recorded as an UNCONFIRMED candidate (sha256 only)")
+        if image_named:
+            image_candidate["status"] = ("named by the operator as the artwork — not pinned, so the card's image "
+                                         "stays null; no ipfs:// URI is synthesised")
+            image_candidate["named_by_operator"] = image_named
+            findings.append(f"--image supplied: {image.name} recorded as the operator-NAMED artwork (sha256; not pinned)")
+        else:
+            findings.append(f"--image supplied: {image.name} recorded as an UNCONFIRMED candidate (sha256 only)")
 
     chartered, generated_from = git_provenance(repo)
 
@@ -1597,18 +1613,23 @@ def main(argv: Optional[List[str]] = None) -> int:
                          "HEAD's manifest is carried forward (G4) and a facet change is refused (G5)")
     ap.add_argument("--parent-reason", default=None, metavar="TEXT",
                     help="with --parent-commit: bundle.parent_reason, what changed since P (required, never compared)")
+    ap.add_argument("--image-named", default=None, metavar="EVIDENCE",
+                    help="with --image: the operator named this file as the artwork (iNFT.md condition 4); EVIDENCE says "
+                         "where that naming is recorded. Without it the image stays an UNCONFIRMED candidate")
     ap.add_argument("--self-test", action="store_true", help="run the keccak / CID / preflight / pointer / §3a / §7 self-tests and exit")
     a = ap.parse_args(argv)
     if a.self_test:
         return self_test()
     if a.parent_reason is not None and a.parent_commit is None:
         ap.error("--parent-reason requires --parent-commit")
+    if a.image_named is not None and a.image is None:
+        ap.error("--image-named requires --image")
     repo = a.repo.resolve()
     out_dir = (a.out_dir or repo).resolve()
     if out_dir == repo and (repo / "savante.persona").resolve() in ((out_dir / CARD_NAME).resolve(), (out_dir / LEDGER_NAME).resolve()):
         fail("refusing to write over savante.persona")  # structurally impossible, kept as a stated invariant
     return run_bind(repo, out_dir, a.mirror.resolve() if a.mirror else DEFAULT_MIRROR, a.no_mirror_check, a.image,
-                    a.parent_commit, a.parent_reason)
+                    a.parent_commit, a.parent_reason, a.image_named)
 
 
 if __name__ == "__main__":

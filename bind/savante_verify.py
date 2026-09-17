@@ -176,6 +176,40 @@ def check_tools(rep: Report, charter: Optional[bytes], persona: Any) -> None:
         rep.ok("persona tool_allowlist equals the charter frontmatter")
 
 
+def check_image(rep: Report, repo: Path, ledger: Dict[str, Any]) -> None:
+    """image_candidate (iNFT.md condition 4): the named file's raw bytes must match the ledger, and the card's
+    image may not claim a pin the ledger does not hold. A predicted CID is checked as a digest, never as a pin."""
+    ic = ledger.get("image_candidate")
+    if ic is None:
+        rep.note("image_candidate is null: no artwork recorded; the card's image is null by construction")
+        return
+    if not isinstance(ic, dict) or not isinstance(ic.get("sha256"), str):
+        rep.reject("image_candidate is present but carries no sha256")
+        return
+    rel = ic.get("path")
+    if not isinstance(rel, str) or not rel:
+        rep.unknown(f"image_candidate {ic.get('file')!r} names no repo path; its bytes cannot be read here",
+                    f"obtain the named file and assert sha256 {ic['sha256']}")
+        return
+    target = (repo / rel).resolve()
+    if repo.resolve() not in target.parents:
+        rep.reject(f"image_candidate.path {rel!r} resolves outside the repository")
+        return
+    if not target.is_file():
+        rep.reject(f"image_candidate.path {rel} is not a file in this checkout")
+        return
+    data = target.read_bytes()
+    cid, _ = sb.cid_or_none(data)
+    got = {"bytes": len(data), "sha256": sb.sha256_hex(data), "cid": cid}
+    bad = [f"{k} {ic.get(k)!r} != {v!r}" for k, v in got.items() if ic.get(k) != v]
+    if bad:
+        rep.reject(f"image_candidate {rel}: " + "; ".join(bad))
+        return
+    named = "named by the operator" if ic.get("named_by_operator") else "an unconfirmed candidate"
+    rep.ok(f"image_candidate {rel}: {got['bytes']} B, sha256 {got['sha256']} — match the ledger ({named}; "
+           f"the naming itself is an unsigned string, not verified here)")
+
+
 def check_mirror(rep: Report, persona_bytes: Optional[bytes], mirror: Path, skip: bool) -> None:
     if persona_bytes is None:
         return
@@ -883,6 +917,7 @@ def main(argv: Optional[List[str]] = None) -> int:
     check_mirror(rep, persona_bytes, a.mirror.resolve(), a.no_mirror_check)     # step 5
     persona_sha = sb.sha256_hex(persona_bytes) if persona_bytes is not None else None
     check_card(rep, repo, ledger, root, persona_sha)
+    check_image(rep, repo, ledger)
     check_prompt_derivation(rep, repo)                                          # step 7
     check_bundle(rep, repo, ledger, a.parent_manifest)                          # step 8 (+ §6, §7)
     if a.onchain:
@@ -1089,6 +1124,24 @@ def self_test() -> int:
                     check(f"ui.manifest_check agrees with savante_bind: {label}", (st == "refused") is refused, str(st))
     else:
         print("[SKIP] ui.py not beside bind/; sharing not checked")
+
+    # image_candidate: a matching file is KNOWN, a changed byte or an escaping path is a FAIL.
+    with tempfile.TemporaryDirectory() as d:
+        p = Path(d)
+        (p / "gfx").mkdir()
+        img = b"\xff\xd8\xff\xe0 not really a jpeg"
+        (p / "gfx" / "a.png").write_bytes(img)
+        good = {"file": "a.png", "path": "gfx/a.png", "bytes": len(img), "sha256": sb.sha256_hex(img),
+                "cid": sb.cid_or_none(img)[0], "named_by_operator": "test"}
+        for name, ic, want in [
+            ("image_candidate matching file is KNOWN", good, "KNOWN"),
+            ("image_candidate one changed sha256 is a FAIL", {**good, "sha256": "0" * 64}, "FAIL"),
+            ("image_candidate path escaping the repo is a FAIL", {**good, "path": "../a.png"}, "FAIL"),
+            ("image_candidate absent file is a FAIL", {**good, "path": "gfx/b.png"}, "FAIL"),
+        ]:
+            rep_i = Report()
+            check_image(rep_i, p, {"image_candidate": ic})
+            check(name, len(rep_i.findings) == 1 and rep_i.findings[0].startswith(want), rep_i.findings[0][:60])
 
     print("self-test:", "OK" if ok else "FAILED")
     return 0 if ok else 1
