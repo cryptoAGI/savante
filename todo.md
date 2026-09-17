@@ -1,4 +1,4 @@
-# todo — Savante, sAGI v0.0.3
+# todo — Savante, sAGI v0.0.5
 
 Written 2026-09-17 from the audits, releases and verdict of 2026-09-16/17. Every open item names how it is
 decided: a deciding experiment someone other than the officer can run, or the operator decision it waits on.
@@ -14,7 +14,8 @@ bytes the Space serves, reported 9 of 9 ledgered components agreeing.
 Releases since: generation 3, `3d0402c` (sAGI v0.0.2, the surface launched and parsed) · generation 4,
 `45d2114` (SKILL.md stopped saying the verdict ledger holds zero records) · generation 5, `4fd21d5`
 (sAGI v0.0.3, a second rendered verdict) · generation 6, `4372cb2` (sAGI v0.0.4, the CI-gate mode exercised; the
-first ledger to hash a committed tree). Doctrine root unchanged throughout:
+first ledger to hash a committed tree) · generation 7, `e95a135` (sAGI v0.0.5, the operator named the artwork).
+Doctrine root unchanged throughout:
 `0x92fe83eb0fb8fb6b9cbde75ee4bbb671032a849ee25d65592b86913d0ae137d0`.
 
 Findings from that audit:
@@ -73,8 +74,12 @@ history can be erased by hand.
 - **What a token would convey is not known.** MIT governs the copy of the files, not token rights.
 - **The embodiment prints are null.** `embodiment.voice.voiceprint`, `embodiment.face.faceprint` and
   `embodiment.face.cloneProportions` are null, each with its reason and deciding experiment; the voice and
-  face objects themselves exist. The card's image is null and waits on the operator naming the artwork
-  (`iNFT.md` condition 4), not on an experiment.
+  face objects themselves exist. The card's image is null: the operator has named the artwork
+  (`gfx/Savante3.png`, generation 7), but nothing is pinned, and `iNFT.md` condition 4 takes only a CID an IPFS
+  node returns.
+- **The operator's naming of the artwork is an unsigned string.** `--image-named` accepts any text, and
+  `savante_verify.py` checks the named file's bytes against the ledger, not who named it. The evidence is the
+  session named by a commit trailer, which is not public.
 - **The scorer wired to Savante cannot tell its verdicts apart, and the imprint gate has never run for it.**
   mindX `mindx/godel/mindxtrain/scorers.py:137-138` maps `savante` to `score_judgedread`, whose ruling regex
   (`:20-21`) matches the word "verdict" and none of APPROVE, APPROVE_WITH_CONDITIONS, REJECT or DEFER, so a
@@ -90,6 +95,10 @@ history can be erased by hand.
       then checked with the check commands it named, not by a third run. Stated limit: no `.github/workflows/`
       file exists — the mode runs headless from an operator checkout and is not wired into pull requests, which
       would run paid inference on every PR against the one-VPS budget.
+      **Run 0003** (`ci/gate-runs/0003/`) reviewed the v0.0.5 branch at `9bc8156` and returned
+      APPROVE_WITH_CONDITIONS, read from the verdict line; its six conditions were worked in before publication,
+      which rebuilt the unpublished branch as `30d1e8c` and `e95a135` (its `meta.txt` says how). They were checked
+      with the commands it named, not by a fourth run.
 - [ ] **The documented gate grep is unanchored and can pass a REJECT.** `usage.md:97` (and the sketch in
       `technical.md`) uses `grep -qE 'VERDICT.*APPROVE'`, which matches any line containing both words, including a
       finding that quotes an earlier verdict: run 0002 showed it exiting 0 with the verdict line changed to REJECT,
@@ -107,8 +116,9 @@ history can be erased by hand.
       an uncommitted tree — by the condition's own words, a working note rather than a record. `savante_verify.py`
       does not check this field, so its APPROVE on those generations says nothing about condition 7. **Met in generation
       6:** the facet change was committed first (`fe5cf13`) and bound afterwards (`4372cb2`); that ledger records the
-      field as `[]` with `repo_head_commit` `fe5cf13`. Generations 2 to 5 stay as they were: their ledgers are
-      published history and are not rewritten.
+      field as `[]` with `repo_head_commit` `fe5cf13`. Generation 7 followed the same order (`30d1e8c`, then
+      `e95a135`; field `[]`). Generations 2 to 5 stay as they were: their ledgers are published history and are
+      not rewritten.
 
 ## 5. Waiting on the operator (DEFER)
 
@@ -126,7 +136,15 @@ history can be erased by hand.
 - [ ] **The sealedKeyHash question (`iNFT.md` condition 3).** A documented sentinel, or a change to
       `iNFT_7857.sol` so an unsealed intelligence can be minted without asserting a key. Until then no Track 2
       mint is attempted.
-- [ ] **Artwork (`iNFT.md` condition 4).** The operator names the artwork file or states there is none.
+- [x] **Artwork named (`iNFT.md` condition 4, naming half).** The operator named the Savante bust,
+      `gfx/Savante3.png`, on 2026-09-16 (session in `30d1e8c`'s `Claude-Session:` trailer). Generation 7's ledger
+      (`e95a135`) records sha256 `30a59db4…c5a9a8` under `image_candidate.named_by_operator`. The other nine
+      images of Savante are in `gfx/` and indexed in `gfx/README.md`, and twelve screen captures are held back.
+- [ ] **Pin the artwork (`iNFT.md` condition 4, pin half).** Pinning is a publication act. **Decided by:** an IPFS
+      node adding `gfx/Savante3.png` and returning a CID. If it equals the predicted
+      `bafkreibquwo3jttw3pviw2uxyfb2osmwypa42ml6hlzb62qyov5orrnjva`, the persona's `image` becomes that
+      `ipfs://` URI in a re-bound generation, and a gateway fetch must return bytes whose sha256 is `30a59db4…c5a9a8`.
+      Declare `image/jpeg`: the file is JPEG bytes under a `.png` name.
 - [ ] Whether Savante joins the mindX coach ladder (an append to `mindX/data/config/coach.json`).
 - [ ] Whether the seat is transferable or soulbound, and whether `REDIRECT_DEFER` is a hard rule or a default.
 - [ ] Whether the charter's output format labels FINDINGS as a field, matching technical.md, usage.md and the

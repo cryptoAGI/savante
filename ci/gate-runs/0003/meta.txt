@@ -1,0 +1,10 @@
+base: main 845312077464f47f415b3ac10dc6ca6f2991c6d9
+head: artwork-v0.0.5 9bc81561924984bf45e550ef0429f595b8156001
+claude: 2.1.274 (Claude Code)
+started: 2026-09-17T02:57:55Z
+claude_exit: 0
+gate_exit (usage.md grep, blocks on REJECT/DEFER): 0
+strict_gate_exit (APPROVE$, also blocks on conditions): 1
+finished: 2026-09-17T03:04:09Z
+raw_output_sha256: 6994f3d39836772d35b6cb81cb7828236b3bf31893c4c23f26ef265198ab7bf9
+note: the reviewed commits (e8e1a55, ca40d62, 9bc8156) were never published. Conditions 2, 3, 4 and 6 changed a bound file (SKILL.md) and the facet commit, so the branch was rebuilt in the same order before publication: 30d1e8c (facet change) then e95a135 (generation 7 bound) then the docs commit. Conditions 1 and 5 were met in the docs commit and in mindX. The pre-gate commits stay only in the operator's local clone (branch artwork-v0.0.5-pre-gate). verdict.md is the raw output unaltered, so its sha256 equals raw_output_sha256.

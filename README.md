@@ -1,6 +1,14 @@
 # Savante
 
+<p align="center"><img src="gfx/Savante3.png" alt="Savante, the bust" width="320"></p>
+
 **The prototype sAGI — an objective-truth review agent for Claude Code.**
+
+*The bust is Savante's artwork, named by the operator on 2026-09-16: `gfx/Savante3.png`, sha256
+`30a59db4ce76dbea8b6a97c143a74996c3c1cd317e3af21f6a18757ae8c5a9a8`, recorded in the generation-7 ledger. It is
+not pinned and nothing is minted, so the card's `image` is still null. Every image of Savante is indexed in
+[gfx/README.md](gfx/README.md). The digests of this skill and every file that carries a proof are in
+[PROOF.md](PROOF.md); check them with `sha256sum -c PROOF.sha256`.*
 
 > *Savante knows. Knowledge is what survives verification; nothing else counts.*
 
@@ -164,6 +172,8 @@ charter and the skill conveys the office; these convey the office's ledger.
 | `bind/savante_bind.py` | The operator's binder — writes the three derived files (the card, the ledger and the THOT manifest `savante.thot.json`). Savante audits it and never runs it. |
 | `bind/savante_verify.py` | The holder's checker — recomputes every digest from raw bytes and prints the verdict block; exits 0 only on `VERDICT: APPROVE`. |
 | `bind/verdict_record.schema.json` | JSON Schema for a ledger entry; `verdict` is a four-value enum, so a fifth verdict fails mechanically. |
+| `gfx/Savante3.png` | The artwork the operator named (the bust). Its sha256 is in the ledger's `image_candidate`; not pinned, so the card's `image` is null. `gfx/README.md` indexes every image of Savante. |
+| `PROOF.md` · `PROOF.sha256` | sha256, bytes and predicted CID of this skill and every file that carries a proof, plus the ledger's roots. `sha256sum -c PROOF.sha256` checks them. |
 
 Plain facts, kept on the front page because they are the ones a buyer would
 most want elsewhere:
