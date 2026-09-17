@@ -16,17 +16,17 @@
   "bundle": {
     "id": "sAGI",
     "officer": "Savante",
-    "generation": 6,
-    "parent": "bafkreietfjsev4z65fidv7cf67r6ind654j772dix6uzrntciqay3mwwxm",
-    "parent_reason": "sAGI v0.0.4: .claude/skills/sagi/SKILL.md takes the version earned by the CI-gate mode exercised on a real diff (runs 0001 and 0002, both APPROVE_WITH_CONDITIONS, recorded under ci/gate-runs/) and states the gate's unanchored-grep defect. Bound after the facet commit so the ledger hashes a committed tree. Doctrine root unchanged."
+    "generation": 7,
+    "parent": "bafkreibzx5apnrk5prim4g5in6vsaqwoztvfc7jfny4hwdhb65g7pmzr44",
+    "parent_reason": "sAGI v0.0.5: the operator named the artwork (gfx/Savante3.png, the Savante bust); persona image_reason and SKILL.md version changed; image stays null until pinned"
   },
   "facets": [
     {
       "facet": "persona",
       "path": "savante.persona",
-      "bytes": 51117,
-      "sha256": "b05357c3be212c116e9b4fd3784d12615984e0b2fba5fa598ddf6a12c3f0df3c",
-      "cid": "bafkreifqknl4hprbfqiw5g2p2n4e2etblgcobmx3ux5ftdo7nijmh4g7hq",
+      "bytes": 51237,
+      "sha256": "fd1933f2dc636a818744edaeade6454e329fddb5438d2ad264e331fd9cc808d3",
+      "cid": "bafkreih5dez7fxddnkayorhnv2w6mrkogkp53nkdruvnezhdgh6zzsai2m",
       "state": "present",
       "custom": false,
       "added_in": 1,
@@ -84,9 +84,9 @@
     {
       "facet": "skill",
       "path": ".claude/skills/sagi/SKILL.md",
-      "bytes": 9601,
-      "sha256": "fe245cb00f2106cce79660c34144ffd132a39482b254b0fc84ef2ccf94ce74ca",
-      "cid": "bafkreih6eroladzba3gopftaynauj76rgkrzjavsksypzbhpfthzjttuzi",
+      "bytes": 10325,
+      "sha256": "b8b9b62db9bac8286171a5766fe23f0512987872d2cefc9598036b7609daff30",
+      "cid": "bafkreifyxg3c3on2zaugc4nfozx6epyfckmhq4wsz36jlgadnn3atwx7ga",
       "state": "present",
       "custom": false,
       "added_in": 1,
@@ -174,7 +174,7 @@
   "doctrine_root": "0x92fe83eb0fb8fb6b9cbde75ee4bbb671032a849ee25d65592b86913d0ae137d0",
   "doctrine_root_note": "the officer's immutable clauses — a DIFFERENT question from bundle_root. Adding a facet must not ring the doctrine alarm, or holders learn to ignore it.",
   "bundle_root": {
-    "value": "0x37f335e872352555a7f53376f5ebb1b2b90ce766f80d04df516ff59fcdeb42a6",
+    "value": "0x144550cedc18d2c126489fbbb0500d67fddf92f9f009d45a9b9ff67c58fe2b96",
     "hash": "keccak256",
     "construction": "concat over facets in registry order of (ext_utf8 + 0x1f + sha256_hex_ascii + 0x1e)",
     "preimage_bytes": 571,
@@ -194,7 +194,7 @@
     "leaf_rule": "keccak256(ext_utf8 || 0x1f || sha256_hex_ascii), facets in registry order",
     "padding": "keccak256(b'') for every unused leaf — a documented constant, never a repeat of the last leaf",
     "populated": 8,
-    "root": "0x882f2334376d58d06d5fd1e193ad1ca9294d31b822ef3e88d140c0000d93ccc2",
+    "root": "0x6c0cd1f72c827efaaf576b9ab1662007d6d72161882beee469e0104f5f20439e",
     "ternary_head": "persona",
     "ternary_head_index": 0,
     "why": "THOTCommitmentRegistry.issueTHOT4096 documents `root` as a Merkle root over 64 leaves; passing a flat digest into that slot would verify and would mean something other than what the contract says"
@@ -209,7 +209,7 @@
       "attested"
     ],
     "evidence": {
-      "locator": "github.com/cryptoAGI/savante@fe5cf1343c3d5d5633adf0de96a9ed2e81318ca8",
+      "locator": "github.com/cryptoAGI/savante@30d1e8c88435c4b2182cf1301e1cb865466cdb42",
       "locator_holds": [
         "persona",
         "agent",
@@ -230,11 +230,11 @@
   },
   "license": "MIT",
   "identity": {
-    "thot": "thot:39bf40f6c55d7c50ce1ba86fab2042ceccea517d256e387b0ce1f74df7b331e7",
-    "cid": "bafkreibzx5apnrk5prim4g5in6vsaqwoztvfc7jfny4hwdhb65g7pmzr44",
-    "name": "thot-bafkreibzx5apnrk5prim4g5in6vsaqwoztvfc7jfny4hwdhb65g7pmzr44",
-    "contentRoot": "0xc1dff4dfd6153df6b706cee0d20417f4f7ca1331ba889216f67f481a1e580401",
-    "canonical_bytes": 7135,
+    "thot": "thot:810586ab5ce5215a8ce77a495707a729a723ce713f64958f3d74c61ad4465164",
+    "cid": "bafkreiebawdkwxhfefnizz32jflqpjzju4r444j7msky6pluyynnirsrmq",
+    "name": "thot-bafkreiebawdkwxhfefnizz32jflqpjzju4r444j7msky6pluyynnirsrmq",
+    "contentRoot": "0xd0dfb05db1516bcea6c6e9d3c1be2a7b342ad01bc59bd7b8f0d0ee2ac49b7210",
+    "canonical_bytes": 6967,
     "construction": "sha256 / cid_v1_raw / keccak256 over canonical_bytes(manifest WITHOUT this identity block); no salt, no timestamp — reproducible from the repository alone"
   }
 }

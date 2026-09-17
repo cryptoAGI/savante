@@ -72,7 +72,7 @@
       "commit_date": "2026-07-27T00:14:59-07:00",
       "source": "git log --reverse --format=%cI, first commit of this repository"
     },
-    "image_reason": "/home/hacker/iNFT.png is 1,687,531 bytes (stat, 2026-09-03) — over the 256 KiB single-block ceiling stated at /home/hacker/mindX/mindx/godel/mindxtrain/inft_publish.py:40-43, so its IPFS CID depends on chunking and cannot be derived locally; and whether that file is the intended artwork is the operator's call. The binder records its sha256 as an unconfirmed candidate only under an explicit --image flag and never synthesises an ipfs:// URI.",
+    "image_reason": "The operator named the artwork on 2026-09-16: gfx/Savante3.png, the Savante bust (154,668 bytes, sha256 30a59db4ce76dbea8b6a97c143a74996c3c1cd317e3af21f6a18757ae8c5a9a8; JPEG bytes under a .png name). It is under the 256 KiB single-block bound, so its CIDv1 raw can be predicted locally, but iNFT.md condition 4 takes only the CID an IPFS node returns once the file is pinned, and nothing is pinned. The binder records the sha256 in the ledger's image_candidate under --image with --image-named, and never synthesises an ipfs:// URI; image stays null until the pin.",
     "animation_url_reason": "no animation exists; null rather than an invented pointer",
     "background_color_reason": "no colour is specified; the card asserts nothing it does not have",
     "attributes_note": "display_type is an OpenSea de-facto convention, not part of the EIP-721 metadata schema; it appears only on the three integer counts and is non-normative.",
@@ -124,12 +124,21 @@
         "/token/intelligence/tool_allowlist"
       ],
       "doctrine_root": "0x92fe83eb0fb8fb6b9cbde75ee4bbb671032a849ee25d65592b86913d0ae137d0",
-      "persona_sha256": "b05357c3be212c116e9b4fd3784d12615984e0b2fba5fa598ddf6a12c3f0df3c",
+      "persona_sha256": "fd1933f2dc636a818744edaeade6454e329fddb5438d2ad264e331fd9cc808d3",
       "charter_sha256": "2cf2d3b6a42c9438f89c6dc3bae833486e356795a997e8a0f932205d2fe18c3a",
-      "skill_sha256": "fe245cb00f2106cce79660c34144ffd132a39482b254b0fc84ef2ccf94ce74ca",
+      "skill_sha256": "b8b9b62db9bac8286171a5766fe23f0512987872d2cefc9598036b7609daff30",
       "note": "recompute with `python3 bind/savante_verify.py .`; the card's own CID lives only in the ledger because a document cannot carry its own digest"
     },
-    "image_candidate": null,
+    "image_candidate": {
+      "file": "Savante3.png",
+      "path": "gfx/Savante3.png",
+      "bytes": 154668,
+      "sha256": "30a59db4ce76dbea8b6a97c143a74996c3c1cd317e3af21f6a18757ae8c5a9a8",
+      "cid": "bafkreibquwo3jttw3pviw2uxyfb2osmwypa42ml6hlzb62qyov5orrnjva",
+      "status": "named by the operator as the artwork — not pinned, so the card's image stays null; no ipfs:// URI is synthesised",
+      "cid_note": "predicted locally (CIDv1 raw, single block); iNFT.md condition 4 takes only the CID an IPFS node returns once pinned, so the card's image stays null until then",
+      "named_by_operator": "operator instruction 2026-09-16 in the Claude Code session named by the Claude-Session trailer of the commit that added gfx/Savante3.png: 'use the Savante bust for the image of Savante' and 'yes, use Savante3'"
+    },
     "provenance": {
       "ledger": "savante.commitments.json",
       "note": "repo_head_commit and components_differing_from_head are recorded in the ledger, never here"
