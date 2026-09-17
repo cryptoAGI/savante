@@ -16,9 +16,9 @@
   "bundle": {
     "id": "sAGI",
     "officer": "Savante",
-    "generation": 4,
-    "parent": "bafkreicsv6qhskgesctycyhukbdztco3vy5cncvx2ofxer53h7minj3fxe",
-    "parent_reason": "sAGI v0.0.2, unchanged: .claude/skills/sagi/SKILL.md corrects a statement made false by verdicts/record-0001.json. The verdict ledger no longer holds zero records; the second rendered verdict now stands as record 1 (APPROVE_WITH_CONDITIONS, 2026-09-17), noted as a reached road step with no version taken for it. Doctrine root unchanged."
+    "generation": 5,
+    "parent": "bafkreidqgtwg5mgl2g7kkfxzeqpqrfhcy75yompt67l24j2xc42txhu4t4",
+    "parent_reason": "sAGI v0.0.3: .claude/skills/sagi/SKILL.md takes the version earned by a second rendered verdict beside the first. verdicts/record-0001.json (APPROVE_WITH_CONDITIONS on the rage render-queue fix, 2026-09-17, 18 findings) is valid against bind/verdict_record.schema.json and its record_cid reproduces from the file alone. Doctrine root unchanged."
   },
   "facets": [
     {
@@ -84,9 +84,9 @@
     {
       "facet": "skill",
       "path": ".claude/skills/sagi/SKILL.md",
-      "bytes": 9570,
-      "sha256": "1c0a23159c0b61f135fa5623f4fe10c870b12ae5e3174b42a31fe870ef1dfa08",
-      "cid": "bafkreia4birrlhalmhytl6swep2p4egiocysvzpdc5fufiy75byo6hp2ba",
+      "bytes": 9481,
+      "sha256": "fb4ed378d532c8b47028190199e69dc0cdebb0385c69fbed1c177201f64b817b",
+      "cid": "bafkreih3j3jxrvjszc2hakazagm6nhoazxv3aoc4nh562haxoia7ms4bpm",
       "state": "present",
       "custom": false,
       "added_in": 1,
@@ -174,7 +174,7 @@
   "doctrine_root": "0x92fe83eb0fb8fb6b9cbde75ee4bbb671032a849ee25d65592b86913d0ae137d0",
   "doctrine_root_note": "the officer's immutable clauses — a DIFFERENT question from bundle_root. Adding a facet must not ring the doctrine alarm, or holders learn to ignore it.",
   "bundle_root": {
-    "value": "0x1437372c16bc12e322d71b0907f94de7cbe5d523d0d25ba435896ce9df92defe",
+    "value": "0x7d46b462d5f3d0606e58f4d6556d42c28b24ecf7feb3db5b34bdb41a29dc6182",
     "hash": "keccak256",
     "construction": "concat over facets in registry order of (ext_utf8 + 0x1f + sha256_hex_ascii + 0x1e)",
     "preimage_bytes": 571,
@@ -194,7 +194,7 @@
     "leaf_rule": "keccak256(ext_utf8 || 0x1f || sha256_hex_ascii), facets in registry order",
     "padding": "keccak256(b'') for every unused leaf — a documented constant, never a repeat of the last leaf",
     "populated": 8,
-    "root": "0x4a971e2799e14d8e73edba3262e4afca2a566a9fa536d551f3f37478c042d0bf",
+    "root": "0xaae586efd02bcd86ad4a09250a4af1c80b98be0fabaa1b61f3cf9c3542c24ee2",
     "ternary_head": "persona",
     "ternary_head_index": 0,
     "why": "THOTCommitmentRegistry.issueTHOT4096 documents `root` as a Merkle root over 64 leaves; passing a flat digest into that slot would verify and would mean something other than what the contract says"
@@ -209,7 +209,7 @@
       "attested"
     ],
     "evidence": {
-      "locator": "github.com/cryptoAGI/savante@bd6b9a501fbbf534180b1b616f601810cc9885c8",
+      "locator": "github.com/cryptoAGI/savante@45d2114722ac6374f16ec095a9b14f44d865f22a",
       "locator_holds": [
         "persona",
         "agent",
@@ -231,11 +231,11 @@
   },
   "license": "MIT",
   "identity": {
-    "thot": "thot:7034ec6eb0cbd1bea516f9241f0894e2c7fb8731f3f7d7ae275717353b9e9c9f",
-    "cid": "bafkreidqgtwg5mgl2g7kkfxzeqpqrfhcy75yompt67l24j2xc42txhu4t4",
-    "name": "thot-bafkreidqgtwg5mgl2g7kkfxzeqpqrfhcy75yompt67l24j2xc42txhu4t4",
-    "contentRoot": "0xf5703eca86f3bb8ca88f1a3b0e76ea1479ad7c1c28fba8ee936e7cf10eabaed1",
-    "canonical_bytes": 7141,
+    "thot": "thot:932a644af33ee9503afc45f7e3e4347eef13ffe868bfa998b66244018db2d6bb",
+    "cid": "bafkreietfjsev4z65fidv7cf67r6ind654j772dix6uzrntciqay3mwwxm",
+    "name": "thot-bafkreietfjsev4z65fidv7cf67r6ind654j772dix6uzrntciqay3mwwxm",
+    "contentRoot": "0xbcdc4bb8b9199c22389b22d89ddf3ae9c7c23430ef921dec96bff8300cc140b8",
+    "canonical_bytes": 7148,
     "construction": "sha256 / cid_v1_raw / keccak256 over canonical_bytes(manifest WITHOUT this identity block); no salt, no timestamp — reproducible from the repository alone"
   }
 }

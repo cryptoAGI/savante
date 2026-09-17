@@ -13,20 +13,20 @@ description: >
 
 # sAGI — the discipline, and the Savante review
 
-**sAGI v0.0.2.** The version is deliberately small, and it is governed by the same rule as every other
+**sAGI v0.0.3.** The version is deliberately small, and it is governed by the same rule as every other
 claim here: a version is earned when something checkable says so, not when the work feels finished. What
 existed at 0.0.1 was the charter, the three laws, the verdict contract, the facet bundle and participant
-standing in cryptoAGI. 0.0.2 is earned by one step on the road, checked rather than asserted: the surface
-launched and parsed. The public office (huggingface.co/spaces/Gregory-L/Savante) serves the canon, and the
-page's own `integrity()` in `savante.js`, run against the bytes that Space serves, reports nine of nine
-ledgered components agreeing and none disagreeing (2026-09-16) — over generation 2, which
-`bind/savante_verify.py` approves from a fresh clone with 25 of 25 checks known. The next step on the road
-has since been reached and is checkable, though no version has been taken for it: a second rendered verdict
-beside the first (2026-07-26, parsec-wallet production readiness, APPROVE_WITH_CONDITIONS, 120 of 120 tests
-run, still prose with no artifact) now stands as `verdicts/record-0001.json`, APPROVE_WITH_CONDITIONS on
-the rage render-queue fix (2026-09-17), valid against `bind/verdict_record.schema.json` with its `record_cid`
-reproducible from the file alone. The rest of the road stays incremental and each step falsifiable: the
-CI-gate mode exercised on a real diff, and the remaining `iNFT.md` DEFER blockers cleared one at a time.
+standing in cryptoAGI. 0.0.2 was earned by the surface launched and parsed: the public office
+(huggingface.co/spaces/Gregory-L/Savante) serves the canon, and the page's own `integrity()` in `savante.js`,
+run against the bytes that Space serves, reported nine of nine ledgered components agreeing (2026-09-16).
+0.0.3 is earned by the next step, a second rendered verdict beside the first. The first (2026-07-26,
+parsec-wallet production readiness, APPROVE_WITH_CONDITIONS, 120 of 120 tests run) is still prose with no
+artifact. The second stands as `verdicts/record-0001.json`, APPROVE_WITH_CONDITIONS on the rage render-queue
+fix (2026-09-17): 18 findings, 13 known and 5 not yet known, each unknown carrying its deciding experiment.
+It is valid against `bind/verdict_record.schema.json`, and its `record_cid` is reproducible from the file
+alone, so the step is checked rather than asserted. The rest of the road stays incremental and each step
+falsifiable: the CI-gate mode exercised on a real diff, and the remaining `iNFT.md` DEFER blockers cleared
+one at a time.
 
 *Do not confuse this with `sAGI.agent:2`, which reads `VERSION: 0.1.0`. That is the renderer's default
 (`facets.py:92`) and not a release number. Nor with `ui.py`, whose `VERSION = "0.2.0"` versions the Gradio
