@@ -88,6 +88,13 @@ THE FILES, AND WHICH ARE AUTHORED VERSUS DERIVED
     iNFT.md                  a VERDICT, not a description: whether this office may be bound to a
                              token. It reads DEFER.
     ui.py                    the office as a Gradio surface (below)
+    gfx/                     the images of Savante. gfx/Savante3.png is the ARTWORK the operator
+                             named (iNFT.md condition 4, naming half): sha256 30a59db4…c5a9a8, in
+                             the ledger's image_candidate. Nothing is pinned, so the card's image is
+                             null and every CID in gfx/README.md is predicted, not a pin.
+    PROOF.md / PROOF.sha256  the digests of the skill and every file that carries a proof, and what
+                             they do not establish. Check: sha256sum -c PROOF.sha256. Derived from
+                             the tree, not authored by hand.
     llm.txt                  this file
 
   Derived — regenerable, never hand-edited, produced by bind/savante_bind.py:
@@ -139,6 +146,15 @@ ui.py — THE SURFACE, AND WHY IT REFUSES THINGS
   `python3 -m py_compile ui.py` both pass under Python 3.10.12 (checked 2026-09-14), and its
   manifest_check was exercised on scratch manifests. NOT YET VERIFIED: it has never been launched,
   so launch it before serving it.
+
+THE PUBLIC OFFICE
+
+  huggingface.co/spaces/Gregory-L/Savante serves this canon as a static page: no server, no compute
+  of its own, no host key, and no mint button. Ask Savante spends the VISITOR's Hugging Face
+  inference quota, never the owner's. The page's own integrity() hashes the bytes it serves against
+  savante.commitments.json; on 2026-09-17, over generation 7, it reported 9 agreeing and 0
+  disagreeing. That binds files to a ledger. It does not prove who wrote them, and a model's answer
+  on that page is a DRAFT, never a finding.
 
 WHAT TO DO IF YOU ARE ASKED TO HELP HERE
 

@@ -2,7 +2,7 @@
 
 The digests of the sAGI skill and of every file in this repository that carries a proof: the office, its
 bound ledger, the artwork, the verdict records and the tools that check them. Written from the tree of the
-commit that adds this file, whose parent is `e95a135`. Every value here can be recomputed by anyone
+commit that adds this file, whose parent is `619c71a`. Every value here can be recomputed by anyone
 holding a clone; none is taken on trust.
 
 ## Check it
@@ -93,7 +93,7 @@ under `image_candidate.named_by_operator`. The file is JPEG bytes under a `.png`
 | `.gitignore` | 19 | `862263fa1f46c20f0d1e4dac5ffcc75abd55c08211b2c3864c5f8764b9d87793` | `bafkreiegejr7uh2gyihq2hsnvrp7zr22xvk4baqrwlbymtc7q5sltwdxsm` |
 | `LICENSE` | 1,091 | `3970382bf4f5fc6adaaff98835fbfd8a01bb1d3ec249b8ab07395e06b1363e3c` | `bafkreibzoa4cx5hv7rvnvl7zra27x7mkag5r2pwcjg4kwbzzlydlcnr6hq` |
 | `MANIFESTO.md` | 7,186 | `4023714ef1226b0d8a646b3bfcd9d351db3310965101c71b43cf3ff18dce5726` | `bafkreicaenyu54jcnmgyuzdlhp6ntu2r3mzrbfsrahdrwq6ph7yy3tsxey` |
-| `README.md` | 12,811 | `1335d7816f45137b21d2fc73e5a7f835bb81a393f67912e4f19dd1824ba4de4a` | `bafkreiatgxlyc32fcn5sdux4ops2p6bvxoa2he7wpejoj4m52gbexjg6ji` |
+| `README.md` | 13,318 | `1f926164e07b82fe201d70c67a198022d24ba8506593346579988e3a31962128` | `bafkreia7sjqwjyd3ql7cahlqyz5btabc2jf2qudfsm2gk6myry5ddfrbfa` |
 | `SAVANTE_AS_A_SERVICE.md` | 5,341 | `e401f81b895bcb67341610460f792689c8b90fbbde16dc52e0091e38eb8e4952` | `bafkreiheah4bxck3znttifqqiyhxsjujzc4q7o66c3offyajdy4oxdsjki` |
 | `Savante.md` | 7,427 | `7a29ebc05085e23ff75a9144e22690b27988f3ac3fbeeddce5678b21ea2361ab` | `bafkreid2fhv4auef4i77owuritrcnefspgephlb7x3w5zzlhrmq6ui3bvm` |
 | `bind/savante_publish.py` | 11,180 | `fe0162d26e416edb1ff068cf37ad905d466f1b78287538389095347574d08315` | `bafkreih6afrne3sbn3nr74diz4323ec5izxrw6biou4dreevgr2xjuedcu` |
@@ -113,7 +113,7 @@ under `image_candidate.named_by_operator`. The file is JPEG bytes under a `.png`
 | `gfx/mindXcodephreaksavante.png` | 215,914 | `9f15a93026f3ed79a0a99f33e1a4da263fbd9c4f36accc78522a6a36e71b4305` | `bafkreie7cwutajxt5v42bkm7gpq2jwrgh66zytzwvtghqurkni3oog2dau` |
 | `gfx/sAGIiNFT.jpeg` | 104,084 | `0b345e19cdd37b01eaf4ff41d9bbfb490bf5c8c50b14d957bd6aa5e7d10f55bb` | `bafkreialgrpbttotpma6v5h7ihm3x62jbp24rrilctmvpplkuxt5cd2vxm` |
 | `iNFT.md` | 43,213 | `d42efa176a76b295e03388efb8c72c793f970ab0d5220387c6aa7c6307dc96f5` | `bafkreiguf35bo2twwkk6am4i564moldzh6lqvmgveibyprvkprrqpxew6u` |
-| `llm.txt` | 10,034 | `81160a697a7e69757986ae491878e0a53e8276df390a2422fa0477e8da8bea5a` | `bafkreiebcyfgs6t6nf2xtbvojemhryffh2bhnxzzbiscf6qeo7unvc7kli` |
+| `llm.txt` | 11,230 | `68b3517f57c4540bb45edf17ee4f9ce664292e0b07d1408263328728a1be2b81` | `bafkreidiwnix6v6ekqf3ixw7c7xe7hhgmqus4cyh2faieyzsq4ukdprlqe` |
 | `sAGI.md` | 6,829 | `5e6f31c7c90ba34fac2147ef1fec2c18fa6b4f6c796984f6f5a6cd220547c28d` | `bafkreic6n4y4psilunh2yikh54p6ylay7jvu63dzngcpn5ngzurakr6cru` |
 | `savante.md` | 7,122 | `2cf2d3b6a42c9438f89c6dc3bae833486e356795a997e8a0f932205d2fe18c3a` | `bafkreibm6lj3njbmsq4prhdnyo5oqm2iny2wpfnjs7ukb6jsebos7ymmhi` |
 | `technical.md` | 12,410 | `65e6f9a18ef4c907051a9d416f332f07990a7a695816f683e0316ca2e538413d` | `bafkreidf4342ddxuzedqkgu5ifxtglyhtefhu2kyc33ihybrnsrokocbhu` |

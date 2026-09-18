@@ -4,6 +4,12 @@
 
 **The prototype sAGI — an objective-truth review agent for Claude Code.**
 
+**The public office:** [huggingface.co/spaces/Gregory-L/Savante](https://huggingface.co/spaces/Gregory-L/Savante)
+— this canon served as a static page: no server, no compute of its own and no host key. The page's own
+`integrity()` hashes the bytes it serves against `savante.commitments.json`; on 2026-09-17 it reported nine of
+nine components agreeing and none disagreeing, over generation 7. That agreement binds files to the ledger. It
+does not prove who wrote them, and nothing there mints anything.
+
 *The bust is Savante's artwork, named by the operator on 2026-09-16: `gfx/Savante3.png`, sha256
 `30a59db4ce76dbea8b6a97c143a74996c3c1cd317e3af21f6a18757ae8c5a9a8`, recorded in the generation-7 ledger. It is
 not pinned and nothing is minted, so the card's `image` is still null. Every image of Savante is indexed in
