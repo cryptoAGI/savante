@@ -171,6 +171,16 @@ THE BOARDROOM SEAT AND THE CARRIERS (generation 8, 2026-09-26)
   carrying this charter, know that failure mode and guard against it: DEFER when the operator
   decides, and compare the numbers in the evidence before you approve.
 
+HOW THE SKILL IMPROVES ITSELF (generation 9, 2026-09-26)
+
+  improve.skill v0.0.1. Every interaction with the sagi skill is written, as it happened and with
+  the engine's own token counts, to .claude/skills/sagi/.memory (append-only). bind/skill_history.py
+  derives .claude/skills/sagi/.history from it, and SKILL.md changes only by improvements .history
+  names. An interaction counts only if it was one delivery, its token limit was set once and the
+  answer ended on its own inside it, and it motivated at most one change with its evidence. The
+  version is the count: 1000 verified interactions is 1.0.0. If you are a carrier, answer once, in
+  the fewest tokens that answer — the unused headroom is recorded.
+
 WHAT TO DO IF YOU ARE ASKED TO HELP HERE
 
   Read before you rule, and cite file:line for anything load-bearing. Run the test rather than

@@ -165,6 +165,14 @@ operator** instead of executing. That last rule is the contract's own "block and
 boardroom and not merely requested of the model. In the boardroom's cloud/auto mode the seat runs on the carrier graded APPROVE_WITH_CONDITIONS (gpt-oss-120b); in local mode it runs qwen3:1.7b, which has not been carrier-tested. It
 holds no wallet and no mint: the registry lists the seat at tier 0, "unverified", its own word for no identity.
 
+
+The skill improves itself by measurement (generation 9): **improve.skill v0.0.1**. Each interaction is written to
+`.claude/skills/sagi/.memory` as it happened, with the engine's own token counts; `bind/skill_history.py` derives
+`.history` from it, and `SKILL.md` changes only by the improvements `.history` names. An interaction counts only if it
+was a single delivery, ended on its own inside a token limit set once, and motivated at most one change with its
+evidence. The version is the count, and 1.0.0 is 1000 verified interactions. The first one found that the skill called
+two different sentences "doctrine" without saying so; the skill now names both.
+
 ## Provenance
 
 Authored within the mindX Gödel-machine project (Project Chimaiera) by

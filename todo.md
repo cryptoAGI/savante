@@ -14,7 +14,7 @@ bytes the Space serves, reported 9 of 9 ledgered components agreeing.
 Releases since: generation 3, `3d0402c` (sAGI v0.0.2, the surface launched and parsed) · generation 4,
 `45d2114` (SKILL.md stopped saying the verdict ledger holds zero records) · generation 5, `4fd21d5`
 (sAGI v0.0.3, a second rendered verdict) · generation 6, `4372cb2` (sAGI v0.0.4, the CI-gate mode exercised; the
-first ledger to hash a committed tree) · generation 7, `e95a135` (sAGI v0.0.5, the operator named the artwork) · generation 8, `9e3453c` (sAGI v0.0.5 — no version earned: the boardroom seat, a binding of the office rather than a DEFER blocker cleared; doctrine root unchanged).
+first ledger to hash a committed tree) · generation 7, `e95a135` (sAGI v0.0.5, the operator named the artwork) · generation 8, `9e3453c` (sAGI v0.0.5 — no version earned: the boardroom seat, a binding of the office rather than a DEFER blocker cleared; doctrine root unchanged) · generation 9, `680b00d` (sAGI v0.0.5 — no version earned: improve.skill v0.0.1, the skill's own .memory → .history → .skill loop, 1 of 1000 verified interactions; doctrine root unchanged).
 Doctrine root unchanged throughout:
 `0x92fe83eb0fb8fb6b9cbde75ee4bbb671032a849ee25d65592b86913d0ae137d0`.
 
