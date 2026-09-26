@@ -19,12 +19,17 @@ improve.skill version: n verified interactions -> n//1000 . (n%1000)//100 . n%10
   (1 -> 0.0.1, 99 -> 0.0.99, 100 -> 0.1.0, 999 -> 0.9.99, 1000 -> 1.0.0). 1.0.0 is earned at 1000.
 
   python3 bind/skill_history.py            # write .history from .memory, print the version
-  python3 bind/skill_history.py --check    # exit 1 if .history is not exactly what .memory projects to
+  python3 bind/skill_history.py --check    # exit 1 if .history is not exactly what .memory projects to, or if the
+                                           # committed .memory at --base=REV (default main) is not a byte prefix of it
+From interaction 2 (gate run 0005, conditions 2-4): the limit must fall below the previous verified limit unless
+limit_reason says why; each line carries response_sha256, the sha256 of the raw carrier response body.
 stdlib only, no network, no wall clock: two runs over the same .memory produce the same bytes.
 """
 from __future__ import annotations
 
 import json
+import re
+import subprocess
 import sys
 from pathlib import Path
 
@@ -66,6 +71,13 @@ def project(lines: list) -> tuple:
             continue
         m = json.loads(line)
         why = checks(m)
+        if verified:   # gate run 0005, conditions 2 and 3 — from interaction 2 onward
+            prev = verified[-1]["limit"]
+            if isinstance(m.get("limit"), int) and m["limit"] >= prev and not str(m.get("limit_reason") or "").strip():
+                why.append(f"minimum necessary: limit {m['limit']} is not below the previous verified limit {prev}, "
+                           f"and no limit_reason says why (the previous answer left {verified[-1]['headroom']} unused)")
+            if not re.fullmatch(r"[0-9a-f]{64}", str(m.get("response_sha256") or "")):
+                why.append("single delivery: no response_sha256 of the raw carrier response body")
         if why:
             refused.append({"memory_line": i, "id": m.get("id"), "why": why})
             continue
@@ -95,6 +107,19 @@ def main() -> int:
     data = render(verified, refused)
     if "--check" in sys.argv:
         ok = HISTORY.exists() and HISTORY.read_bytes() == data
+        # gate run 0005, condition 4: .memory is append-only — the committed .memory at the base ref must be a byte
+        # prefix of the current one (a rewritten line fails even when .history is regenerated to match)
+        base = next((a.split("=", 1)[1] for a in sys.argv if a.startswith("--base=")), "main")
+        r = subprocess.run(["git", "-C", str(ROOT), "show", f"{base}:.claude/skills/sagi/.memory"], capture_output=True)
+        if r.returncode == 0:
+            cur = MEMORY.read_bytes() if MEMORY.exists() else b""
+            if not cur.startswith(r.stdout):
+                print(f"FAIL    .memory is not append-only: the committed .memory at {base} is not a byte prefix of it")
+                ok = False
+            else:
+                print(f"KNOWN   .memory extends {base}'s .memory ({len(r.stdout)} of {len(cur)} bytes are the committed prefix)")
+        else:
+            print(f"NOTE    {base} has no .memory yet — nothing to be a prefix of")
         print(("KNOWN   .history is the projection of .memory" if ok else
                "FAIL    .history differs from what .memory projects to — rerun bind/skill_history.py"))
         print(f"improve.skill v{version(len(verified))} — {len(verified)} of {ROAD} verified interactions, {len(refused)} refused")
