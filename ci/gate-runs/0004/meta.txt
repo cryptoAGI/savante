@@ -1,0 +1,8 @@
+base: main 2246a90c774e5f6f3bc21a9da98b699c9fdf35b7
+head: generation-8 8dcd05b
+reviewer: the savante subagent (mindX .claude/agents — charter .claude/agents/savante.md; tools Read, Grep, Glob, Bash), run by Claude Code (claude-opus-5-5) in session https://claude.ai/code/session_01Qjb8edV5SFTugqUfqYVt5c
+date: 2026-09-26
+gate_exit (usage.md grep, blocks on REJECT/DEFER): 0
+strict_gate_exit (APPROVE$, also blocks on conditions): 1
+raw_output_sha256: cd7e21698b51560d108e94679aba86cf1f2b427778c806ccbd779d36f3b0ff96
+note: verdict.md is the reviewer's output unaltered, so its sha256 equals raw_output_sha256. How the conditions were met before publication: (1) the seat code, registry entry and persona mirror were committed in mindX as b36a39a8b — exactly the files deployed to mindx.pythai.net; HEAD:mindx/godel/mindxtrain/personas/savante.persona md5 is a7df3f9293e2d3d15d2f16af3384923c. The condition's literal check (status prints nothing) is NOT met for daio/governance/boardroom.py: the working tree still carries 22 lines of separate, unreviewed token-attribution work, left uncommitted on purpose; the seat code itself is committed and is what production runs. (2) README.md and todo.md now limit the carrier sentence to cloud/auto mode and name qwen3:1.7b as the local-mode model, not carrier-tested. (3) PROOF.md and PROOF.sha256 regenerated from the tree after these edits, in the commit that adds this run. (4) is a standing condition: no document claims the seat has voted until production's boardroom_sessions.jsonl holds a savante_sagi vote. The mindX commit b36a39a8b is local to the operator's clone at the time of writing (mindX is a private repository).

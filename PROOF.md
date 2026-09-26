@@ -1,8 +1,8 @@
-# PROOF — Savante, sAGI v0.0.5, generation 7
+# PROOF — Savante, sAGI v0.0.5, generation 8
 
 The digests of the sAGI skill and of every file in this repository that carries a proof: the office, its
 bound ledger, the artwork, the verdict records and the tools that check them. Written from the tree of the
-commit that adds this file, whose parent is `619c71a`. Every value here can be recomputed by anyone
+commit that adds this file, whose parent is `8dcd05b`. Every value here can be recomputed by anyone
 holding a clone; none is taken on trust.
 
 ## Check it
@@ -23,12 +23,12 @@ the whole file. Every file here is under the 256 KiB single-block bound, so ever
 | root | value | what it answers |
 |---|---|---|
 | doctrine root | `0x92fe83eb0fb8fb6b9cbde75ee4bbb671032a849ee25d65592b86913d0ae137d0` | is the office still the office? (keccak256 over the persona's 15 doctrine clauses; unchanged since generation 2) |
-| bundle root | `0x144550cedc18d2c126489fbbb0500d67fddf92f9f009d45a9b9ff67c58fe2b96` | is this the same facet bundle? |
-| THOT identity | `bafkreiebawdkwxhfefnizz32jflqpjzju4r444j7msky6pluyynnirsrmq` | the name of generation 7 (parent `bafkreibzx5apnrk5prim4g5in6vsaqwoztvfc7jfny4hwdhb65g7pmzr44`) |
-| identity contentRoot | `0xd0dfb05db1516bcea6c6e9d3c1be2a7b342ad01bc59bd7b8f0d0ee2ac49b7210` | the same identity as a keccak256 slot value |
-| card | `bafkreicx2bh4vl3zahiygebn35ntqjkpece7dpuk76npnkduknj56xguom` | the public card as written (keccak256 canonical `0x8d4cc9e211aded279f5cacb41b2a6987652e00e63a4c46209b7d7400511e4971`) |
+| bundle root | `0xbb777fa07f7afaf7ab7325cf4ca114e76395c981e14afeb3cbcda7fe200d9983` | is this the same facet bundle? |
+| THOT identity | `bafkreice4de3l4gz7u6vcorxccqymx5taywciis442omspnqw7jh76pe5m` | the name of generation 8 (parent `bafkreiebawdkwxhfefnizz32jflqpjzju4r444j7msky6pluyynnirsrmq`) |
+| identity contentRoot | `0x0b78f06ff12fc661a55132d018cd8c9f2222b2c1626b51a6d9861c20b51caf61` | the same identity as a keccak256 slot value |
+| card | `bafkreifyhkdz77otcol5cjbzrx2zautu426kldnibks54342wbnphk26pi` | the public card as written (keccak256 canonical `0xb0f3c90ef3b9990a9f53ef2c8a25fe1715da1e4bfba0500b8037dc09d4ff57b3`) |
 | verdict record 1 | `bafkreibke7n3v5ykztl4xpyltf4grhslddpcl3diwavrqpibbh3onqmdhi` | `record_cid`, recomputed from the record with `record_cid` set to null |
-| ledger's commit | `30d1e8c88435c4b2182cf1301e1cb865466cdb42` | the commit the ledger hashes (`components_differing_from_head` is `[]`) |
+| ledger's commit | `eb4b8509decc09e61cf5e2b01d875d7ee6819d61` | the commit the ledger hashes (`components_differing_from_head` is `[]`) |
 
 ## The artwork
 
@@ -48,7 +48,7 @@ under `image_candidate.named_by_operator`. The file is JPEG bytes under a `.png`
 | file | what | bytes | sha256 | CID (predicted) |
 |---|---|---:|---|---|
 | `.claude/agents/savante.md` | charter (operative) | 7,122 | `2cf2d3b6a42c9438f89c6dc3bae833486e356795a997e8a0f932205d2fe18c3a` | `bafkreibm6lj3njbmsq4prhdnyo5oqm2iny2wpfnjs7ukb6jsebos7ymmhi` |
-| `savante.persona` | identity: the .persona | 51,237 | `fd1933f2dc636a818744edaeade6454e329fddb5438d2ad264e331fd9cc808d3` | `bafkreih5dez7fxddnkayorhnv2w6mrkogkp53nkdruvnezhdgh6zzsai2m` |
+| `savante.persona` | identity: the .persona | 51,492 | `d96556b1198940c73eb7b0456c29b9cdfd9eb7f83a3a88a65f8a880b95807b7e` | `bafkreigzmvllcgmjiddt5n5qivwctoon7wplp6b2hkekmx4krafzlad3py` |
 | `sAGI.agent` | facet: agent class | 5,461 | `e5a8b0111b3b3d342d5f01057c019044bca46a592ee18ca1ec1e031c4263a650` | `bafkreihfvcybcgz3hu2c2xybav6adecexssguwjo4ggkd3a6amoeey5gka` |
 | `sAGI.model` | facet: model (pins none) | 1,636 | `03dbbf5069cfdbcd67747eff1a513217b8139e16e0b4cc74aa71015adb9d3581` | `bafkreiad3o7va2op3pgwo5d674nfcmqxxajz4fxawtghjktrafnnxhjvqe` |
 | `sAGI.prompt` | facet: charter body as prompt | 7,191 | `baf5a302bf591b977d45ff21c484cc1279c9693e0f65ae9541db42c042bdcffe` | `bafkreif26wrqfp2zdolx2rp7ehcijtasphewspqpmwxjkqo3ilaefpop7y` |
@@ -60,9 +60,9 @@ under `image_candidate.named_by_operator`. The file is JPEG bytes under a `.png`
 
 | file | what | bytes | sha256 | CID (predicted) |
 |---|---|---:|---|---|
-| `savante.agentcard.json` | public card: EIP-721 metadata + ERC-8004 registration | 7,815 | `57d04fcaaf7901d183102ddf5b38254f2089f1be8aff9af6a8745353df5cd473` | `bafkreicx2bh4vl3zahiygebn35ntqjkpece7dpuk76npnkduknj56xguom` |
-| `savante.commitments.json` | integrity ledger | 17,452 | `80821b8ada201b278b4d9148d26d80667e5802d44f151ce2a647bec4a4fd1ab1` | `bafkreieaqinyvwradmtywtmrjdjg3adgpzmafvcpcuoofjshx3ckj7i2we` |
-| `savante.thot.json` | THOT manifest, generation 7 | 9,090 | `727309a72809e77270896ed825e8a85818df1257bac4a15ac477c5b6da834bf9` | `bafkreidsome2okaj45zhbclo3as6rkcyddprev52ysqvvrdxyw3nva2l7e` |
+| `savante.agentcard.json` | public card: EIP-721 metadata + ERC-8004 registration | 8,024 | `b83a879ffdd31397d124398df5905274e6bca58da80aa5de6f9ab05af3ab5e7a` | `bafkreifyhkdz77otcol5cjbzrx2zautu426kldnibks54342wbnphk26pi` |
+| `savante.commitments.json` | integrity ledger | 17,498 | `283404bca322f8c7247461c6372ce4ce3cd344f54e200d5eda72b8388cf0c0ac` | `bafkreibigqclzizc7ddsi5dbyy3szzgohtjuj5koeagv5wtsxa4iz4gavq` |
+| `savante.thot.json` | THOT manifest, generation 8 | 9,186 | `24b431f161f8ccb7bc34d2cdcea4f76355d1daf0bbaf4f81bdc5aea08c16955a` | `bafkreibewqy7cypyzs33yngszxhkj53dkxi5v4f3v5hydpofv2qiyfuvli` |
 
 ## The artwork
 
@@ -77,6 +77,7 @@ under `image_candidate.named_by_operator`. The file is JPEG bytes under a `.png`
 | `verdicts/record-0001.json` | verdict record 1 | 15,406 | `d54f380a54e2a0156140455bd0fe9dc26fe369e0385f536dd7192a58a78d391e` | `bafkreigvj44auvhcuakwcqcflpip5hocn7rwtybyl5jw3vyzfjmkpdjzdy` |
 | `bind/verdict_record.schema.json` | verdict record schema | 6,577 | `70f191cf666e3ff5d91df600271c4f9916b98e3d1ee33ec9129ed412df522fb9` | `bafkreidq6gi46ztoh725shpwaatryt4zc24y4pi64m7mseu62qjn6urpxe` |
 | `ci/gate-runs/0001/verdict.md` | CI gate run 0001 | 7,633 | `4c980486d15e249728beff4ff2f7e29ec1c714ebe2d3cbd32b6aad1c7e61d0da` | `bafkreicmtacinuk6eslsrpx7j7zppyu6yhdrj27c2pf5gk3kvuoh4yoq3i` |
+| `ci/gate-runs/0004/verdict.md` | CI gate run 0004 (generation 8) | 6,885 | `cd7e21698b51560d108e94679aba86cf1f2b427778c806ccbd779d36f3b0ff96` | `bafkreignpyqwtc2rkygrbduum6nlvbwpd4vue53yzadmzplxtu3phmh7sy` |
 | `ci/gate-runs/0002/verdict.md` | CI gate run 0002 | 8,564 | `15abbccf1fff83aa76b76ebc16566a2188c1d972f43d5ab3868896a613dc8e29` | `bafkreiavvo6m6h77qovhnn3oxqlfm2rbrda5s4xuhvnlhbuis2tbhxeofe` |
 
 ## The tools that make and check the proofs
@@ -93,13 +94,14 @@ under `image_candidate.named_by_operator`. The file is JPEG bytes under a `.png`
 | `.gitignore` | 19 | `862263fa1f46c20f0d1e4dac5ffcc75abd55c08211b2c3864c5f8764b9d87793` | `bafkreiegejr7uh2gyihq2hsnvrp7zr22xvk4baqrwlbymtc7q5sltwdxsm` |
 | `LICENSE` | 1,091 | `3970382bf4f5fc6adaaff98835fbfd8a01bb1d3ec249b8ab07395e06b1363e3c` | `bafkreibzoa4cx5hv7rvnvl7zra27x7mkag5r2pwcjg4kwbzzlydlcnr6hq` |
 | `MANIFESTO.md` | 7,186 | `4023714ef1226b0d8a646b3bfcd9d351db3310965101c71b43cf3ff18dce5726` | `bafkreicaenyu54jcnmgyuzdlhp6ntu2r3mzrbfsrahdrwq6ph7yy3tsxey` |
-| `README.md` | 13,318 | `1f926164e07b82fe201d70c67a198022d24ba8506593346579988e3a31962128` | `bafkreia7sjqwjyd3ql7cahlqyz5btabc2jf2qudfsm2gk6myry5ddfrbfa` |
+| `README.md` | 15,195 | `60ac977d31aa6b15e06a0abcdaba71fb6c6153514b1b695264e12e69cf188f9e` | `bafkreidavslx2mnknmk6a2qkxtnlu4p3nrqvgukldnuvezhbfzu46gepty` |
 | `SAVANTE_AS_A_SERVICE.md` | 5,341 | `e401f81b895bcb67341610460f792689c8b90fbbde16dc52e0091e38eb8e4952` | `bafkreiheah4bxck3znttifqqiyhxsjujzc4q7o66c3offyajdy4oxdsjki` |
 | `Savante.md` | 7,427 | `7a29ebc05085e23ff75a9144e22690b27988f3ac3fbeeddce5678b21ea2361ab` | `bafkreid2fhv4auef4i77owuritrcnefspgephlb7x3w5zzlhrmq6ui3bvm` |
 | `bind/savante_publish.py` | 11,180 | `fe0162d26e416edb1ff068cf37ad905d466f1b78287538389095347574d08315` | `bafkreih6afrne3sbn3nr74diz4323ec5izxrw6biou4dreevgr2xjuedcu` |
 | `ci/gate-runs/0001/meta.txt` | 1,665 | `3fdb410b95aaceb04a07143313cdddb00e4a052c82e65b26cb7991fe94ecaba7` | `bafkreib73naqxfnkz2yeubyugmj43xnqbzfaklec4znsns3zsh7jj3flu4` |
 | `ci/gate-runs/0002/meta.txt` | 775 | `745c71d6b0bbdb02c5fbf5e3a0127b25438e96e86cbec67063e3ba98ef269973` | `bafkreidulry5nmf33mbml67v4oqbe6zfiohjn2dmx3dhay7dxkmo6juzom` |
 | `ci/gate-runs/0003/meta.txt` | 950 | `c8d726b6501199a5a439cad3d5b9c8d6c89858cf88680773be9cf9dc32e4d178` | `bafkreigi24tlmuartgs2iook2pk3tsgwzcmfrt4inadxhpu47hodfzgrpa` |
+| `ci/gate-runs/0004/meta.txt` | 1,678 | `90b65f31e8754fd660de0858439f5c61e8d62d5052340580079c07df62683a1b` | `bafkreieqwzptd2dvj7lgbxqilbbz6xdb5dlc2ucsgqcyab44a7pwe2b2dm` |
 | `ci/gate-runs/0003/verdict.md` | 2,906 | `6994f3d39836772d35b6cb81cb7828236b3bf31893c4c23f26ef265198ab7bf9` | `bafkreidjstz5hgbwo4wtlnwlqhfxqkbdnm57ggetytbd6jxpezizrk337e` |
 | `explanation.md` | 7,175 | `311c7518416a9a0eadf53f3ac464689eb14304c73ec53dc7f9fb72f75132bf56` | `bafkreibrdr2rqqlktihk35j7hlcgi2e6wfbqjrz6yu64p6p3ol3vcmv7ky` |
 | `gfx/README.md` | 6,086 | `c7269398ad4692dea22df3915dce8c08fdf253739bb11251e45934752720bc4d` | `bafkreighe2jzrlkgslpkelptsfo45dai7xzfg443wejfdzczgr2soif4ju` |
@@ -113,11 +115,11 @@ under `image_candidate.named_by_operator`. The file is JPEG bytes under a `.png`
 | `gfx/mindXcodephreaksavante.png` | 215,914 | `9f15a93026f3ed79a0a99f33e1a4da263fbd9c4f36accc78522a6a36e71b4305` | `bafkreie7cwutajxt5v42bkm7gpq2jwrgh66zytzwvtghqurkni3oog2dau` |
 | `gfx/sAGIiNFT.jpeg` | 104,084 | `0b345e19cdd37b01eaf4ff41d9bbfb490bf5c8c50b14d957bd6aa5e7d10f55bb` | `bafkreialgrpbttotpma6v5h7ihm3x62jbp24rrilctmvpplkuxt5cd2vxm` |
 | `iNFT.md` | 43,213 | `d42efa176a76b295e03388efb8c72c793f970ab0d5220387c6aa7c6307dc96f5` | `bafkreiguf35bo2twwkk6am4i564moldzh6lqvmgveibyprvkprrqpxew6u` |
-| `llm.txt` | 11,230 | `68b3517f57c4540bb45edf17ee4f9ce664292e0b07d1408263328728a1be2b81` | `bafkreidiwnix6v6ekqf3ixw7c7xe7hhgmqus4cyh2faieyzsq4ukdprlqe` |
+| `llm.txt` | 12,281 | `b40b0901e3faf7f0e0cc781328691373e8a2eda7b765bc0e920efbbb539c80cb` | `bafkreifubmeqdy7267yobtdycmugse3t5cro3j5xmw6a5eqo7o5vhheazm` |
 | `sAGI.md` | 6,829 | `5e6f31c7c90ba34fac2147ef1fec2c18fa6b4f6c796984f6f5a6cd220547c28d` | `bafkreic6n4y4psilunh2yikh54p6ylay7jvu63dzngcpn5ngzurakr6cru` |
 | `savante.md` | 7,122 | `2cf2d3b6a42c9438f89c6dc3bae833486e356795a997e8a0f932205d2fe18c3a` | `bafkreibm6lj3njbmsq4prhdnyo5oqm2iny2wpfnjs7ukb6jsebos7ymmhi` |
 | `technical.md` | 12,410 | `65e6f9a18ef4c907051a9d416f332f07990a7a695816f683e0316ca2e538413d` | `bafkreidf4342ddxuzedqkgu5ifxtglyhtefhu2kyc33ihybrnsrokocbhu` |
-| `todo.md` | 12,293 | `0c5ff3e783a99180e678471222aab60b00982231b712a6ea78433d45a7c54a62` | `bafkreiaml7z6pa5jsgaom6chcirkvnqlacmcemnxcktou6cdhvc2prkkmi` |
+| `todo.md` | 13,068 | `2e920fb5f15605407b8c97687b90933c332d5ea95fa993a257b274246d794d55` | `bafkreibosih3l4kwavahxdexnb5zbez4gmwv5kk7vgj2ev5soqsg26knku` |
 | `ui.py` | 53,571 | `de08f5adbac23b855e054052d85b176e8aac1bcf8e4d3786dd2982d90fc61fd0` | `bafkreig6bd223owchocv4bkaklmfwf3orkwbxt4oju3ynxjjqlmq7rq72a` |
 | `usage.md` | 4,549 | `8cd688e2d6832d9db4e98cbc23cc9bc5e722c3c09cf71dc083a761f29e431285` | `bafkreiem22eofvudfwo3j2mmxqr4zg6f44rmhqe464o4ba5hmhzj4qysqu` |
 

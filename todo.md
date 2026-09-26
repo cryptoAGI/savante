@@ -88,7 +88,7 @@ history can be erased by hand.
 
 - [ ] **Carriers.** The office pins no model, and the first measured carriers disagree: Bonsai-8B (1-bit, local CPU) is
       REJECT for review duty (never DEFERs, approved a false claim), and gpt-oss-120b is APPROVE_WITH_CONDITIONS
-      (sagi `engine/CARRIER_TEST.md`, 2026-09-26). The boardroom seat runs on the second. *Deciding experiment:*
+      (sagi `engine/CARRIER_TEST.md`, 2026-09-26). The boardroom seat runs on the second in cloud/auto mode; in local mode it runs qwen3:1.7b, not yet carrier-tested. *Deciding experiment:*
       the probe set with a like-for-like trap, run on each new carrier before its APPROVE may gate anything, and
       once on a small carrier fine-tuned on this charter's verdicts.
 

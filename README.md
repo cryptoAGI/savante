@@ -162,7 +162,7 @@ The same day, the office took a seat. `savante_sagi` is the **9th seat, sAGI, of
 beside the CEO and the seven soldiers (generation 8). Its verdict is cast as a vote: APPROVE and
 APPROVE_WITH_CONDITIONS count as approve, REJECT counts as reject, and **DEFER holds the session for the
 operator** instead of executing. That last rule is the contract's own "block and page a human", enforced by the
-boardroom and not merely requested of the model. The seat runs on the carrier graded APPROVE_WITH_CONDITIONS. It
+boardroom and not merely requested of the model. In the boardroom's cloud/auto mode the seat runs on the carrier graded APPROVE_WITH_CONDITIONS (gpt-oss-120b); in local mode it runs qwen3:1.7b, which has not been carrier-tested. It
 holds no wallet and no mint: the registry lists the seat at tier 0, "unverified", its own word for no identity.
 
 ## Provenance
