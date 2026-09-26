@@ -126,7 +126,7 @@
       "doctrine_root": "0x92fe83eb0fb8fb6b9cbde75ee4bbb671032a849ee25d65592b86913d0ae137d0",
       "persona_sha256": "d96556b1198940c73eb7b0456c29b9cdfd9eb7f83a3a88a65f8a880b95807b7e",
       "charter_sha256": "2cf2d3b6a42c9438f89c6dc3bae833486e356795a997e8a0f932205d2fe18c3a",
-      "skill_sha256": "b8b9b62db9bac8286171a5766fe23f0512987872d2cefc9598036b7609daff30",
+      "skill_sha256": "f5147a9bcc978251964121f1e55b0f635ebb5883a97c2108a435f4b4b1612169",
       "note": "recompute with `python3 bind/savante_verify.py .`; the card's own CID lives only in the ledger because a document cannot carry its own digest"
     },
     "image_candidate": {

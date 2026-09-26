@@ -16,9 +16,9 @@
   "bundle": {
     "id": "sAGI",
     "officer": "Savante",
-    "generation": 8,
-    "parent": "bafkreiebawdkwxhfefnizz32jflqpjzju4r444j7msky6pluyynnirsrmq",
-    "parent_reason": "the boardroom seat: savante_sagi is the 9th seat (sAGI) of the mindX DAIO boardroom — persona /token/bindings/wallet/reason corrected (now in agent_map soldiers, tier 0, no wallet) and the card's description names the seat and its DEFER; doctrine unchanged"
+    "generation": 9,
+    "parent": "bafkreice4de3l4gz7u6vcorxccqymx5taywciis442omspnqw7jh76pe5m",
+    "parent_reason": "improve.skill: the sagi skill gains .memory -> .history -> .skill (v0.0.1, 1 of 1000 verified interactions; bind/skill_history.py projects and checks), and interaction 1's one improvement: the skill names both lines called doctrine; persona and doctrine unchanged"
   },
   "facets": [
     {
@@ -84,9 +84,9 @@
     {
       "facet": "skill",
       "path": ".claude/skills/sagi/SKILL.md",
-      "bytes": 10325,
-      "sha256": "b8b9b62db9bac8286171a5766fe23f0512987872d2cefc9598036b7609daff30",
-      "cid": "bafkreifyxg3c3on2zaugc4nfozx6epyfckmhq4wsz36jlgadnn3atwx7ga",
+      "bytes": 11907,
+      "sha256": "f5147a9bcc978251964121f1e55b0f635ebb5883a97c2108a435f4b4b1612169",
+      "cid": "bafkreihvcr5jxtexqjizmqjb6hsvwd3dl25vra5jpqqqrjbv6s2lcyjbne",
       "state": "present",
       "custom": false,
       "added_in": 1,
@@ -174,7 +174,7 @@
   "doctrine_root": "0x92fe83eb0fb8fb6b9cbde75ee4bbb671032a849ee25d65592b86913d0ae137d0",
   "doctrine_root_note": "the officer's immutable clauses — a DIFFERENT question from bundle_root. Adding a facet must not ring the doctrine alarm, or holders learn to ignore it.",
   "bundle_root": {
-    "value": "0xbb777fa07f7afaf7ab7325cf4ca114e76395c981e14afeb3cbcda7fe200d9983",
+    "value": "0xbfe1d43dc5f0abb3354d2111b0bc70de1a7d2786d1f082c6ecff643579460efc",
     "hash": "keccak256",
     "construction": "concat over facets in registry order of (ext_utf8 + 0x1f + sha256_hex_ascii + 0x1e)",
     "preimage_bytes": 571,
@@ -194,7 +194,7 @@
     "leaf_rule": "keccak256(ext_utf8 || 0x1f || sha256_hex_ascii), facets in registry order",
     "padding": "keccak256(b'') for every unused leaf — a documented constant, never a repeat of the last leaf",
     "populated": 8,
-    "root": "0x5518f788198fd81dad8d05cd46da9ebaa74e963d70bc0136207a26dc30e52bd1",
+    "root": "0xd220c1f857b583cac28cca1870631f29a05c9ad2ae9e62aba4d670ff23b2d8bb",
     "ternary_head": "persona",
     "ternary_head_index": 0,
     "why": "THOTCommitmentRegistry.issueTHOT4096 documents `root` as a Merkle root over 64 leaves; passing a flat digest into that slot would verify and would mean something other than what the contract says"
@@ -209,7 +209,7 @@
       "attested"
     ],
     "evidence": {
-      "locator": "github.com/cryptoAGI/savante@eb4b8509decc09e61cf5e2b01d875d7ee6819d61",
+      "locator": "github.com/cryptoAGI/savante@70009b5f5fe44d930a7d699644afc694ec7291e2",
       "locator_holds": [
         "persona",
         "agent",
@@ -230,11 +230,11 @@
   },
   "license": "MIT",
   "identity": {
-    "thot": "thot:44e0c9b5f0d9fd3d513a3710a1865fb3062c24225ce69cc93db0b7d27ff9e4eb",
-    "cid": "bafkreice4de3l4gz7u6vcorxccqymx5taywciis442omspnqw7jh76pe5m",
-    "name": "thot-bafkreice4de3l4gz7u6vcorxccqymx5taywciis442omspnqw7jh76pe5m",
-    "contentRoot": "0x0b78f06ff12fc661a55132d018cd8c9f2222b2c1626b51a6d9861c20b51caf61",
-    "canonical_bytes": 7063,
+    "thot": "thot:37487279630eb08a65db3967181c5470fda72818cb7af395ea1c5b3be7d6cfe3",
+    "cid": "bafkreibxjbzhsyyowcfglwzzm4mbyvdq7wtsqgglplzzl2q4lm56pvwp4m",
+    "name": "thot-bafkreibxjbzhsyyowcfglwzzm4mbyvdq7wtsqgglplzzl2q4lm56pvwp4m",
+    "contentRoot": "0x40c56fa567660e0a8ec13da481c8b8c926732a90c6c66448f7eb65ed15a1e84e",
+    "canonical_bytes": 7068,
     "construction": "sha256 / cid_v1_raw / keccak256 over canonical_bytes(manifest WITHOUT this identity block); no salt, no timestamp — reproducible from the repository alone"
   }
 }
