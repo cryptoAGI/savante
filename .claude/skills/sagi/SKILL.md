@@ -161,7 +161,29 @@ BANKON vault and registering on an ERC-8004 registry are **factory** steps —
 treasury acts and publication decisions awaiting the operator's signature, not
 capabilities of this office. Do not add a path to any of them.
 
+## improve.skill — .memory → .history → .skill
+
+This skill improves itself by measured interactions, never by feel. **improve.skill v0.0.1** — the road to 1.0.0 is
+1000 verified interactions.
+
+- **`.memory`** (this folder) is append-only JSONL: every interaction with the skill as it happened, with the
+  engine's own token counts. A line is never edited; a mistake is corrected by a later line.
+- **`.history`** is derived from `.memory` by `bind/skill_history.py` and is byte-for-byte reproducible
+  (`--check` fails on any drift). It keeps the interactions that pass three checks, numbered:
+  1. **single delivery** — one answer, no retries, no regeneration;
+  2. **minimum necessary** — the token limit was set once, the engine counted the tokens, the answer ended on its
+     own (`finish: stop`), and the unused headroom is recorded so the next limit can be smaller;
+  3. **minimal improvement** — at most one change, naming the evidence that applied it.
+- **`.skill`** — this file — changes only by improvements that `.history` names.
+
+The version is the count: interaction *n* is `n//1000 . (n%1000)//100 . n%100`, so 1 is 0.0.1, 100 is 0.1.0 and
+1000 is 1.0.0. It versions the skill's improvement loop, not the office — the office's version is sAGI v0.0.5 above.
+
 ## The doctrine in one line
+
+Two lines are called "doctrine", and they answer different questions. Savante's own doctrine — what she *is* — is
+the seven words in `savante.persona`: *the structural substrate — rarely intervenes, always watching.* The
+discipline's doctrine — what sAGI *holds* — is this one:
 
 Knowledge is what survives verification; nothing else counts. Accuracy,
 attention, time, and security claims are measured quantities (SCIEN·TIFIC, LUV,
