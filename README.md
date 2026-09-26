@@ -141,6 +141,30 @@ from being priceless — value creates price, never the reverse. Verified value
 circulates bankon → mindx → agenticplace: identity proven, knowledge
 delivered, exchange made. Details: [MANIFESTO.md](MANIFESTO.md).
 
+## Carriers and the boardroom seat
+
+The charter pins no model (`sAGI.model`: `pinned: false`), so which model *carries* the office is a claim, and it
+is decided like every other claim. The sAGI engine's
+[carrier test](https://github.com/cryptoAGI/sagi/blob/main/engine/CARRIER_TEST.md) grades form (the verdict
+contract's shape, by regex) and substance (the four invariants, by reading) on five probes with fixed evidence.
+On 2026-09-26 it ran through **SavanteUI**, a local Gradio surface that mounts this repository's `ui.py` rooms
+behind an Interaction tab, with these results:
+
+| carrier | pass · partial · fail | as a carrier |
+|---|---|---|
+| Bonsai-8B, 1-bit, on two CPU cores | 5 · 1 · 4 | **REJECT** for review duty: it never used DEFER, and it approved a false claim |
+| gpt-oss-120b | 6 · 4 · 0 | **APPROVE_WITH_CONDITIONS**: DEFER only where the operator signs; quote counts from the evidence |
+
+The [transcripts](https://github.com/cryptoAGI/sagi/blob/main/engine/carriers/2026-09-26/TRANSCRIPTS.md) are
+published verbatim. A carrier's APPROVE gates nothing until that carrier has passed.
+
+The same day, the office took a seat. `savante_sagi` is the **9th seat, sAGI, of the mindX DAIO boardroom**,
+beside the CEO and the seven soldiers (generation 8). Its verdict is cast as a vote: APPROVE and
+APPROVE_WITH_CONDITIONS count as approve, REJECT counts as reject, and **DEFER holds the session for the
+operator** instead of executing. That last rule is the contract's own "block and page a human", enforced by the
+boardroom and not merely requested of the model. The seat runs on the carrier graded APPROVE_WITH_CONDITIONS. It
+holds no wallet and no mint: the registry lists the seat at tier 0, "unverified", its own word for no identity.
+
 ## Provenance
 
 Authored within the mindX Gödel-machine project (Project Chimaiera) by

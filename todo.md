@@ -14,7 +14,7 @@ bytes the Space serves, reported 9 of 9 ledgered components agreeing.
 Releases since: generation 3, `3d0402c` (sAGI v0.0.2, the surface launched and parsed) · generation 4,
 `45d2114` (SKILL.md stopped saying the verdict ledger holds zero records) · generation 5, `4fd21d5`
 (sAGI v0.0.3, a second rendered verdict) · generation 6, `4372cb2` (sAGI v0.0.4, the CI-gate mode exercised; the
-first ledger to hash a committed tree) · generation 7, `e95a135` (sAGI v0.0.5, the operator named the artwork).
+first ledger to hash a committed tree) · generation 7, `e95a135` (sAGI v0.0.5, the operator named the artwork) · generation 8, `9e3453c` (sAGI v0.0.5 — no version earned: the boardroom seat, a binding of the office rather than a DEFER blocker cleared; doctrine root unchanged).
 Doctrine root unchanged throughout:
 `0x92fe83eb0fb8fb6b9cbde75ee4bbb671032a849ee25d65592b86913d0ae137d0`.
 
@@ -85,6 +85,12 @@ history can be erased by hand.
   (`:20-21`) matches the word "verdict" and none of APPROVE, APPROVE_WITH_CONDITIONS, REJECT or DEFER, so a
   DEFER answer scores 1.0 against an expected APPROVE. `iNFT.md:169`, which says no verdict-word scorer exists,
   is stale.
+
+- [ ] **Carriers.** The office pins no model, and the first measured carriers disagree: Bonsai-8B (1-bit, local CPU) is
+      REJECT for review duty (never DEFERs, approved a false claim), and gpt-oss-120b is APPROVE_WITH_CONDITIONS
+      (sagi `engine/CARRIER_TEST.md`, 2026-09-26). The boardroom seat runs on the second. *Deciding experiment:*
+      the probe set with a like-for-like trap, run on each new carrier before its APPROVE may gate anything, and
+      once on a small carrier fine-tuned on this charter's verdicts.
 
 ## 4. Road to 1.0 — remaining steps
 
