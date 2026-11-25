@@ -36,6 +36,35 @@
 <main>
   <section data-room="ask" class="console">
     <div class="screen">
+      <div class="modelbar" aria-label="the model">
+        <button id="power" class="power" type="button" role="switch" aria-checked="true" title="turn the model on or off">
+          <span class="knob" aria-hidden="true"></span><span id="powerlabel">ON</span></button>
+        <span id="powerstate" class="pstate" aria-live="polite">…</span>
+      </div>
+        <div class="bar">
+          <label class="chooser">model
+            <select id="modelpick">
+              <optgroup label="this machine · localhost — nothing leaves it" id="grplocal" hidden>
+                <option value="local:bonsai-8b" id="optlocal">Bonsai-8B 1-bit · this machine</option>
+              </optgroup>
+              <optgroup label="sAGI · Savante on Bonsai — free, no sign-in">
+                <option value="space:ternary-bonsai-8b">Ternary-Bonsai-8B 1.58-bit · free public CPU · not carrier-tested (~20 s warm)</option>
+                <option value="space:bonsai-8b">Bonsai-8B 1-bit · free public CPU · carrier test: REJECT (~5 s warm)</option>
+              </optgroup>
+              <optgroup label="Hugging Face Inference — sign in, your quota">
+                <option value="hf:Qwen/Qwen3-8B">Qwen/Qwen3-8B</option>
+                <option value="hf:openai/gpt-oss-120b">openai/gpt-oss-120b — carrier-tested: approve with conditions</option>
+                <option value="hf:custom">another Hub model id…</option>
+              </optgroup>
+            </select></label>
+          <label id="customwrap" class="chooser" hidden>Hub model id<input id="model" spellcheck="false" placeholder="owner/name"></label>
+          <div id="authrow" class="auth">
+            <button id="signin" class="primary">Sign in with Hugging Face</button>
+            <button id="signout" hidden>Sign out</button>
+            <span id="who" class="muted">not signed in</span>
+          </div>
+        </div>
+        <p id="carriernote" class="note"></p>
       <div id="counter" class="counter" aria-live="polite">
         <span><i>session</i> <b id="c_in">0</b> in · <b id="c_out">0</b> out · <b id="c_turns">0</b> turns</span>
         <span id="c_iter" title="the live improve.skill loop: every measured sAGI answer on Bonsai is one iteration; 1000 is 1.0.0">improve.skill …</span>
@@ -60,31 +89,7 @@
     <p class="muted">Everything that shapes an answer. <b>Ask Savante</b> uses these as they are set here.</p>
     <h3 class="histhead">the last answer</h3>
     <p id="lastanswer" class="note">no answer yet — how an answer was delivered (the tokens the engine counted, the timings, the footer) is shown here, not in the conversation</p>
-    <h3 class="histhead">model</h3>
-    <div class="bar">
-      <label class="chooser">model
-        <select id="modelpick">
-          <optgroup label="this machine · localhost — nothing leaves it" id="grplocal" hidden>
-            <option value="local:bonsai-8b" id="optlocal">Bonsai-8B 1-bit · this machine</option>
-          </optgroup>
-          <optgroup label="sAGI · Savante on Bonsai — free, no sign-in">
-            <option value="space:ternary-bonsai-8b">Ternary-Bonsai-8B 1.58-bit · free public CPU · not carrier-tested (~20 s warm)</option>
-            <option value="space:bonsai-8b">Bonsai-8B 1-bit · free public CPU · carrier test: REJECT (~5 s warm)</option>
-          </optgroup>
-          <optgroup label="Hugging Face Inference — sign in, your quota">
-            <option value="hf:Qwen/Qwen3-8B">Qwen/Qwen3-8B</option>
-            <option value="hf:openai/gpt-oss-120b">openai/gpt-oss-120b — carrier-tested: approve with conditions</option>
-            <option value="hf:custom">another Hub model id…</option>
-          </optgroup>
-        </select></label>
-      <label id="customwrap" class="chooser" hidden>Hub model id<input id="model" spellcheck="false" placeholder="owner/name"></label>
-      <div id="authrow" class="auth">
-        <button id="signin" class="primary">Sign in with Hugging Face</button>
-        <button id="signout" hidden>Sign out</button>
-        <span id="who" class="muted">not signed in</span>
-      </div>
-    </div>
-    <p id="carriernote" class="note"></p>
+    <p class="muted">The model, its on/off switch and what is known about it as a reviewer are at the top of <b>Ask Savante</b>.</p>
     <div class="env" aria-label="environment">
       <span><i>model runs on</i> <b id="env_server">—</b></span>
       <span><i>your machine</i> <b id="env_client">reading…</b></span>

@@ -82,7 +82,7 @@ header.top nav button { padding: 5px 10px; font-size: .85rem; }
 .counter i { font-style: normal; text-transform: uppercase; letter-spacing: .08em; font-size: .7rem; }
 .counter .live { color: var(--green); }
 .screen .log { border: 0; background: transparent; margin: 6px 0; min-height: 38vh; max-height: 58vh; padding: 6px 4px; }
-.screen .log:empty::before { content: "Savante is listening. Pick a model above, then ask."; color: var(--text2); }
+.screen .log:empty::before { content: "Savante is listening. Choose a model above and switch it on, then ask."; color: var(--text2); }
 .msg.assistant .body + .muted { font-size: .76rem; margin-top: 4px; }
 .composer { display: flex; gap: 8px; align-items: stretch; }
 .composer textarea { flex: 1; resize: vertical; min-height: 48px; font-size: .98rem; }
@@ -156,3 +156,19 @@ tr.pick:hover td { background: rgba(88,166,255,.08); }
 td.ok { color: var(--green); } td.warn { color: var(--amber); } td.bad { color: var(--red); }
 #pyfilter { max-width: 320px; }
 td.ok, td.warn, td.bad { white-space:nowrap; }
+
+/* the model bar at the top of Ask Savante: the switch, its state, the chooser and the carrier's evidence */
+.modelbar { display:flex; align-items:center; gap:10px 14px; flex-wrap:wrap; margin: 0 0 8px; }
+.power { display:inline-flex; align-items:center; gap:8px; padding:5px 12px 5px 6px; border-radius:999px; font-weight:700;
+  letter-spacing:.08em; border:1px solid rgba(248,81,73,.55); color: var(--red); background:#1a1216; cursor:pointer; }
+.power .knob { width:30px; height:16px; border-radius:999px; background:#3a2a30; position:relative; transition: background .15s; }
+.power .knob::after { content:""; position:absolute; top:2px; left:2px; width:12px; height:12px; border-radius:50%;
+  background: var(--red); transition: left .15s, background .15s; }
+.power.on { border-color: rgba(86,211,100,.55); color: var(--green); background:#10191a; }
+.power.on .knob { background:#1d3a2a; }
+.power.on .knob::after { left:16px; background: var(--green); box-shadow: 0 0 8px var(--green); }
+.power:focus-visible { outline:2px solid var(--amber); outline-offset:2px; }
+.pstate { font-size:.85rem; color: var(--text2); flex:1 1 280px; }
+.pstate.ok { color: var(--green); } .pstate.warn { color: var(--amber); } .pstate.bad { color: var(--red); }
+.console .bar { margin-bottom: 4px; }
+.console #carriernote { margin-top: 2px; }
