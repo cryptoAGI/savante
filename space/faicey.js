@@ -306,22 +306,30 @@ function readout() {
   }
 }
 
-async function loadVoices() {
-  const sel = $("fc_voice");
-  let voices = FALLBACK_VOICES, src = "fallback list";
-  try {
-    const u = new URL($("fc_url").value.trim());
-    u.pathname = u.pathname.replace(/\/+$/, "") + "/voices";
-    const r = await fetch(u.toString(), { mode: "cors", credentials: "omit" });
-    if (r.ok) {
-      const d = await r.json();
-      if (Array.isArray(d.voices) && d.voices.length) { voices = d.voices.map(String); src = d.engine || "server"; }
-    }
-  } catch {}
+function fillVoices(voices, src) {
+  const sel = $("fc_voice"), keep = sel.value;
   sel.replaceChildren();
   const own = document.createElement("option"); own.value = ""; own.textContent = "persona's own"; sel.append(own);
   for (const v of voices) { const o = document.createElement("option"); o.value = v; o.textContent = v; sel.append(o); }
+  sel.value = voices.includes(keep) ? keep : "";
   sel.title = `voices from ${src}`;
+}
+
+// The presets the server honours. The known list is shown at once; the server's own answer replaces it if it comes
+// within 8 s (an origin voicey does not allow gets no answer, so the known list stays, labelled as such).
+async function loadVoices() {
+  fillVoices(FALLBACK_VOICES, "the last list read from GET /voicey/voices (2026-11-25)");
+  try {
+    const u = new URL($("fc_url").value.trim());
+    u.pathname = u.pathname.replace(/\/+$/, "") + "/voices";
+    const ac = new AbortController();
+    const t = setTimeout(() => ac.abort(), 8000);
+    const r = await fetch(u.toString(), { mode: "cors", credentials: "omit", signal: ac.signal }).finally(() => clearTimeout(t));
+    if (r.ok) {
+      const d = await r.json();
+      if (Array.isArray(d.voices) && d.voices.length) fillVoices(d.voices.map(String), `the server (${d.engine || "voicey"})`);
+    }
+  } catch {}
 }
 
 // ── room lifecycle ────────────────────────────────────────────────────────────
