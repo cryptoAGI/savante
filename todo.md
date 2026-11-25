@@ -30,8 +30,10 @@ Open from this generation, each with what decides it:
       `https://pythai-savante.static.hf.space`, `https://gregory-l-savante.static.hf.space` nor `http://127.0.0.1:7864`,
       and the server sends no `Access-Control-Expose-Headers: X-Voaice-Backend`. Until both change, the Faicey mouth reads
       the microphone or the browser voice's envelope, never voaicey samples. A request for `persona=savante` also
-      returned 502 on 2026-11-25. **Decided by:** the operator adding the origins on that host, after which Speak on the
-      Space shows "voaicey · samples" in the readout.
+      returned 502 on 2026-11-25. The code is prepared but not deployed: mindX `0ebe782cf` adds these origins to the
+      server's default list and exposes the headers to them. **Decided by:** the operator deploying it on that host, and
+      checking that the host's environment doesn't override `VOAICE_VOICEY_ORIGINS`. After that, Speak on the Space
+      shows "voaicey · samples" in the readout.
 - [x] **The interactive edition was not in canon.** Gregory-L/Savante's page was uploaded straight to the Space on
       2026-10-09, and no copy existed anywhere else. Its served page sources are now `space/interactive/`, layered over
       the shared modules, and they carry the Faicey and PYTHAI rooms. Its build bundles (`uif-space.*`,
