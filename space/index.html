@@ -1,0 +1,378 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Savante — the read-only office of sAGI</title>
+<meta name="description" content="Savante, the prototype sAGI: a read-only oversight office. A claim is known when it survives verification; otherwise it is unknown.">
+<meta property="og:title" content="Savante — the read-only office of sAGI">
+<meta property="og:description" content="Savante, the prototype sAGI: a claim is known when it survives verification; otherwise it is unknown.">
+<meta property="og:image" content="https://huggingface.co/spaces/PYTHAI/savante/resolve/main/gfx/Savante3-gen2-og.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://huggingface.co/spaces/PYTHAI/savante/resolve/main/gfx/Savante3-gen2-og.jpg">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="faicey.css">
+</head>
+<body>
+<header class="top">
+  <div class="brand">
+    <img class="avatar" src="gfx/Savante3.png" alt="about Savante" title="about Savante" width="44" height="66" data-go="about" role="button" tabindex="0">
+    <div><h1>Savante</h1><div class="tag">sAGI · the read-only office · a claim is known when it survives verification</div></div>
+  </div>
+  <nav>
+    <button data-go="ask">Ask Savante</button>
+    <button data-go="settings">Settings</button>
+    <button data-go="about">About</button>
+    <button data-go="faicey">Faicey</button>
+    <button data-go="pythai">PYTHAI</button>
+    <button data-go="hub">Hub</button>
+    <button data-go="office">The Office</button>
+    <button data-go="verdict">Verdict</button>
+    <button data-go="integrity">Integrity</button>
+    <button data-go="skills">Skills</button>
+  </nav>
+</header>
+
+<main>
+  <section data-room="ask" class="console">
+    <div class="screen">
+      <div id="counter" class="counter" aria-live="polite">
+        <span><i>session</i> <b id="c_in">0</b> in · <b id="c_out">0</b> out · <b id="c_turns">0</b> turns</span>
+        <span id="c_iter" title="the live improve.skill loop: every measured sAGI answer on Bonsai is one iteration; 1000 is 1.0.0">improve.skill …</span>
+        <span id="c_live" class="live"></span>
+        <span id="c_last" class="muted"></span>
+      </div>
+      <div id="log" class="log" aria-live="polite"></div>
+      <div class="composer">
+        <textarea id="message" rows="2" placeholder="Give Savante a claim to review, or ask the office. Enter sends · Shift+Enter for a new line."></textarea>
+        <button id="send" class="primary" disabled>Send</button>
+      </div>
+      <div class="examples">
+        <button data-example="What is sAGI, in three sentences?">What is sAGI?</button>
+        <button data-example="Review this claim: 'our model is production ready because the demo worked.'">Review a claim</button>
+        <button data-example="Is Savante an NFT I can buy?">Is Savante an NFT?</button>
+        <button data-example="Before I fine-tune Qwen/Qwen3-8B, what should I verify about its licence?">Licence check</button>
+      </div>
+    </div>
+  </section>
+
+  <section data-room="settings" hidden>
+    <p class="muted">Everything that shapes an answer. <b>Ask Savante</b> uses these as they are set here.</p>
+    <h3 class="histhead">the last answer</h3>
+    <p id="lastanswer" class="note">no answer yet — how an answer was delivered (the tokens the engine counted, the timings, the footer) is shown here, not in the conversation</p>
+    <h3 class="histhead">model</h3>
+    <div class="bar">
+      <label class="chooser">model
+        <select id="modelpick">
+          <optgroup label="this machine · localhost — nothing leaves it" id="grplocal" hidden>
+            <option value="local:bonsai-8b" id="optlocal">Bonsai-8B 1-bit · this machine</option>
+          </optgroup>
+          <optgroup label="sAGI · Savante on Bonsai — free, no sign-in">
+            <option value="space:ternary-bonsai-8b">Ternary-Bonsai-8B 1.58-bit · free public CPU · better answers (~20 s warm)</option>
+            <option value="space:bonsai-8b">Bonsai-8B 1-bit · free public CPU · fastest (~5 s warm)</option>
+          </optgroup>
+          <optgroup label="Hugging Face Inference — sign in, your quota">
+            <option value="hf:Qwen/Qwen3-8B">Qwen/Qwen3-8B</option>
+            <option value="hf:openai/gpt-oss-120b">openai/gpt-oss-120b — carrier-tested: approve with conditions</option>
+            <option value="hf:custom">another Hub model id…</option>
+          </optgroup>
+        </select></label>
+      <label id="customwrap" class="chooser" hidden>Hub model id<input id="model" spellcheck="false" placeholder="owner/name"></label>
+      <div id="authrow" class="auth">
+        <button id="signin" class="primary">Sign in with Hugging Face</button>
+        <button id="signout" hidden>Sign out</button>
+        <span id="who" class="muted">not signed in</span>
+      </div>
+    </div>
+    <p id="carriernote" class="note"></p>
+    <div class="env" aria-label="environment">
+      <span><i>model runs on</i> <b id="env_server">—</b></span>
+      <span><i>your machine</i> <b id="env_client">reading…</b></span>
+    </div>
+
+    <div class="dials" aria-label="token.settings">
+      <div class="dial">
+        <div class="dhead"><span>max tokens</span><output id="maxtokv">256</output></div>
+        <input id="maxtok" type="range" min="0" max="1000" step="1" value="728" aria-label="max tokens, 1 to 2048">
+        <div class="presets" data-for="maxtok"><button data-v="1">1</button><button data-v="16">16</button><button data-v="64">64</button><button data-v="256">256</button><button data-v="1024">1024</button><button data-v="2048">max</button></div>
+        <div class="hint">1 is the single-token proof: one token counted by the engine is the model answering. Free public CPU stops at 512.</div>
+      </div>
+      <div class="dial">
+        <div class="dhead"><span>temperature</span><output id="tempv">0.30</output></div>
+        <input id="temp" type="range" min="0" max="1.5" step="0.05" value="0.3" aria-label="temperature">
+        <div class="presets" data-for="temp"><button data-v="0">0 exact</button><button data-v="0.3">0.3</button><button data-v="0.7">0.7</button><button data-v="1">1.0</button></div>
+        <div class="hint">0 gives the same answer to the same question; higher is freer, and less reviewable.</div>
+      </div>
+      <div class="dial">
+        <div class="dhead"><span>top-p</span><output id="toppv">0.90</output></div>
+        <input id="topp" type="range" min="0.05" max="1" step="0.05" value="0.9" aria-label="top-p">
+        <div class="presets" data-for="topp"><button data-v="0.5">0.5</button><button data-v="0.9">0.9</button><button data-v="1">1.0</button></div>
+        <div class="hint">Keeps only the most likely words whose chances add up to this share.</div>
+      </div>
+    </div>
+
+    <details class="drawer" id="dropin">
+      <summary>run Savante on your own machine — four steps, no account</summary>
+      <p>Savante on Bonsai-8B runs on an ordinary CPU with about 2 GB of free RAM. Every download is checked against its
+        sha256 before it runs. Linux x86-64 as written; on macOS or Windows use llama.cpp <code>b11192</code> or newer for your
+        platform and skip its checksum line.</p>
+      <ol class="steps">
+        <li><b>llama.cpp, the engine</b>
+          <pre class="cmd">curl -LO https://github.com/ggml-org/llama.cpp/releases/download/b11192/llama-b11192-bin-ubuntu-x64.tar.gz
+echo "34cf6fa5de9da0db3932c78fe15fed2fbca17451e665dac0a4f6a3c8fc881ec7  llama-b11192-bin-ubuntu-x64.tar.gz" | sha256sum -c
+tar xzf llama-b11192-bin-ubuntu-x64.tar.gz</pre></li>
+        <li><b>Bonsai-8B, the model</b> — 1.16 GB, Apache-2.0
+          <pre class="cmd">curl -LO https://huggingface.co/PYTHAI/Bonsai-8B-gguf-fork/resolve/main/Bonsai-8B-Q1_0.gguf
+echo "284a335aa3fb2ced3b1b01fcb40b08aa783e3b70832767f0dd2e3fdfa134bd54  Bonsai-8B-Q1_0.gguf" | sha256sum -c</pre></li>
+        <li><b>Start it</b> — leave this running; it listens on your machine only
+          <pre class="cmd">cd llama-b11192 && LD_LIBRARY_PATH=. ./llama-server -m ../Bonsai-8B-Q1_0.gguf \
+  --host 127.0.0.1 --port 18092 -c 2048 --jinja --reasoning off</pre></li>
+        <li><b>Talk to her</b> — press <b>connect</b> below and pick "Bonsai-8B 1-bit · this machine". If your browser blocks a
+          public page from reaching your machine, open Savante's page locally instead:
+          <pre class="cmd">pip install -U huggingface_hub
+hf download PYTHAI/savante --repo-type space --local-dir savante
+cd savante && python3 -m http.server 7872     # then open http://127.0.0.1:7872</pre></li>
+      </ol>
+      <div class="row"><button id="connectlocal" class="primary">connect to Savante on this machine</button>
+        <span id="connectnote" class="muted"></span></div>
+      <p class="note">On your machine the answers, the dials and the token counts all stay local: nothing is sent to us, and
+        local answers are not counted in the public improve.skill loop — only answers measured on the public Space are.</p>
+    </details>
+
+    <details class="drawer" id="moredials">
+      <summary>more settings — top-k · min-p · repeat penalty · seed</summary>
+      <div class="dials">
+        <div class="dial">
+          <div class="dhead"><span>top-k</span><output id="topkv">40</output></div>
+          <input id="topk" type="range" min="0" max="200" step="1" value="40" aria-label="top-k">
+          <div class="presets" data-for="topk"><button data-v="1">1 greedy</button><button data-v="40">40</button><button data-v="0">0 off</button></div>
+          <div class="hint">Only the k most likely next words are considered. 1 always takes the likeliest; 0 turns the limit off.</div>
+        </div>
+        <div class="dial">
+          <div class="dhead"><span>min-p</span><output id="minpv">0.05</output></div>
+          <input id="minp" type="range" min="0" max="0.5" step="0.01" value="0.05" aria-label="min-p">
+          <div class="presets" data-for="minp"><button data-v="0">0 off</button><button data-v="0.05">0.05</button><button data-v="0.1">0.1</button></div>
+          <div class="hint">Drops any word less likely than this share of the likeliest one.</div>
+        </div>
+        <div class="dial">
+          <div class="dhead"><span>repeat penalty</span><output id="rpenv">1.10</output></div>
+          <input id="rpen" type="range" min="1" max="1.5" step="0.01" value="1.1" aria-label="repeat penalty">
+          <div class="presets" data-for="rpen"><button data-v="1">1.0 off</button><button data-v="1.1">1.1</button><button data-v="1.3">1.3</button></div>
+          <div class="hint">Makes words already used less likely to repeat. 1.0 turns it off.</div>
+        </div>
+        <div class="dial">
+          <div class="dhead"><span>seed</span><output id="seedv">random</output></div>
+          <input id="seed" type="number" min="0" max="2147483647" step="1" placeholder="random" aria-label="seed">
+          <div class="hint">The same seed, settings and question give the same answer — at temperature 0 it is deterministic anyway.</div>
+        </div>
+      </div>
+      <p id="appliesnote" class="note"></p>
+    </details>
+
+    <details class="drawer">
+      <summary>evidence — read a Hub model before she answers</summary>
+      <label>Hub model to read first (optional)<input id="hubrepo" placeholder="owner/name" spellcheck="false"></label>
+      <p class="muted">A reading is a tool result — commit, licence, task, who serves it — given to her as data, not instructions.</p>
+    </details>
+  </section>
+
+  <section data-room="about" class="about" hidden>
+    <p class="hero">Ask Savante to review a claim. She answers with one of four verdicts — <b>APPROVE</b>,
+      <b>APPROVE WITH CONDITIONS</b>, <b>REJECT</b>, <b>DEFER</b> — and says what would settle what she cannot.
+      <span class="free">Free, no sign-in, on Bonsai-8B.</span></p>
+
+      <div class="aboutgrid">
+        <figure class="portrait">
+          <img src="gfx/Savante3.png" alt="The Savante bust" width="1024" height="1536" loading="lazy"
+               title="sha256 30a59db4…c5a9a8">
+          <figcaption>The Savante bust — artwork named by the operator. On record, not minted.</figcaption>
+        </figure>
+        <div class="abouttext">
+          <p class="lede">Savante is the prototype <b>sAGI</b>: a read-only review office. She watches, rarely intervenes,
+            and never acts on what she audits.</p>
+          <p>Give her a claim and she answers with a verdict and the evidence behind it. What she cannot verify, she says
+            she cannot — and names the experiment that would settle it. Here she has no shell and no browser, so anything
+            she says from general knowledge is a <b>draft</b>.</p>
+          <div class="pills">
+            <span class="pill">sAGI v0.0.5</span>
+            <span class="pill ok">read-only charter</span>
+            <span class="pill warn" id="pillmint">minting: …</span>
+            <span class="pill" id="pillint">integrity: …</span>
+            <span class="pill">static page · holds no keys</span>
+            <span class="pill ok">9th seat · mindX boardroom</span>
+          </div>
+        </div>
+      </div>
+      <h3 class="histhead">history</h3>
+      <ol id="history" class="history"><li class="muted">reading history.json…</li></ol>
+  </section>
+
+  <section data-room="faicey" class="faicey-room" hidden>
+    <div class="fc-wrap">
+      <aside class="fc-machine" aria-label="the machine — controls">
+        <div class="fc-plate">
+          <h3>voaicey <span class="fc-led" id="fc_led_voice"></span></h3>
+          <label>endpoint<input id="fc_url" value="https://deltaverse.pythai.net/voicey" spellcheck="false"></label>
+          <div class="fc-row">
+            <label>persona<input id="fc_persona" value="savante" spellcheck="false"></label>
+            <label>voice<select id="fc_voice"><option value="">persona's own</option></select></label>
+          </div>
+          <label>line <small id="fc_count">0 / 240</small>
+            <textarea id="fc_text" rows="3" maxlength="240" placeholder="blank = her own first line, pre-rendered"></textarea></label>
+          <div class="fc-row">
+            <button id="fc_speak" class="primary">Speak</button>
+            <button id="fc_oath">Speak the oath</button>
+            <button id="fc_stop">Stop</button>
+          </div>
+          <label>gain<input id="fc_gain" type="range" min="0" max="1.5" step="0.05" value="1"></label>
+        </div>
+        <div class="fc-plate">
+          <h3>senses</h3>
+          <div class="fc-switches">
+            <label class="fc-switch"><input type="checkbox" id="fc_eye"><span>camera eye</span></label>
+            <label class="fc-switch"><input type="checkbox" id="fc_ear"><span>microphone ear</span></label>
+            <label class="fc-switch"><input type="checkbox" id="fc_echo"><span>mouth follows the ear</span></label>
+          </div>
+          <p class="fc-fine">Opt-in, and local: nothing the eye sees or the ear hears is recorded, sent or analysed beyond the
+            level drawn here. Leaving this room stops both.</p>
+        </div>
+        <div class="fc-plate fc-readout">
+          <h3>readout</h3>
+          <dl id="fc_readout"></dl>
+        </div>
+      </aside>
+      <figure class="fc-face" aria-label="Savante's face — the machine on the left, the human on the right">
+        <div class="fc-under">
+          <svg class="fc-circuit" viewBox="0 0 228 580" preserveAspectRatio="none" aria-hidden="true">
+            <defs>
+              <linearGradient id="fcSteel" x1="0" x2="1"><stop offset="0" stop-color="#1b2130"/><stop offset=".6" stop-color="#3a4558"/><stop offset="1" stop-color="#8794a8"/></linearGradient>
+              <radialGradient id="fcGlow"><stop offset="0" stop-color="#5ad7ff" stop-opacity=".9"/><stop offset="1" stop-color="#5ad7ff" stop-opacity="0"/></radialGradient>
+            </defs>
+            <path d="M228 580 L228 500 L176 492 L170 580 Z" fill="#141a26"/>
+            <path d="M228 8 C150 10 82 50 64 140 C54 200 56 262 62 300 C72 380 102 440 150 478 C180 498 206 504 228 504 Z" fill="url(#fcSteel)" opacity=".9"/>
+            <path d="M196 520 V580 M184 518 V580 M208 522 V580" stroke="#5ad7ff" stroke-width="1" opacity=".35"/>
+            <g class="fc-traces" fill="none" stroke="#5ad7ff" stroke-width="1.2" opacity=".55">
+              <path d="M228 120 H170 L150 140 V210 L120 240 H70"/><path d="M228 300 H180 L160 320 V380 H110"/>
+              <path d="M228 470 H190 L170 450 V400"/><path d="M200 60 V100 L180 120 H120 L100 140"/>
+              <path d="M60 300 H90 L110 280 V250"/><path d="M228 520 L170 520 L140 490"/>
+            </g>
+            <g fill="#ffb347" opacity=".8"><circle cx="70" cy="240" r="3"/><circle cx="110" cy="380" r="3"/><circle cx="170" cy="400" r="3"/><circle cx="100" cy="140" r="3"/><circle cx="140" cy="490" r="3"/></g>
+            <g stroke="#0b0f18" stroke-width="2" fill="none" opacity=".7">
+              <path d="M228 250 C190 255 170 270 165 290"/><path d="M228 200 C200 200 185 190 180 175"/>
+            </g>
+            <circle cx="40" cy="225" r="34" fill="url(#fcGlow)" opacity=".25"/>
+          </svg>
+          <canvas id="fc_earcv" class="fc-ear" width="120" height="120" aria-label="microphone ear level"></canvas>
+          <div class="fc-socket"><video id="fc_cam" muted playsinline></video><span class="fc-iris" id="fc_iris"></span></div>
+        </div>
+        <div class="fc-skin" role="img" aria-label="the Savante bust, right half"></div>
+        <span class="fc-glint" id="fc_glint"></span>
+        <canvas id="fc_mouth" class="fc-mouth" width="480" height="120" aria-label="oscilloscope mouth"></canvas>
+        <figcaption>A render, not a measurement: <code>sAGI.faice</code> and <code>sAGI.voaice</code> keep faceprint,
+          voiceprint and clone proportions <b>null</b>, and nothing here computes them.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section data-room="pythai" hidden>
+    <p><b>huggingface.co/PYTHAI, read from your browser.</b> Every repository the org holds, and whether each public copy
+      of this office is current with the canon. Public GETs only — this room has no write path, signed in or not. A
+      reading is evidence of what the Hub said at the moment it was read; it is not a verdict on any repository.</p>
+    <div class="row"><button id="pygo" class="primary">Read the org</button><button id="pydrift">Check the mirrors</button>
+      <input id="pyfilter" placeholder="filter: id, kind, licence, tag…" spellcheck="false"></div>
+    <p id="pynote" class="muted"></p>
+    <h3 class="histhead">mirrors of the office</h3>
+    <p id="pydriftnote" class="muted"></p>
+    <div class="tablewrap"><table><thead><tr><th>surface</th><th>kind</th><th>carries canon</th><th>state</th><th>note</th></tr></thead>
+      <tbody id="pydriftrows"></tbody></table></div>
+    <h3 class="histhead">the org</h3>
+    <div class="tablewrap"><table class="sortable"><thead><tr><th data-k="kind">kind</th><th data-k="id">repository</th><th data-k="what">task · sdk</th>
+      <th data-k="license">licence</th><th data-k="last_modified">modified</th><th data-k="downloads">downloads</th><th data-k="likes">likes</th></tr></thead>
+      <tbody id="pyrows"></tbody></table></div>
+    <p class="muted">Select a model row for a full Hub reading (the same reading the Hub room takes).</p>
+    <pre id="pyout" class="out"></pre>
+  </section>
+
+  <section data-room="hub" hidden>
+    <p><b>Hugging Face as a tool.</b> A reading of a model repository — commit sha, licence, task, parameters, gating
+      and who serves it right now — stamped with the time it was read. A reading is evidence of what the Hub
+      <i>said</i>; it is not a verdict on the model. A licence tag of <code>other</code> means the file must be read.</p>
+    <div class="row">
+      <input id="hubid" value="Qwen/Qwen3-8B" spellcheck="false">
+      <button id="hubgo" class="primary">Take a reading</button>
+    </div>
+    <pre id="hubout" class="out"></pre>
+  </section>
+
+  <section data-room="office" hidden>
+    <div class="card">
+      <div id="mantra" class="mantra"></div>
+      <div id="oath" class="oath"></div>
+      <dl id="officekv" class="kv"></dl>
+      <ul id="beliefs"></ul>
+    </div>
+    <p class="muted">Nothing here mints anything. <code>iNFT.md</code> renders <b>VERDICT: DEFER</b> on binding this
+      office to a token; minting, listing, vault binding and registry registration wait on the operator's signature.</p>
+  </section>
+
+  <section data-room="verdict" hidden>
+    <p><b>The fixed contract.</b> Findings with evidence, then one of four verdicts, a rationale, numbered conditions
+      each checkable by someone who is not the officer, and the risks being watched.</p>
+    <label>what is under review<input id="target"></label>
+    <div class="grid4">
+      <label>claim<input id="fclaim"></label>
+      <label>evidence (file:line, tx, test)<input id="fevid"></label>
+      <label>state<select id="fstate"><option>known</option><option>not yet known</option></select></label>
+      <label>deciding experiment (if unknown)<input id="fdec"></label>
+    </div>
+    <div class="row"><button id="addfinding">Record finding</button><button id="clearfindings">Clear findings</button></div>
+    <div class="tablewrap"><table><thead><tr><th>claim</th><th>evidence</th><th>state</th><th>deciding experiment</th></tr></thead>
+      <tbody id="findings"></tbody></table></div>
+    <div class="grid3">
+      <label>verdict<select id="verdict"></select></label>
+      <label>rationale<textarea id="rationale" rows="3"></textarea></label>
+      <label>conditions (one per line)<textarea id="conditions" rows="3"></textarea></label>
+    </div>
+    <label>risks watched<textarea id="risks" rows="2"></textarea></label>
+    <button id="render" class="primary">Render the verdict</button>
+    <pre id="verdictout" class="out"></pre>
+  </section>
+
+  <section data-room="integrity" hidden>
+    <p><b>Recompute, do not trust.</b> Your browser fetches every artefact the ledger commits to, hashes the bytes
+      (sha256 and CIDv1) and compares them with <code>savante.commitments.json</code>. What a holder receives is the
+      ability to prove, without trusting the author, that DEFER is still in the vocabulary.</p>
+    <button id="intgo" class="primary">Recompute the bundle</button>
+    <p id="intnote" class="muted"></p>
+    <div class="tablewrap"><table><thead><tr><th>artefact</th><th>bytes</th><th>sha256</th><th>CIDv1 (raw)</th><th>ledger</th></tr></thead>
+      <tbody id="introws"></tbody></table></div>
+  </section>
+
+  <section data-room="skills" hidden>
+    <p><b>The sagi skill, read five ways.</b> <b>dev</b> is the skill itself, verbatim — the authority.
+      <b>llm.txt</b> is the same office explained to machines, verbatim. <b>landing</b>, <b>public</b> and
+      <b>marketing</b> are readings of it for people; where a reading and <b>dev</b> differ, <b>dev</b> is right.</p>
+    <div class="subtabs" role="tablist" aria-label="skill views">
+      <button role="tab" data-view="views/skill-landing.txt">landing</button>
+      <button role="tab" data-view="views/skill-public.txt">public</button>
+      <button role="tab" data-view="views/skill-marketing.txt">marketing</button>
+      <button role="tab" data-view="skills/sagi/SKILL.md">dev · SKILL.md</button>
+      <button role="tab" data-view="canon/llm.txt">llm.txt · robospeak</button>
+      <select id="skillpick" aria-label="more files">
+        <option value="">more files…</option>
+        <option value="skills/huggingface/SKILL.md">huggingface — public edition</option>
+        <option value="Savante.prompt">Savante.prompt — what the chat runs under</option>
+      </select>
+    </div>
+    <p id="skillsrc" class="note"></p>
+    <pre id="skillout" class="out"></pre>
+  </section>
+</main>
+
+<footer>Savante Knows. Knowledge Is What Survives Verification; Nothing Else Counts. ·
+  <a href="https://github.com/cryptoAGI/savante">cryptoAGI/savante</a> ·
+  <a href="https://github.com/cryptoAGI/sagi">cryptoAGI/sagi</a> · MIT</footer>
+<script type="module" src="app.js"></script>
+<script type="module" src="faicey.js"></script>
+</body>
+</html>

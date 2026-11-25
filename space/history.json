@@ -1,0 +1,70 @@
+{
+ "source": "curated from the commit history of github.com/cryptoAGI/savante and cryptoAGI/sagi; every entry has a date the log records",
+ "entries": [
+  {
+   "date": "2026-09-26",
+   "title": "Free and public, on Bonsai",
+   "detail": "Anyone can ask Savante without signing in: she answers on Bonsai-8B, a 1-bit 8B model, on a free public CPU, and every answer shows the token counts the engine reported."
+  },
+  {
+   "date": "2026-09-26",
+   "title": "The carrier test",
+   "detail": "Two models carried her charter. Bonsai-8B kept the verdict form but never used DEFER and approved a false claim, so it was graded REJECT for review duty; its answers here are drafts. gpt-oss-120b was graded APPROVE WITH CONDITIONS.",
+   "links": [
+    [
+     "carrier test",
+     "https://github.com/cryptoAGI/sagi/blob/main/engine/CARRIER_TEST.md"
+    ],
+    [
+     "transcripts",
+     "https://github.com/cryptoAGI/sagi/blob/main/engine/carriers/2026-09-26/TRANSCRIPTS.md"
+    ]
+   ]
+  },
+  {
+   "date": "2026-09-25",
+   "title": "A seat on the board",
+   "detail": "Savante became the 9th seat of the mindX boardroom — sAGI, beside the CEO and the seven soldiers. There, her DEFER holds a session until the operator decides."
+  },
+  {
+   "date": "2026-09-16",
+   "title": "The artwork is named",
+   "detail": "The operator named the Savante bust as her artwork. It is hashed and on record; it is not minted."
+  },
+  {
+   "date": "2026-09-16",
+   "title": "The first verdict on record",
+   "detail": "Her first recorded verdict: APPROVE WITH CONDITIONS, on a fix to the rage render queue — with conditions anyone other than the reviewer can check."
+  },
+  {
+   "date": "2026-09-13",
+   "title": "sAGI v0.0.1 and the licence",
+   "detail": "The version was stated with its road to 1.0, the office was licensed to cryptoAGI and Professor Codephreak, and the Integrity room learned to refuse a manifest it cannot verify."
+  },
+  {
+   "date": "2026-09-12",
+   "title": "The office opens",
+   "detail": "Savante's office first ran as an interface: a place to read her charter and render verdicts."
+  },
+  {
+   "date": "2026-09-03",
+   "title": "Bound to her bytes",
+   "detail": "Her ledger was first bound to the exact files it names, so what she is can be proven from the bytes without trusting the author."
+  },
+  {
+   "date": "2026-09-03",
+   "title": "Ready to be a token — and deferred",
+   "detail": "Her persona gained the token and task blocks an iNFT needs. Her own verdict on minting it: DEFER, until the operator signs."
+  },
+  {
+   "date": "2026-07-31",
+   "title": "The Chairman in mindX format",
+   "detail": "Savante was written as a mindX .persona: the Chairman, with her beliefs, desires and voice stated as data."
+  },
+  {
+   "date": "2026-07-27",
+   "title": "Savante is written",
+   "detail": "The prototype sAGI, packaged for duplication: a full document set, and Savante.md — the office in her own voice."
+  }
+ ]
+}

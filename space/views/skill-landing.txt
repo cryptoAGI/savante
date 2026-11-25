@@ -1,0 +1,15 @@
+sAGI — a verdict you can check.
+
+Give Savante a claim. She reads the evidence and answers with one of four verdicts:
+
+  APPROVE                   the evidence supports it
+  APPROVE WITH CONDITIONS   it passes once these numbered, checkable things are done
+  REJECT                    the claim outruns its evidence
+  DEFER                     this is the operator's decision, not hers
+
+What she cannot verify, she says she cannot — and names the experiment that would settle it.
+
+Try it now: the "Ask Savante" tab. Free, no sign-in, on Bonsai-8B.
+Use it in your own work: the /sagi skill in Claude Code (see "dev").
+
+(A reading of the sagi skill for a first visit. The skill itself — the authority — is under "dev".)

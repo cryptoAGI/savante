@@ -7,7 +7,7 @@ structural substrate — rarely intervenes, always watching.* Its epistemology h
 third: a claim is **known** when it survives verification against evidence, and **unknown** otherwise.
 It holds no opinions; it holds findings.
 
-So this surface is not an agent console. Seven rooms, each something the office may actually do:
+So this surface is not an agent console. Nine rooms, each something the office may actually do:
 
 - **The Office** — the charter itself, read from `savante.persona`: mantra, oath, the four verdicts,
   the tool allowlist, and the mint status, which is `not_yet_minted` and stays that way here.
@@ -26,6 +26,11 @@ So this surface is not an agent console. Seven rooms, each something the office 
   needs, what it would cost, and the ceiling and flag that stand between the plan and a charge.
 - **Kimi** — a provider configuration tab: base URL, model id, whether a key is present (never the key),
   and a live model list, because model identifiers rot and the provider's own endpoint is the authority.
+- **Faicey** — the office embodied: voaicey speaks, the mouth is an oscilloscope of the audio playing, the
+  eye is the visitor's camera and the ear their microphone; controls on the machine half, the named artwork
+  on the human half. It frames the page's own room (`space/faicey.js`, served by `space/serve.py`).
+- **PYTHAI · Hub** — huggingface.co/PYTHAI read with public GETs: every repository the org holds, and whether
+  each mirror of this office carries canon main. No write path, so no token.
 - **Voice** — the verdict read aloud through voaice: a pre-rendered line plays for free, and synthesised
   text is bounded at 240 characters rather than refused.
 
@@ -205,9 +210,13 @@ def kimi_ask(base: str, model: str, system: str, prompt: str, temperature: float
 #   docsplayer  POST /docsplayer/render {url,title,voice,formats,blocks,job,recipe?}
 #               → 202 + {job} → poll /progress?job= → /render/<key> → parts[].url
 #
-# The id list is copied from `isDocsplayerVoice`, so it is the real roster and not a guess.
-VOAICE_VOICES = ["sagi", "neural", "jaimla", "leaderofearth", "overlord", "sam", "ancient",
-                 "voicebox", "zen", "classic", "kitt", "t800", "fairydust", "translator", "mony"]
+# Two rosters, because there are two lanes. /voicey honours only the server's own presets and silently uses the
+# persona's preset for anything else — `GET /voicey/voices` on deltaverse.pythai.net listed M1–M5 and F1–F5
+# (audiocpp:supertonic) on 2026-11-25, with `savante` cast as F5. The docsplayer ids are copied from
+# `isDocsplayerVoice`. The earlier single list offered docsplayer ids to /voicey, where they did nothing.
+VOAICE_VOICES = ["M1", "M2", "M3", "M4", "M5", "F1", "F2", "F3", "F4", "F5"]
+DOCSPLAYER_VOICES = ["sagi", "neural", "jaimla", "leaderofearth", "overlord", "sam", "ancient",
+                     "voicebox", "zen", "classic", "kitt", "t800", "fairydust", "translator", "mony"]
 VOAICE_TEXT_CAP = 240
 
 
@@ -267,6 +276,101 @@ def voaice_link(endpoint: str, text: str, persona: str, voice: str) -> str:
             f"</div><p style='margin:10px 0 0'><a href='{url}' target='_blank' rel='noopener'>"
             f"open the audition →</a></p>"
             f"<p class='mx-sub' style='margin:6px 0 0;word-break:break-all'><code>{url}</code></p></div>")
+
+
+# ── PYTHAI: the org the office lives in, read from the Hub ────────────────────
+# The same reading as the page's PYTHAI room (space/savante.js orgReading / driftReading), in stdlib. Public GETs
+# only, no token sent even when one is in the environment: this room has no write path, so it needs no authority.
+HF_ORG = "PYTHAI"
+HF_MIRRORS = [("PYTHAI/SAVANTE", "model", "PYTHAI/SAVANTE"),
+              ("PYTHAI/savante", "space", "spaces/PYTHAI/savante"),
+              ("Gregory-L/Savante", "space", "spaces/Gregory-L/Savante")]
+HF_LOOP = "datasets/PYTHAI/savante-loop"
+_HF_EXPAND = {"models": ["lastModified", "likes", "tags", "sha", "downloads", "pipeline_tag", "library_name"],
+              "datasets": ["lastModified", "likes", "tags", "sha", "downloads"],
+              "spaces": ["lastModified", "likes", "tags", "sha", "sdk"]}
+
+
+def _get(url: str, timeout: float = 20.0) -> bytes:
+    req = urllib.request.Request(url, headers={"User-Agent": "savante-ui (read-only)"})
+    with urllib.request.urlopen(req, timeout=timeout) as r:   # noqa: S310 — fixed https hosts only
+        return r.read()
+
+
+def _stamp() -> str:
+    return time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+
+
+def pythai_org(author: str = HF_ORG) -> Tuple[List[List[Any]], str]:
+    """Every repository the org holds: kind, id, task/sdk, licence, modified, downloads, likes."""
+    who = (author or "").strip()
+    if not who or not all(c.isalnum() or c in "-_." for c in who):
+        return [], "<div class='sv-warn'>expected an author or organisation name</div>"
+    rows: List[List[Any]] = []
+    errors: List[str] = []
+    for kind, expand in _HF_EXPAND.items():
+        url = (f"https://huggingface.co/api/{kind}?author={who}&limit=200&"
+               + "&".join(f"expand[]={e}" for e in expand))
+        try:
+            for d in json.loads(_get(url)):
+                tags = d.get("tags") or []
+                lic = next((t.split(":", 1)[1] for t in tags if t.startswith("license:")), "—")
+                rid = d.get("id", "")
+                link = f"https://huggingface.co/{'' if kind == 'models' else kind + '/'}{rid}"
+                rows.append([kind[:-1], rid, d.get("pipeline_tag") or d.get("sdk") or d.get("library_name") or "—",
+                             lic, (d.get("lastModified") or "")[:10], d.get("downloads", "—"), d.get("likes", 0), link])
+        except Exception as e:   # noqa: BLE001 — the reading names what it could not read
+            errors.append(f"{kind}: {str(e)[:120]}")
+    count = {k: sum(1 for r in rows if r[0] == k) for k in ("model", "dataset", "space")}
+    note = (f"<div class='sv-kv'><span>read</span><span>{_stamp()} · huggingface.co/{who}</span>"
+            f"<span>holds</span><span>{count['model']} models · {count['dataset']} datasets · {count['space']} Spaces</span>"
+            f"<span>standing</span><span>a reading of what the Hub listed — not a verdict on any repository</span>"
+            + (f"<span>not read</span><span>{'; '.join(errors)}</span>" if errors else "") + "</div>")
+    return rows, note
+
+
+def pythai_drift(canon_repo: str = "cryptoAGI/savante") -> Tuple[List[List[Any]], str]:
+    """Is every public copy of the office current with canon main? AGREES · BEHIND · DIFFERS · unreadable."""
+    canon: Dict[str, Any] = {}
+    try:
+        c = json.loads(_get(f"https://api.github.com/repos/{canon_repo}/commits/main"))
+        canon = {"commit": c["sha"], "date": c["commit"]["committer"]["date"],
+                 "subject": c["commit"]["message"].split("\n")[0]}
+    except Exception as e:   # noqa: BLE001
+        canon = {"error": str(e)[:160]}
+    skill_sha = None
+    try:
+        skill_sha = hashlib.sha256(_get(f"https://raw.githubusercontent.com/{canon_repo}/main/.claude/skills/sagi/SKILL.md")).hexdigest()
+    except Exception:   # noqa: BLE001
+        pass
+
+    def state(commit: Optional[str]) -> str:
+        if not canon.get("commit") or not commit:
+            return "unreadable"
+        return "AGREES" if canon["commit"].startswith(commit) or commit.startswith(canon["commit"]) else "BEHIND"
+
+    rows: List[List[Any]] = []
+    for repo, kind, path in HF_MIRRORS:
+        try:
+            m = json.loads(_get(f"https://huggingface.co/{path}/resolve/main/MIRROR.json"))
+            carries = (m.get("canon") or {}).get("commit")
+            rows.append([repo, kind, (carries or "—")[:7], state(carries), m.get("proof", "")])
+        except Exception as e:   # noqa: BLE001
+            rows.append([repo, kind, "—", "unreadable", str(e)[:120]])
+    try:
+        p = json.loads(_get(f"https://huggingface.co/{HF_LOOP}/resolve/main/publication.json"))
+        sk = p.get("skill") or {}
+        st = state(sk.get("canon_commit")) if not (skill_sha and sk.get("sha256")) else (
+            "AGREES" if skill_sha == sk["sha256"] else "DIFFERS")
+        rows.append(["PYTHAI/savante-loop", "dataset", (sk.get("canon_commit") or "—")[:7], st,
+                     f"improve.skill {p.get('improve_skill_version')} · iteration {p.get('iteration')} of {p.get('road')}"])
+    except Exception as e:   # noqa: BLE001
+        rows.append(["PYTHAI/savante-loop", "dataset", "—", "unreadable", str(e)[:120]])
+    head = (f"{canon['commit'][:7]} ({canon['date']}) — {canon['subject']}" if canon.get("commit")
+            else f"unreadable: {canon.get('error')}")
+    note = (f"<div class='sv-kv'><span>canon main</span><span>{head}</span><span>read</span><span>{_stamp()}</span>"
+            f"<span>standing</span><span>a mirror BEHIND is a fact to fix, not a verdict</span></div>")
+    return rows, note
 
 
 # ── the office ────────────────────────────────────────────────────────────────
@@ -786,6 +890,50 @@ def build(public: bool = False, extra_rooms=None):
                     k_refresh.click(lambda: (kimi_status(), status_pills()), None, [k_note, pill_row])
                     k_ask.click(kimi_ask, [k_base, k_model, k_sys, k_prompt, k_temp, k_max], [k_out, k_meta])
 
+            with gr.Tab("Faicey · embodied"):
+                gr.Markdown("**The office, embodied.** voaicey speaks; the **mouth is an oscilloscope** of the audio "
+                            "actually playing; the **eye is your camera**; the **ear is your microphone**. The controls "
+                            "sit on the left, which is the machine with the skin taken off; the right is the human half of "
+                            "the named artwork. It is the page's own room (`space/faicey.js`), so the two editions share "
+                            "one implementation rather than keep two.\n\n"
+                            "Serve the page with `python3 space/serve.py` (it binds 127.0.0.1:7864, a secure context, "
+                            "which the camera and microphone require), then use it below or open it full size. "
+                            "**A render, not a measurement:** faceprint and voiceprint stay null, and nothing here "
+                            "computes them. Nothing the eye sees or the ear hears leaves the browser.")
+                fc_url = gr.Textbox(value="http://127.0.0.1:7864/#faicey", label="page (served by space/serve.py)")
+                fc_frame = gr.HTML("")
+
+                def _faicey_frame(u: str) -> str:
+                    u = (u or "").strip()
+                    if not (u.startswith("http://127.0.0.1:") or u.startswith("http://localhost:") or u.startswith("https://")):
+                        return "<div class='sv-warn'>the camera and microphone need a secure context: https, or localhost</div>"
+                    from html import escape
+                    e = escape(u, quote=True)
+                    return (f"<p><a href='{e}' target='_blank' rel='noopener'>open full size →</a></p>"
+                            f"<iframe src='{e}' allow='camera; microphone; autoplay' "
+                            "style='width:100%;height:900px;border:1px solid rgba(120,140,200,.18);border-radius:12px;"
+                            "background:#0a0a12'></iframe>")
+
+                gr.Button("show the face").click(_faicey_frame, [fc_url], [fc_frame])
+
+            with gr.Tab("PYTHAI · Hub"):
+                gr.Markdown("**huggingface.co/PYTHAI, read.** Every repository the org holds, and whether each public "
+                            "copy of this office is current with the canon. **Public GETs only** — no token is sent even "
+                            "when one is set, because this room has no write path and so needs no authority. A reading "
+                            "is evidence of what the Hub said when it was read; it is not a verdict on any repository.")
+                with gr.Row():
+                    py_org = gr.Textbox(value=HF_ORG, label="author / organisation", scale=2)
+                    py_go = gr.Button("read the org", variant="primary", scale=1)
+                    py_dr = gr.Button("check the mirrors", scale=1)
+                py_dnote = gr.HTML("")
+                py_drift = gr.Dataframe(headers=["surface", "kind", "carries canon", "state", "note"], value=[],
+                                        interactive=False, wrap=True, label="mirrors of the office")
+                py_note = gr.HTML("")
+                py_tbl = gr.Dataframe(headers=["kind", "repository", "task · sdk", "licence", "modified", "downloads",
+                                               "likes", "link"], value=[], interactive=False, wrap=True, label="the org")
+                py_go.click(lambda a: pythai_org(a)[::-1], [py_org], [py_note, py_tbl])
+                py_dr.click(lambda: pythai_drift()[::-1], None, [py_dnote, py_drift])
+
             with gr.Tab("Voice · voaice"):
                 gr.Markdown("**The verdict, read aloud.** Adapted from the rage player on "
                             "`deltaverse.pythai.net/playdocs`, which speaks a line two ways and this tab "
@@ -798,7 +946,7 @@ def build(public: bool = False, extra_rooms=None):
                             "file — which is how a long passage gets spoken at all.")
                 with gr.Row():
                     vo_url = gr.Textbox(value="https://deltaverse.pythai.net/voicey", label="voaice endpoint", scale=2)
-                    vo_voice = gr.Dropdown(choices=VOAICE_VOICES, value="sagi", allow_custom_value=True,
+                    vo_voice = gr.Dropdown(choices=[""] + VOAICE_VOICES, value="", allow_custom_value=True,
                                            label="voice", scale=1)
                     vo_persona = gr.Textbox(value="savante", label="persona", scale=1)
                 vo_text = gr.Textbox(value="", lines=3, label="line (blank = that persona's own first line, pre-rendered)")
@@ -806,9 +954,10 @@ def build(public: bool = False, extra_rooms=None):
                     vo_link = gr.Button("build the audition link", variant="primary")
                     vo_from_verdict = gr.Button("speak the verdict's first line")
                 vo_out = gr.HTML("")
-                gr.Markdown(f"*Voice ids verified from `voicey.js`:* `{'` · `'.join(VOAICE_VOICES)}`, plus "
-                            "`custom:<16 hex>` for a studio recipe composed in playdocs. `sagi` is the default "
-                            "here because it is the office's own voice. Every response names its producer in "
+                gr.Markdown(f"*Voices `/voicey` honours, read from `GET /voicey/voices` on 2026-11-25:* "
+                            f"`{'` · `'.join(VOAICE_VOICES)}`; blank is the persona's own preset (`savante` is cast as "
+                            "F5), and anything else is silently replaced by it. The docsplayer lane has its own ids "
+                            f"(`{'` · `'.join(DOCSPLAYER_VOICES)}`). Every /voicey response names its producer in "
                             "`X-Voaice-Backend`, so what you hear is attributable.\n\n"
                             "**Why a link and not a player:** this tab builds the request rather than fetching "
                             "it, because the endpoint lives on another origin and a verdict is text the office "

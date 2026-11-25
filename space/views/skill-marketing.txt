@@ -1,0 +1,21 @@
+Savante knows.
+
+Knowledge is what survives verification. Nothing else counts.
+
+  → Four verdicts. No opinions.
+  → "Not yet known" — with the test that would settle it.
+  → She reviews. She never acts on what she reviews.
+  → Every answer shows the token count the engine reported. Nothing hidden.
+  → Free to ask. No sign-in. Open source (MIT).
+
+For teams: put a review gate on a claim before it ships — production readiness, a contract suite,
+a deployment, a number in a deck. The verdict is a fixed format a machine can read and a person
+can check.
+
+What we will not tell you: that she is always right. The model under her matters, and we measure
+it — the free model here was graded REJECT for review duty, and we say so on the front page.
+
+Ask Savante → the "Ask Savante" tab
+Read the code → github.com/cryptoAGI/savante · github.com/cryptoAGI/sagi
+
+(Marketing copy for the sagi skill. Every line above is checkable in "dev" or in the carrier test.)

@@ -170,9 +170,17 @@
   "embodiment": {
     "voice": {
       "engine": "voaice",
+      "docspeech": "savante",
+      "label": "SAVANTE",
+      "source": "data/config/docspeech_voices.json#savante",
+      "clip": "https://deltaverse.pythai.net/audio/voices/savante.opus",
+      "clip_doc": "docs/VOICES.md",
+      "state": "measured",
       "voiceprint": null,
+      "browser_model": true,
+      "note": "Board-minute gravity, low and even. The reading voice is SAVANTE in the docspeech registry, evolved by fitness from the open voices of PYTHAI/voaice (data/config/savante_voice_pool.json); its body is an open model, so it is the one persona voice that may also be rendered client-side. voiceprint stays null until a clone from a real reference exists.",
       "emotion_default": "measured",
-      "note": "board-minute gravity; low, even, unhurried — clone via voaice /clone when embodied"
+      "note_before": "board-minute gravity; low, even, unhurried — clone via voaice /clone when embodied"
     },
     "face": {
       "engine": "faicey",
