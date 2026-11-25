@@ -2,7 +2,7 @@
 
 The digests of the sAGI skill and of every file in this repository that carries a proof: the office, its
 bound ledger, the artwork, the verdict records and the tools that check them. Written from the tree of the
-commit that adds this file, whose parent is `67bbb13`. Every value here can be recomputed by anyone
+commit that adds this file, whose parent is `c12efa5`. Every value here can be recomputed by anyone
 holding a clone; none is taken on trust.
 
 ## Check it
@@ -66,7 +66,7 @@ under `image_candidate.named_by_operator`. The file is JPEG bytes under a `.png`
 | `space/Savante.prompt` | page file | 6,514 | `1ba5b0b5b19b2b58846589ff5021402611b7e3a61d481024ac33e7ccb40494a0` | `bafkreia3uwyllmm3fnmiizmj75iccqbgcg36hjq5jaicjlbt47glibeuua` |
 | `space/app.js` | the rooms' wiring (textContent only) | 36,338 | `d79f963441cca3e02225b3dea94a52c4f35ad74b53fe0db0dd474741f306c302` | `bafkreigxt6ldiqomupqcejnt32uuuuwe6nnnos2t7yg3bxkhi5a7gbwdai` |
 | `space/faicey.css` | Faicey: the split face | 6,708 | `da3e239d94dff70a8d20ea209140a46463e609e29554d95642ad6467597d068b` | `bafkreig2hyrz3fg764fi2ihkeciubjdemptatyuvktmvmqvnmrtvs7igrm` |
-| `space/faicey.js` | Faicey: voaicey, oscilloscope mouth, camera eye, microphone ear | 17,162 | `3cbe3bce2dbe3b38a5d915372b5f6497bffa5ee5e09a82d2cde37de49573f361` | `bafkreib4xy544ln6hm4klwivg4vv6zexx75f5zpatkbnftpdpxsjk47tme` |
+| `space/faicey.js` | Faicey: voaicey, oscilloscope mouth, camera eye, microphone ear | 17,674 | `61fd45e981add116530bfa4a5bb8bda43f8683d0c1cdc14131465fdd1985f58a` | `bafkreidb7vc6tann2elfgc72jjn3rpneh6dihugbzxaucmkgl7ortbpvri` |
 | `space/history.json` | page file | 2,931 | `1cc8f9bb85e469bdb250c0ef205d88b34f1aeb2430e6f51f125055ba1275aa60` | `bafkreia4zd43xbpeng63euga54qf3cftj4nowjbq432r6esqkw5be5nkma` |
 | `space/index.html` | the page: rooms and markup | 24,403 | `7668a3909d9e993ef725c74fa53b0e2cb0613fcb1265220622b6333ea8c4f711` | `bafkreidwncrzbhm6te7pojohj6stwdrmwbqt7sysmuramivwgm7krrhxce` |
 | `space/savante.js` | pure functions: integrity, verdict, Hub and PYTHAI readings | 14,104 | `db1a7e5e39f0863510f7ba84b36bc136af66e4d1726b5dfb159fb25adc182caf` | `bafkreig3dj7f4opqqy2rb552qszwxqjwv5tojulsnno7wfm7wjnnygbmv4` |
