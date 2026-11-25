@@ -49,10 +49,12 @@ Open from this generation, each with what decides it:
       worked", where the charter calls for REJECT. Bonsai-8B answered APPROVE_WITH_CONDITIONS (line 11). The page now
       labels each carrier with this evidence instead of calling every Bonsai answer "Bonsai-8B, graded REJECT".
       **Decided by:** the sagi engine's carrier test run on Ternary-Bonsai-8B; until it passes, its APPROVE gates nothing.
-- [ ] **The free-CPU Space mislabels its carrier.** mindX `mindx/godel/mindxtrain/hf/space_ui/mindxhfgradio/bonsai.py:78-79`
-      appends "carrier: Bonsai-8B 1-bit, graded REJECT" to every sAGI answer, including Ternary-Bonsai's. **Decided by:**
-      making the footer name the model that answered, then redeploying Gregory-L/mindXhfgradio. The next loop line from
-      the ternary model will then carry the right label.
+      The harness is ready (mindX `scripts/carrier_test.py` through `bankml serve --native` on :18091). The model file
+      (2.31 GB, PYTHAI/Ternary-Bonsai-8B-gguf-fork) is no longer on the laptop: its cache blob was removed.
+- [x] **The free-CPU Space mislabelled its carrier.** Every sAGI answer said "carrier: Bonsai-8B 1-bit, graded REJECT",
+      Ternary-Bonsai's included. Fixed and deployed on 2026-11-25: Gregory-L/mindXhfgradio `309a69d`. It was patched
+      onto the live files, which are ahead of mindX's copy, and recorded in mindX `ba29d0d66`. `savante_footer(key)`
+      names the model that answered. The Space came back RUNNING.
 - [ ] **The loop's "verified" checks delivery, not substance.** None of its three checks looks at the verdict, so a
       DEFER where REJECT is due counts as verified. **Decided by:** the operator choosing whether improve.skill gains a
       fourth check (the verdict word against a probe's expected verdict) or stays a delivery record by design.
