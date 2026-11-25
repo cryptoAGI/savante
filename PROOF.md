@@ -2,7 +2,7 @@
 
 The digests of the sAGI skill and of every file in this repository that carries a proof: the office, its
 bound ledger, the artwork, the verdict records and the tools that check them. Written from the tree of the
-commit that adds this file, whose parent is `84baf04`. Every value here can be recomputed by anyone
+commit that adds this file, whose parent is `67bbb13`. Every value here can be recomputed by anyone
 holding a clone; none is taken on trust.
 
 ## Check it
@@ -64,7 +64,7 @@ under `image_candidate.named_by_operator`. The file is JPEG bytes under a `.png`
 |---|---|---:|---|---|
 | `space/README.md` | page file | 4,369 | `e6478a2fe91527cf7f470156ff933449410032924bf8b271a37fb741ba105c65` | `bafkreihgi6fc72ive7hx6rybk37zgncjieadfesl7czhdi37w5a3uec4mu` |
 | `space/Savante.prompt` | page file | 6,514 | `1ba5b0b5b19b2b58846589ff5021402611b7e3a61d481024ac33e7ccb40494a0` | `bafkreia3uwyllmm3fnmiizmj75iccqbgcg36hjq5jaicjlbt47glibeuua` |
-| `space/app.js` | the rooms' wiring (textContent only) | 36,106 | `ca0f2f5d9edd9fd00a99ac90c94756a1fa6aeaddf366b6d43eadfd5e9de75c7c` | `bafkreigkb4xv3hw5t7iavgnmsdeuovvb7jvovxptm23nipvn7vpj3z24pq` |
+| `space/app.js` | the rooms' wiring (textContent only) | 36,338 | `d79f963441cca3e02225b3dea94a52c4f35ad74b53fe0db0dd474741f306c302` | `bafkreigxt6ldiqomupqcejnt32uuuuwe6nnnos2t7yg3bxkhi5a7gbwdai` |
 | `space/faicey.css` | Faicey: the split face | 6,708 | `da3e239d94dff70a8d20ea209140a46463e609e29554d95642ad6467597d068b` | `bafkreig2hyrz3fg764fi2ihkeciubjdemptatyuvktmvmqvnmrtvs7igrm` |
 | `space/faicey.js` | Faicey: voaicey, oscilloscope mouth, camera eye, microphone ear | 17,162 | `3cbe3bce2dbe3b38a5d915372b5f6497bffa5ee5e09a82d2cde37de49573f361` | `bafkreib4xy544ln6hm4klwivg4vv6zexx75f5zpatkbnftpdpxsjk47tme` |
 | `space/history.json` | page file | 2,931 | `1cc8f9bb85e469bdb250c0ef205d88b34f1aeb2430e6f51f125055ba1275aa60` | `bafkreia4zd43xbpeng63euga54qf3cftj4nowjbq432r6esqkw5be5nkma` |
@@ -99,7 +99,7 @@ under `image_candidate.named_by_operator`. The file is JPEG bytes under a `.png`
 | `bind/verdict_record.schema.json` | verdict record schema | 6,577 | `70f191cf666e3ff5d91df600271c4f9916b98e3d1ee33ec9129ed412df522fb9` | `bafkreidq6gi46ztoh725shpwaatryt4zc24y4pi64m7mseu62qjn6urpxe` |
 | `ci/gate-runs/0001/verdict.md` | CI gate run 0001 | 7,633 | `4c980486d15e249728beff4ff2f7e29ec1c714ebe2d3cbd32b6aad1c7e61d0da` | `bafkreicmtacinuk6eslsrpx7j7zppyu6yhdrj27c2pf5gk3kvuoh4yoq3i` |
 | `ci/gate-runs/0004/verdict.md` | CI gate run 0004 (generation 8) | 6,885 | `cd7e21698b51560d108e94679aba86cf1f2b427778c806ccbd779d36f3b0ff96` | `bafkreignpyqwtc2rkygrbduum6nlvbwpd4vue53yzadmzplxtu3phmh7sy` |
-| `ci/gate-runs/0005/verdict.md` | CI gate run 0005 (generation 9) | 4,553 | `363fb7fb2df122f599a8a7f7fbaab59d0f8cf421a7fa8a431404e3274f56623a` | `bafkreibwh637wlprel2ztkfh6752vnm5b6gpiinh7kfegfae4mtu6vtchi` |
+| `ci/gate-runs/0005/verdict.md` | CI gate run 0005 (generation 10) | 4,553 | `363fb7fb2df122f599a8a7f7fbaab59d0f8cf421a7fa8a431404e3274f56623a` | `bafkreibwh637wlprel2ztkfh6752vnm5b6gpiinh7kfegfae4mtu6vtchi` |
 | `ci/gate-runs/0002/verdict.md` | CI gate run 0002 | 8,564 | `15abbccf1fff83aa76b76ebc16566a2188c1d972f43d5ab3868896a613dc8e29` | `bafkreiavvo6m6h77qovhnn3oxqlfm2rbrda5s4xuhvnlhbuis2tbhxeofe` |
 
 ## The tools that make and check the proofs
