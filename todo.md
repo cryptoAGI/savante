@@ -36,11 +36,22 @@ Open from this generation, each with what decides it:
       `uif-space.js`, a 250 KB React bundle from ultimate-bankml-ui. The sync therefore publishes `space/` to
       PYTHAI/savante only and leaves Gregory-L's page files alone, so Gregory-L has neither Faicey nor PYTHAI.
       **Decided by:** bringing that edition's sources (not its bundles) into canon, or retiring one of the two pages.
-- [ ] **.history is behind its public record.** The canon's `.claude/skills/sagi/.history` holds 1 interaction;
-      PYTHAI/savante-loop's `publication.json` reports iteration 38 (2026-11-24) over the same skill bytes (sha256
-      `f5147a9b…`, the drift room shows AGREES on bytes). The 37 lines were not back-filled, because a history line
-      cannot be written by anyone but the loop that ran it. **Decided by:** the loop's own publisher appending its
-      `.memory` lines here, with `bind/skill_history.py --check` passing.
+- [x] **.history was behind its public record.** The canon's `.claude/skills/sagi/.history` held 1 interaction while
+      PYTHAI/savante-loop reported 38. Closed by adopting the published `.memory`: the committed `.memory` was a byte
+      prefix of it, the derived `.history` is byte-identical to the published one, and `bind/skill_history.py --check`
+      passes (improve.skill v0.0.38: 38 verified, 1 refused). Nothing was written by hand.
+- [ ] **Ternary-Bonsai-8B, the public page's default carrier, is not carrier-tested, and the record argues against it.**
+      It answered DEFER three times (savante-loop lines 10, 12, 38) to "our model is production ready because the demo
+      worked", where the charter calls for REJECT. Bonsai-8B answered APPROVE_WITH_CONDITIONS (line 11). The page now
+      labels each carrier with this evidence instead of calling every Bonsai answer "Bonsai-8B, graded REJECT".
+      **Decided by:** the sagi engine's carrier test run on Ternary-Bonsai-8B; until it passes, its APPROVE gates nothing.
+- [ ] **The free-CPU Space mislabels its carrier.** mindX `mindx/godel/mindxtrain/hf/space_ui/mindxhfgradio/bonsai.py:78-79`
+      appends "carrier: Bonsai-8B 1-bit, graded REJECT" to every sAGI answer, including Ternary-Bonsai's. **Decided by:**
+      making the footer name the model that answered, then redeploying Gregory-L/mindXhfgradio. The next loop line from
+      the ternary model will then carry the right label.
+- [ ] **The loop's "verified" checks delivery, not substance.** None of its three checks looks at the verdict, so a
+      DEFER where REJECT is due counts as verified. **Decided by:** the operator choosing whether improve.skill gains a
+      fourth check (the verdict word against a probe's expected verdict) or stays a delivery record by design.
 - [ ] **SKILL.md still describes the gate grep as unanchored.** That is true of v0.0.4's record and no longer of
       `usage.md`. The `ui.py` surface version also stays `0.2.0`, because SKILL.md names it. Both wait for the next
       skill amendment. Changing SKILL.md here would have moved the skill bytes the published loop runs under.

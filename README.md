@@ -193,12 +193,27 @@ boardroom and not merely requested of the model. In the boardroom's cloud/auto m
 holds no wallet and no mint: the registry lists the seat at tier 0, "unverified", its own word for no identity.
 
 
-The skill improves itself by measurement (generation 9): **improve.skill v0.0.1**. Each interaction is written to
+The skill improves itself by measurement (generation 9): **improve.skill**, which started at v0.0.1. Each interaction is written to
 `.claude/skills/sagi/.memory` as it happened, with the engine's own token counts; `bind/skill_history.py` derives
 `.history` from it, and `SKILL.md` changes only by the improvements `.history` names. An interaction counts only if it
 was a single delivery, ended on its own inside a token limit set once, and motivated at most one change with its
 evidence. The version is the count, and 1.0.0 is 1000 verified interactions. The first one found that the skill called
 two different sentences "doctrine" without saying so; the skill now names both.
+
+**Where the loop stands (2026-11-25): improve.skill v0.0.38.** That is 38 verified interactions and 1 refused, out of
+39 lines. Thirty-eight of the lines were answered on the free public CPU lane and published in
+[PYTHAI/savante-loop](https://huggingface.co/datasets/PYTHAI/savante-loop); this canon's `.memory` now carries all
+of them. The committed record was a byte prefix of the published one, and `bind/skill_history.py` derives a
+`.history` byte-identical to the published `.history`. Only the first line motivated a change, and SKILL.md's own
+line still reads v0.0.1, because the skill changes only by an improvement `.history` names.
+
+**"Verified" checks the delivery, not the answer.** It means one delivery that ended on its own inside a token limit
+set once. Whether the answer was right is a separate question, and the record answers part of it.
+- Ternary-Bonsai-8B is the public page's default carrier, and it has not been carrier-tested. It answered **DEFER**
+  three times (lines 10, 12, 38) to "our model is production ready because the demo worked", where the charter calls
+  for REJECT.
+- Bonsai-8B answered **APPROVE_WITH_CONDITIONS** to the same claim (line 11).
+- The page now labels each carrier with this evidence.
 
 ## Provenance
 

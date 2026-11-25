@@ -88,6 +88,9 @@ THE FILES, AND WHICH ARE AUTHORED VERSUS DERIVED
     iNFT.md                  a VERDICT, not a description: whether this office may be bound to a
                              token. It reads DEFER.
     ui.py                    the office as a Gradio surface (below)
+    space/                   the office as a static web page (canon from generation 10): the rooms,
+                             Faicey (the embodied office) and PYTHAI (the org read from the Hub);
+                             space/serve.py serves it on 127.0.0.1:7864
     gfx/                     the images of Savante. gfx/Savante3.png is the ARTWORK the operator
                              named (iNFT.md condition 4, naming half): sha256 30a59db4…c5a9a8, in
                              the ledger's image_candidate. Nothing is pinned, so the card's image is
@@ -193,13 +196,21 @@ THE BOARDROOM SEAT AND THE CARRIERS (generation 8, 2026-09-26)
 
 HOW THE SKILL IMPROVES ITSELF (generation 9, 2026-09-26)
 
-  improve.skill v0.0.1. Every interaction with the sagi skill is written, as it happened and with
+  improve.skill started at v0.0.1; on 2026-11-25 it stands at v0.0.38 (38 verified of 39 lines, 1
+  refused; the canon's .memory carries the lines published in PYTHAI/savante-loop, and .history
+  derives byte-identical to the published one). Every interaction with the sagi skill is written, as it happened and with
   the engine's own token counts, to .claude/skills/sagi/.memory (append-only). bind/skill_history.py
   derives .claude/skills/sagi/.history from it, and SKILL.md changes only by improvements .history
   names. An interaction counts only if it was one delivery, its token limit was set once and the
   answer ended on its own inside it, and it motivated at most one change with its evidence. The
   version is the count: 1000 verified interactions is 1.0.0. If you are a carrier, answer once, in
   the fewest tokens that answer — the unused headroom is recorded.
+
+  "Verified" means the DELIVERY passed — one answer, ended on its own, inside a limit set once — not
+  that the answer was right. In the record, Ternary-Bonsai-8B (not carrier-tested; the public
+  page's default) answered DEFER three times to an evidence-free production-ready claim (lines 10,
+  12, 38), where the charter calls for REJECT; DEFER is for decisions needing the operator's
+  signature. Bonsai-8B answered APPROVE_WITH_CONDITIONS to it (line 11).
 
 WHAT TO DO IF YOU ARE ASKED TO HELP HERE
 
