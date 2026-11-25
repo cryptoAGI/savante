@@ -77,7 +77,7 @@ Machine consumption: the verdict line is grep-stable —
 
 ```bash
 result=$(claude -p "..." )
-echo "$result" | grep -qE '^\*{0,2}VERDICT\*{0,2}: *APPROVE' || exit 1
+echo "$result" | grep -qE '^\*{0,2}VERDICT\*{0,2}: *\*{0,2}APPROVE(_WITH_CONDITIONS)?\*{0,2} *$' || exit 1
 ```
 
 `DEFER` is reserved for decisions requiring the operator (Professor /
@@ -97,7 +97,7 @@ Claude Code session. Nothing to wire.
       against main. Print ONLY the verdict block." \
       --allowedTools "Read,Grep,Glob,Bash")
     echo "$out"
-    echo "$out" | grep -qE 'VERDICT.*: *APPROVE' # WITH_CONDITIONS also matches APPROVE_
+    echo "$out" | grep -qE '^\*{0,2}VERDICT\*{0,2}: *\*{0,2}APPROVE(_WITH_CONDITIONS)?\*{0,2} *$'   # anchored: a quoted verdict cannot pass
   env:
     ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
 ```

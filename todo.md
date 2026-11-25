@@ -1,5 +1,54 @@
 # todo — Savante, sAGI v0.0.5
 
+## 0. Generation 10 (2026-11-25): the page is canon, Faicey and PYTHAI
+
+Audit of `029642b` (generation 9) before this generation. All four Hugging Face mirrors carried `029642b` (read from each
+`MIRROR.json`). The page itself was in no canon: its source sat in mindX `mindx/savante/space_static`, marked "NOT canon",
+with three different `app.js` builds across mindX, PYTHAI/savante and Gregory-L/Savante. `savante_verify.py` could not
+run on the operator laptop (no keccak backend). Once given one (pycryptodome in a scratch venv), it returned **REJECT**:
+mindX commit `39edf0c0b` had edited `savante.persona`'s `embodiment.voice` without the canon (mirror md5 `587341ac` !=
+`a7df3f92`).
+
+Done in this generation (`4aee1b1` facet change, `56fa4bd` bind):
+- [x] The page is canon: `space/`, laid out and served by `space/serve.py`, the same mapping as the mirror sync.
+- [x] **Faicey room.** The office embodied. The controls sit on the machine half; the human half is the unplated half
+      of `gfx/Savante3.png`, mirrored. The mouth is an oscilloscope of voaicey audio, the eye is the camera and the ear is
+      the microphone. Exercised in Chrome on 127.0.0.1:7864 with a synthetic camera and microphone (a canvas stream and
+      an oscillator): the eye showed the stream, the ear rings and the mouth trace followed the tone, and leaving the
+      room stopped both tracks. Voicey refused the origin (CORS), so the browser-voice fallback and its "not measured"
+      label were exercised too.
+- [x] **PYTHAI room**, in the page and in `ui.py`. It read 18 models, 5 datasets and 6 Spaces, and all four mirrors AGREES with
+      `029642b` (2026-11-25). Public GETs only.
+- [x] `savante.persona` voice block adopted from mindX byte for byte; the doctrine root moved `0x92fe83eb…` →
+      `0xd2647b21…` (pointer `/embodiment`); `savante_verify.py`: APPROVE, conditions none.
+- [x] `ui.py`'s /voicey voice list replaced with the server's presets (`GET /voicey/voices`: M1–M5, F1–F5). The old
+      list held docsplayer ids, which /voicey silently ignored.
+- [x] `ui.py` built in both editions and launched under gradio 6.32.0. The public edition registers no executor and no Kimi call.
+
+Open from this generation, each with what decides it:
+- [ ] **Voicey does not allow the page's origins.** `VOAICE_VOICEY_ORIGINS` on the deltaverse host lists neither
+      `https://pythai-savante.static.hf.space`, `https://gregory-l-savante.static.hf.space` nor `http://127.0.0.1:7864`,
+      and the server sends no `Access-Control-Expose-Headers: X-Voaice-Backend`. Until both change, the Faicey mouth reads
+      the microphone or the browser voice's envelope, never voaicey samples. A request for `persona=savante` also
+      returned 502 on 2026-11-25. **Decided by:** the operator adding the origins on that host, after which Speak on the
+      Space shows "voaicey · samples" in the readout.
+- [ ] **The interactive edition is not in canon.** Gregory-L/Savante serves a different page: browseML wasm, plus
+      `uif-space.js`, a 250 KB React bundle from ultimate-bankml-ui. The sync therefore publishes `space/` to
+      PYTHAI/savante only and leaves Gregory-L's page files alone, so Gregory-L has neither Faicey nor PYTHAI.
+      **Decided by:** bringing that edition's sources (not its bundles) into canon, or retiring one of the two pages.
+- [ ] **.history is behind its public record.** The canon's `.claude/skills/sagi/.history` holds 1 interaction;
+      PYTHAI/savante-loop's `publication.json` reports iteration 38 (2026-11-24) over the same skill bytes (sha256
+      `f5147a9b…`, the drift room shows AGREES on bytes). The 37 lines were not back-filled, because a history line
+      cannot be written by anyone but the loop that ran it. **Decided by:** the loop's own publisher appending its
+      `.memory` lines here, with `bind/skill_history.py --check` passing.
+- [ ] **SKILL.md still describes the gate grep as unanchored.** That is true of v0.0.4's record and no longer of
+      `usage.md`. The `ui.py` surface version also stays `0.2.0`, because SKILL.md names it. Both wait for the next
+      skill amendment. Changing SKILL.md here would have moved the skill bytes the published loop runs under.
+- [ ] **`embodiment.voice.state` reads `"measured"`.** In this persona that names the register (the same word as
+      `emotion_default`), not a measurement: `voiceprint` is null and the note says so. A reader can take it otherwise.
+      **Decided by:** renaming the key in mindX and the canon together, in the same generation.
+- [ ] CI gate run 0006 was not run for this generation, because it is paid inference. It waits on the operator.
+
 Written 2026-09-17 from the audits, releases and verdict of 2026-09-16/17. Every open item names how it is
 decided: a deciding experiment someone other than the officer can run, or the operator decision it waits on.
 Nothing here is a claim of progress; ticked items cite the commit that closed them.
@@ -14,9 +63,10 @@ bytes the Space serves, reported 9 of 9 ledgered components agreeing.
 Releases since: generation 3, `3d0402c` (sAGI v0.0.2, the surface launched and parsed) · generation 4,
 `45d2114` (SKILL.md stopped saying the verdict ledger holds zero records) · generation 5, `4fd21d5`
 (sAGI v0.0.3, a second rendered verdict) · generation 6, `4372cb2` (sAGI v0.0.4, the CI-gate mode exercised; the
-first ledger to hash a committed tree) · generation 7, `e95a135` (sAGI v0.0.5, the operator named the artwork) · generation 8, `9e3453c` (sAGI v0.0.5 — no version earned: the boardroom seat, a binding of the office rather than a DEFER blocker cleared; doctrine root unchanged) · generation 9, `680b00d` (sAGI v0.0.5 — no version earned: improve.skill v0.0.1, the skill's own .memory → .history → .skill loop, 1 of 1000 verified interactions; doctrine root unchanged).
-Doctrine root unchanged throughout:
-`0x92fe83eb0fb8fb6b9cbde75ee4bbb671032a849ee25d65592b86913d0ae137d0`.
+first ledger to hash a committed tree) · generation 7, `e95a135` (sAGI v0.0.5, the operator named the artwork) · generation 8, `9e3453c` (sAGI v0.0.5 — no version earned: the boardroom seat, a binding of the office rather than a DEFER blocker cleared; doctrine root unchanged) · generation 9, `680b00d` (sAGI v0.0.5 — no version earned: improve.skill v0.0.1, the skill's own .memory → .history → .skill loop, 1 of 1000 verified interactions; doctrine root unchanged) · generation 10, `56fa4bd` (sAGI v0.0.5 — no version earned: the page is canon, Faicey and PYTHAI rooms; the persona's voice block reconciled with mindX, which moved the doctrine root).
+Doctrine root through generation 9:
+`0x92fe83eb0fb8fb6b9cbde75ee4bbb671032a849ee25d65592b86913d0ae137d0`; from generation 10 (pointer `/embodiment`):
+`0xd2647b218dbb6b9d09b43fa2a2c02f9ebda325e7166d92c0f9c6b62d9c3a32a0`.
 
 Findings from that audit:
 
@@ -26,10 +76,11 @@ Findings from that audit:
 - [x] mindX's staging copy `mindx/savante/ui_remote.py`, described as matching `main`, had fallen behind
       canon's `ui.py` — re-synced in mindX commit `5f0fb7f0c` (a private repository); canon `ui.py` and that
       copy now share md5 `b8d201c5`. Not a canon change.
-- [ ] The public page shows `head` as the commit the binder saw, which is the parent of the commit that
+- [x] The public page shows `head` as the commit the binder saw, which is the parent of the commit that
       publishes the ledger (a ledger cannot contain its own commit hash). By design, but a visitor can read
       it as the previous generation. **Decided by:** a label on the page naming it the bind-time HEAD, or a
-      sentence in `usage.md`.
+      sentence in `usage.md`. **Done in generation 10:** The Office room labels it "the bind-time HEAD this ledger
+      hashes; the commit that publishes a ledger is its child" (`space/app.js`, `office()`).
 
 ## 2. Verdict ledger, record 1 — open conditions
 
@@ -105,12 +156,15 @@ history can be erased by hand.
       APPROVE_WITH_CONDITIONS, read from the verdict line; its six conditions were worked in before publication,
       which rebuilt the unpublished branch as `30d1e8c` and `e95a135` (its `meta.txt` says how). They were checked
       with the commands it named, not by a fourth run.
-- [ ] **The documented gate grep is unanchored and can pass a REJECT.** `usage.md:97` (and the sketch in
+- [x] **The documented gate grep is unanchored and can pass a REJECT.** `usage.md:97` (and the sketch in
       `technical.md`) uses `grep -qE 'VERDICT.*APPROVE'`, which matches any line containing both words, including a
       finding that quotes an earlier verdict: run 0002 showed it exiting 0 with the verdict line changed to REJECT,
       because `ci/gate-runs/0001/verdict.md:7` quotes "VERDICT: APPROVE". A gate exit of 0 therefore says nothing
       about the verdict; both runs' verdicts above were read from the verdict line. **Decided by:** anchoring the
-      pattern to the verdict line itself and showing it exits non-zero on REJECT and DEFER.
+      pattern to the verdict line itself and showing it exits non-zero on REJECT and DEFER. **Done in generation 10:**
+      `usage.md` and `technical.md` now use `'^\*{0,2}VERDICT\*{0,2}: *\*{0,2}APPROVE(_WITH_CONDITIONS)?\*{0,2} *$'`. It
+      matches the verdict line of all five recorded runs, and exits 1 for runs 0001 and 0003 with their verdict lines
+      rewritten to REJECT and to DEFER.
 - [ ] The remaining `iNFT.md` DEFER blockers cleared one at a time (§14), among them: read the intended
       ERC-8004 registry's ABI on chain; diff `iNFT_7857.sol` against ERC-7857 function by function; run the
       imprint gate for Savante; confirm every teaching row survives `build_corpus` at a stated `persona_share`;

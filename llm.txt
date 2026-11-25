@@ -128,7 +128,7 @@ NOTHING IS MINTED, AND THAT IS LOAD-BEARING
 
 ui.py — THE SURFACE, AND WHY IT REFUSES THINGS
 
-  Seven rooms, each something the office may actually do: the Office (the charter read from the
+  Nine rooms, each something the office may actually do: the Office (the charter read from the
   persona), Evidence (verification that actually runs, under a read-only verb allowlist, refusing
   with its reason), Verdict (the five-field contract, refusing APPROVE with zero findings),
   Integrity (first refuse a savante.thot.json outside the sagi.thot_manifest/1 vocabulary, using
@@ -138,23 +138,43 @@ ui.py — THE SURFACE, AND WHY IT REFUSES THINGS
   the cost, and the ceiling and flag that stand between a plan and a charge), Kimi (Moonshot
   provider configuration; the key is never printed and the provider's list endpoint is the
   authority, because model identifiers rot), and Voice (the verdict read aloud through voaice,
-  which plays a pre-rendered line for free and bounds synthesised text at 240 characters).
+  which plays a pre-rendered line for free and bounds synthesised text at 240 characters), Faicey
+  (frames the page's own embodied room, served by space/serve.py) and PYTHAI · Hub (the org read
+  with public GETs, plus the mirror drift check; no token is sent).
 
   It has no mint button. Its model answers are labelled DRAFTS, never findings. Its verification
   verbs are an allowlist and the forbidden list wins ties. Run it with SAVANTE_ROOT pointing at
   this checkout. It parses: `python3 -c "import ast;ast.parse(open('ui.py').read())"` and
   `python3 -m py_compile ui.py` both pass under Python 3.10.12 (checked 2026-09-14), and its
-  manifest_check was exercised on scratch manifests. NOT YET VERIFIED: it has never been launched,
-  so launch it before serving it.
+  manifest_check was exercised on scratch manifests. On 2026-11-25 it was built in both editions and
+  launched under gradio 6.32.0 (127.0.0.1:7863 served the page, and its API listed 14 endpoints). The
+  public edition registers no executor and no Kimi call.
 
-THE PUBLIC OFFICE
+THE PUBLIC OFFICE (generation 10: the page is canon)
 
-  huggingface.co/spaces/Gregory-L/Savante serves this canon as a static page: no server, no compute
-  of its own, no host key, and no mint button. Ask Savante spends the VISITOR's Hugging Face
-  inference quota, never the owner's. The page's own integrity() hashes the bytes it serves against
-  savante.commitments.json; on 2026-09-17, over generation 7, it reported 9 agreeing and 0
-  disagreeing. That binds files to a ledger. It does not prove who wrote them, and a model's answer
-  on that page is a DRAFT, never a finding.
+  The office's web page is canon now, in space/. It is served as a static page at
+  huggingface.co/spaces/PYTHAI/savante and huggingface.co/spaces/Gregory-L/Savante: no server, no
+  compute of its own, no host key, and no mint button. The canon and the sAGI engine are mirrored
+  to huggingface.co/PYTHAI/SAVANTE, and the skill's improvement loop is published at
+  huggingface.co/datasets/PYTHAI/savante-loop. Each mirror names the canon commit it carries in
+  its MIRROR.json. Ask Savante spends the VISITOR's Hugging Face inference quota, never the
+  owner's. The page's own integrity() hashes the bytes it serves against
+  savante.commitments.json. That binds files to a ledger; it does not prove who wrote them. A
+  model's answer on that page is a DRAFT, never a finding.
+
+  Two rooms are new in generation 10, and ui.py carries both as tabs:
+  - FAICEY, the office embodied. The left half is the machine with the skin off, and the
+    controls sit on it. The right half is the human half of the named artwork, mirrored for
+    display. The mouth is an oscilloscope of the audio actually playing (voaicey /voicey,
+    persona savante, at most 240 characters, the server's own presets). When voicey refuses the
+    page's origin, the browser voice speaks instead and the mouth draws an envelope labelled
+    "not measured". The eye is the visitor's camera and the ear is the visitor's microphone; both
+    are opt-in, stay in the browser, and stop when the visitor leaves the room. It is a render,
+    not a measurement: faceprint and voiceprint stay null.
+  - PYTHAI, huggingface.co/PYTHAI read with public GETs. It lists every repository the org holds,
+    and reports whether each mirror carries canon main (read live from GitHub): AGREES, BEHIND,
+    DIFFERS, or unreadable. It has no write path.
+  Serve the page locally with `python3 space/serve.py`.
 
 THE BOARDROOM SEAT AND THE CARRIERS (generation 8, 2026-09-26)
 

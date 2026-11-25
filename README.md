@@ -4,11 +4,15 @@
 
 **The prototype sAGI — an objective-truth review agent for Claude Code.**
 
-**The public office:** [huggingface.co/spaces/Gregory-L/Savante](https://huggingface.co/spaces/Gregory-L/Savante)
-— this canon served as a static page: no server, no compute of its own and no host key. The page's own
-`integrity()` hashes the bytes it serves against `savante.commitments.json`; on 2026-09-17 it reported nine of
-nine components agreeing and none disagreeing, over generation 7. That agreement binds files to the ledger. It
-does not prove who wrote them, and nothing there mints anything.
+**The public office.** The office's page is canon now, in [`space/`](space/), served as a static page (no server,
+no compute of its own and no host key) at
+[huggingface.co/spaces/PYTHAI/savante](https://huggingface.co/spaces/PYTHAI/savante) and
+[Gregory-L/Savante](https://huggingface.co/spaces/Gregory-L/Savante), its first public page. The same canon, with the
+sAGI engine, is mirrored to the model repository [PYTHAI/SAVANTE](https://huggingface.co/PYTHAI/SAVANTE), and the
+skill's improvement loop is published as [PYTHAI/savante-loop](https://huggingface.co/datasets/PYTHAI/savante-loop).
+Each mirror says which canon commit it carries in its own `MIRROR.json`. The page's `integrity()` hashes the bytes it
+serves against `savante.commitments.json`. That agreement binds files to the ledger; it does not prove who wrote them,
+and nothing there mints anything.
 
 *The bust is Savante's artwork, named by the operator on 2026-09-16: `gfx/Savante3.png`, sha256
 `30a59db4ce76dbea8b6a97c143a74996c3c1cd317e3af21f6a18757ae8c5a9a8`, recorded in the generation-7 ledger. It is
@@ -89,6 +93,29 @@ rather than gatherable evidence — a statement about jurisdiction, not a
 failure. The fixed shape makes Savante usable as a CI merge gate; see
 [usage.md](usage.md) for the GitHub Actions recipe and
 [technical.md](technical.md) for the wiring details.
+
+## The page: Faicey, PYTHAI and the rooms
+
+`space/` is the office as a web page: plain ES modules, no build step, every string from a model, the Hub or a
+file written with `textContent`. Serve it with `python3 space/serve.py` (127.0.0.1:7864; `#faicey` and `#pythai`
+open a room directly). The Gradio surface `ui.py` carries the same two rooms as tabs.
+
+- **Faicey** is the office embodied, built into one face. The left half is the machine with the skin taken off,
+  and the **controls live on it**. The right half is the human: the unplated half of the named artwork
+  (`gfx/Savante3.png`, mirrored for display; the bytes are unchanged).
+  - The **mouth is an oscilloscope** of the audio actually playing. It reads **voaicey** (`/voicey`, persona
+    `savante`, ≤240 characters, the server's own presets) through a Web Audio analyser. Where voicey refuses the
+    page's origin, the browser voice speaks instead and the mouth draws a labelled envelope: "not measured".
+  - The **eye is the visitor's camera**, in the machine socket opposite the human eye.
+  - The **ear is the visitor's microphone**. It drives ring meters, and optionally the mouth.
+  - Both senses are opt-in and stay in the browser, and leaving the room stops them. It is a render, not a
+    measurement: faceprint and voiceprint stay null and nothing computes them.
+- **PYTHAI** reads [huggingface.co/PYTHAI](https://huggingface.co/PYTHAI) with public GETs: every model, dataset and
+  Space the org holds, sortable and filterable, with a full Hub reading on any model. It also reports whether each
+  mirror above carries canon main (AGREES · BEHIND · DIFFERS · unreadable), with canon main read live from GitHub.
+  It has no write path, signed in or not.
+- The other rooms are Ask Savante, Settings, About, Hub, The Office, Verdict, Integrity and Skills. Each mirror's
+  README describes them.
 
 ## Service modes
 

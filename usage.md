@@ -94,10 +94,15 @@ jobs:
             against the base branch. Print ONLY the verdict block." \
             --allowedTools "Read,Grep,Glob,Bash")
           echo "$out"
-          echo "$out" | grep -qE 'VERDICT.*APPROVE'   # blocks on REJECT/DEFER
+          echo "$out" | grep -qE '^\*{0,2}VERDICT\*{0,2}: *\*{0,2}APPROVE(_WITH_CONDITIONS)?\*{0,2} *$'   # blocks on REJECT/DEFER
 ```
 
-Use `grep -qE 'VERDICT.*: *APPROVE$'` to also block on
+The pattern is anchored to the verdict line itself — bare, `**VERDICT**: X` or
+`**VERDICT: X**`, the three forms the recorded runs use — so a finding that quotes an
+earlier verdict cannot pass the gate. The unanchored `VERDICT.*APPROVE` it replaces
+exited 0 on a REJECT whose findings quoted "VERDICT: APPROVE" (`ci/gate-runs/0002/verdict.md:52`);
+this one exits 1 on REJECT and on DEFER, checked against `ci/gate-runs/0001` and `0003` with
+their verdict lines rewritten. Use `grep -qE '^\*{0,2}VERDICT\*{0,2}: *\*{0,2}APPROVE\*{0,2} *$'` to also block on
 APPROVE_WITH_CONDITIONS. Add a step posting CONDITIONS as a PR comment if
 you want the work list surfaced.
 
