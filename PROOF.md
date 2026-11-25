@@ -2,7 +2,7 @@
 
 The digests of the sAGI skill and of every file in this repository that carries a proof: the office, its
 bound ledger, the artwork, the verdict records and the tools that check them. Written from the tree of the
-commit that adds this file, whose parent is `6411edc`. Every value here can be recomputed by anyone
+commit that adds this file, whose parent is `effe452`. Every value here can be recomputed by anyone
 holding a clone; none is taken on trust.
 
 ## Check it
@@ -64,11 +64,11 @@ under `image_candidate.named_by_operator`. The file is JPEG bytes under a `.png`
 |---|---|---:|---|---|
 | `space/README.md` | page file | 4,369 | `e6478a2fe91527cf7f470156ff933449410032924bf8b271a37fb741ba105c65` | `bafkreihgi6fc72ive7hx6rybk37zgncjieadfesl7czhdi37w5a3uec4mu` |
 | `space/Savante.prompt` | page file | 6,514 | `1ba5b0b5b19b2b58846589ff5021402611b7e3a61d481024ac33e7ccb40494a0` | `bafkreia3uwyllmm3fnmiizmj75iccqbgcg36hjq5jaicjlbt47glibeuua` |
-| `space/app.js` | the rooms' wiring (textContent only) | 34,425 | `9088ad91a4d0993863c769c2e9880217e83771513f030acd85c0d1a88d115b21` | `bafkreieqrcwzdjgqte4ghr3jyluyqaqx5a3xcuj7amfm3boa2gui2ek3ee` |
+| `space/app.js` | the rooms' wiring (textContent only) | 39,540 | `49fe72c40b88e6d6739691942a7d3ebfb876086312d5b9ace7a5b42711e31f56` | `bafkreicj7zzmic4i43lhhfursqvh2pv7xb3aqyys2w42zz5fwqtrdyy7ky` |
 | `space/faicey.css` | Faicey: the split face | 6,708 | `da3e239d94dff70a8d20ea209140a46463e609e29554d95642ad6467597d068b` | `bafkreig2hyrz3fg764fi2ihkeciubjdemptatyuvktmvmqvnmrtvs7igrm` |
 | `space/faicey.js` | Faicey: voaicey, oscilloscope mouth, camera eye, microphone ear | 17,674 | `61fd45e981add116530bfa4a5bb8bda43f8683d0c1cdc14131465fdd1985f58a` | `bafkreidb7vc6tann2elfgc72jjn3rpneh6dihugbzxaucmkgl7ortbpvri` |
 | `space/history.json` | page file | 2,931 | `1cc8f9bb85e469bdb250c0ef205d88b34f1aeb2430e6f51f125055ba1275aa60` | `bafkreia4zd43xbpeng63euga54qf3cftj4nowjbq432r6esqkw5be5nkma` |
-| `space/index.html` | the page: rooms and markup | 24,468 | `7a4689f738ebb8e83372508030263f8dd8a76a8196326e159b7b33a9a5912f92` | `bafkreid2i2e7oohlxdudg4sqqaycmp4n3ctwvamwgjxblg33gou2lejpsi` |
+| `space/index.html` | the page: rooms and markup | 25,020 | `bf2420e48dde6691125f1087e6c532b55746fbaeb3defd32f4e90135d52c565b` | `bafkreif7eqqojdo6m2irexyqq7tmkmvvk5dpxlvt336tf5hjae25klcwlm` |
 | `space/interactive/README.md` | page file | 7,380 | `64420dc910fdba5cf94f5fe304a32f1f93d477e52a231240e526dbebf68cd0ba` | `bafkreideiig4seh5xjopst274mckgly7spkhpzjkemjebzjg3pv7ndgqxi` |
 | `space/interactive/app.js` | page file | 55,271 | `42e8fb8752cb09795e8736223950cbfd2e20ada1fe79f8157cbc4bb47b7f13b9` | `bafkreicc5d5youwlbf4v5bzwei4vbs75fyqk3ip6ph4bk7f4jo2hw7ytxe` |
 | `space/interactive/browseml-thread.js` | page file | 1,747 | `8af38a67e81d02ed98f1473426ffd6c97241161d5e2766c578af0b8b906c3b53` | `bafkreiek6ofgp2a5alwzr4khgqtp7vwjojarmhk6e5tmk6fpbofza3b3km` |
@@ -81,7 +81,7 @@ under `image_candidate.named_by_operator`. The file is JPEG bytes under a `.png`
 | `space/savante.js` | pure functions: integrity, verdict, Hub and PYTHAI readings | 14,104 | `db1a7e5e39f0863510f7ba84b36bc136af66e4d1726b5dfb159fb25adc182caf` | `bafkreig3dj7f4opqqy2rb552qszwxqjwv5tojulsnno7wfm7wjnnygbmv4` |
 | `space/serve.py` | lays the Space out and serves it locally | 5,501 | `da20116cbd4027f83e934b38f48c48a13bb11b866ab1baf5b1e28dfbb8c7bc47` | `bafkreig2eaiwzpkae74d5e2lhd2iysfbhoyrxbtkwg5plmpcrx53rr54i4` |
 | `space/skills/huggingface/SKILL.md` | page file | 4,337 | `6bd22d8973b3933c603466b8b75ff1fe6d873188d710a048028d3c332b7f1da4` | `bafkreidl2iwys45tsm6gandgxc3v74p6nwdtdcgxccqeqaunhqzsw7y5uq` |
-| `space/style.css` | page file | 11,429 | `198de8a8eab4caa30071e5704a4720a45aa8bd3d2e8ae8a82a69c19cc1078bdb` | `bafkreiazrxukr2vuzkrqa4pfobfeoifelkul2pjorlukqktjygomcb4l3m` |
+| `space/style.css` | page file | 12,774 | `b4cb400e40350bde9b5b756115a1c4e233d4022ee29d3c5fb4865b15e9d3a918` | `bafkreifuznaa4qbvbppjww3vmek2drhcgpkaelxctu6f7neglmk6tu5jda` |
 | `space/views/skill-landing.txt` | page file | 725 | `86b4b2650eaa06f11838bc83a1f6bb87a7fdde22edfb666eea13f4797636aca6` | `bafkreiegwszgkdvka3yrqof4qoq7no4hu7654ixn7ntg52qt6r4xmnvmuy` |
 | `space/views/skill-marketing.txt` | page file | 975 | `4335983244ddda413bf0671cb7d46b95be19412520f5f5e8676b44f11202b731` | `bafkreicdgwmderg53jatx4dhds35i24vxymucjja6x26qz3lityreavxge` |
 | `space/views/skill-public.txt` | page file | 2,031 | `1a1cbfa4a8225e1e6c4e623005fb057566913f5e1f1ba80fbd59be376903b096` | `bafkreia2ds72jkbclypgyttcgac7wblvm2it6xq7doua7pkzxy3wsa5qsy` |
