@@ -461,12 +461,12 @@ document.querySelectorAll("table.sortable th[data-k]").forEach((th) => th.addEve
   ORG_SORT = { k: th.dataset.k, dir: ORG_SORT.k === th.dataset.k ? -ORG_SORT.dir : 1 };
   drawOrg();
 }));
+// The first time the room is shown, however it is reached (its button, #pythai, the hash changing), read it once.
 let pyRead = false;
-document.querySelector('nav button[data-go="pythai"]').addEventListener("click", () => {
-  if (pyRead) return;
-  pyRead = true;
-  readOrg().then(readDrift);
-});
+const pyRoom = document.querySelector('[data-room="pythai"]');
+const pyFirst = () => { if (pyRead || pyRoom.hidden) return; pyRead = true; readOrg().then(readDrift); };
+new MutationObserver(pyFirst).observe(pyRoom, { attributes: true, attributeFilter: ["hidden"] });
+pyFirst();
 
 // ── The Office ───────────────────────────────────────────────────────────────
 async function office() {
