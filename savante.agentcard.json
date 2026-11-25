@@ -123,8 +123,8 @@
         "/embodiment",
         "/token/intelligence/tool_allowlist"
       ],
-      "doctrine_root": "0x92fe83eb0fb8fb6b9cbde75ee4bbb671032a849ee25d65592b86913d0ae137d0",
-      "persona_sha256": "d96556b1198940c73eb7b0456c29b9cdfd9eb7f83a3a88a65f8a880b95807b7e",
+      "doctrine_root": "0xd2647b218dbb6b9d09b43fa2a2c02f9ebda325e7166d92c0f9c6b62d9c3a32a0",
+      "persona_sha256": "886dabce06fb5eb3cc061e4ade52b81aa3bb5efc645f0a815f8c0b895f74dc13",
       "charter_sha256": "2cf2d3b6a42c9438f89c6dc3bae833486e356795a997e8a0f932205d2fe18c3a",
       "skill_sha256": "f5147a9bcc978251964121f1e55b0f635ebb5883a97c2108a435f4b4b1612169",
       "note": "recompute with `python3 bind/savante_verify.py .`; the card's own CID lives only in the ledger because a document cannot carry its own digest"
