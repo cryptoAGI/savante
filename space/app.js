@@ -114,6 +114,25 @@ const CARRIER_NOTES = {
     "Public record: your question, her answer and the token counts are published in the improve.skill loop (dataset PYTHAI/savante-loop) — do not type anything private.",
   hf: "Runs at a Hugging Face Inference Provider, billed to your token — sign in first.",
 };
+// What is known about each carrier as a reviewer, from evidence anyone can read — never from how it feels to use.
+//   CARRIER_TEST.md (cryptoAGI/sagi engine) graded two carriers on 2026-09-26; the rest have not been tested.
+//   PYTHAI/savante-loop is the public record of every answer given on the free CPU lane.
+const CARRIER_TEST = "https://github.com/cryptoAGI/sagi/blob/main/engine/CARRIER_TEST.md";
+const STANDING = {
+  "bonsai-8b": `Bonsai-8B 1-bit was graded REJECT for review duty in the carrier test (${CARRIER_TEST}): it never used ` +
+    "DEFER and it approved a false claim. In the public loop it gave APPROVE_WITH_CONDITIONS to a claim with no evidence " +
+    "(PYTHAI/savante-loop, line 11). Its answers are drafts.",
+  "ternary-bonsai-8b": "Ternary-Bonsai-8B has NOT been carrier-tested. In the public loop it answered DEFER to " +
+    "\"our model is production ready because the demo worked\" (PYTHAI/savante-loop, lines 10, 12, 38), where the charter " +
+    "calls for REJECT — DEFER is reserved for decisions that need the operator's signature. Its answers are drafts.",
+  "openai/gpt-oss-120b": `gpt-oss-120b was graded APPROVE_WITH_CONDITIONS as a carrier (${CARRIER_TEST}).`,
+};
+function carrierStanding(p) {
+  const id = String(p || "").replace(/^(local|space|hf):/, "");
+  if (p && p.startsWith("local:")) return (/ternary/i.test(LOCAL.name || "") ? STANDING["ternary-bonsai-8b"] : STANDING["bonsai-8b"]);
+  return STANDING[id] || "This carrier has not been carrier-tested; its answers are drafts, never findings.";
+}
+
 // ── environment: where the model runs (server side) and what the visitor's machine offers (client side) ──
 // The browser reports cores (hardwareConcurrency), RAM rounded down to a power of two and capped at 8 GB
 // (deviceMemory, Chromium only), and the GPU through WebGL's renderer string and WebGPU's adapter. Read, never sent.
@@ -146,8 +165,8 @@ function onPick() {
   $("env_server").textContent = carrier() === "local" && LOCAL.name ? `this machine — llama-server on CPU, ${LOCAL.name}` : SERVER_ENV[carrier()];
   showApplies();
   $("customwrap").hidden = pick() !== "hf:custom";
-  $("carriernote").textContent = (carrier() === "local" && !LOCAL.up ? LOCAL_DOWN : CARRIER_NOTES[carrier()]) + (carrier() !== "hf"
-    ? " Bonsai was graded REJECT for review duty in the carrier test, so its answers are drafts." : "");
+  $("carriernote").textContent = (carrier() === "local" && !LOCAL.up ? LOCAL_DOWN : CARRIER_NOTES[carrier()]) + " " +
+    carrierStanding(pick());
   renderAuth();
 }
 $("modelpick").addEventListener("change", onPick);
@@ -231,8 +250,9 @@ function bubble(role, text) {
 const BONSAI_SPACE = "Gregory-L/mindXhfgradio";
 const BONSAI_WHERE = { "bonsai-8b": "bonsai-8b (1-bit, CPU llama.cpp)", "ternary-bonsai-8b": "ternary-bonsai-8b (CPU llama.cpp)" };
 const LOCAL_LLAMA = "http://127.0.0.1:18092";
-const SAGI_FOOTER = "— sAGI (Savante) · public office: https://huggingface.co/spaces/PYTHAI/savante · carrier: Bonsai-8B 1-bit, " +
-  "graded REJECT for review duty (https://github.com/cryptoAGI/sagi/blob/main/engine/CARRIER_TEST.md)";
+// The footer names the carrier that actually answered: the model llama-server reports, not the one this page expects.
+const sagiFooter = () => "— sAGI (Savante) · public office: https://huggingface.co/spaces/PYTHAI/savante · carrier: " +
+  (/ternary/i.test(LOCAL.name || "") ? "Ternary-Bonsai-8B, not carrier-tested" : `Bonsai-8B 1-bit, graded REJECT for review duty (${CARRIER_TEST})`);
 let SAGI_PROMPT = "";
 const FOOTER_MARK = "\n\n— sAGI (Savante)";
 const plain = (html) => new DOMParser().parseFromString(String(html || ""), "text/html").body.textContent.replace(/\s+/g, " ").trim();
@@ -313,7 +333,7 @@ async function askLocal(message, out, meta, reading) {
   const tps = timings?.predicted_per_second ? `${timings.predicted_per_second.toFixed(2)} tok/s` : "";
   meta.textContent = `delivered by the model — ${LOCAL.name || "Bonsai-8B"} on this machine: ${usage?.prompt_tokens ?? timings?.prompt_n} prompt → ` +
     `${completion} completion tokens counted by llama-server · first token ${ttft?.toFixed(2)} s · ${tps} · ` +
-    `${((performance.now() - t0) / 1000).toFixed(1)} s  ·  footer added by this page, not the model: ${SAGI_FOOTER}`;
+    `${((performance.now() - t0) / 1000).toFixed(1)} s  ·  footer added by this page, not the model: ${sagiFooter()}`;
   return raw.trim();
 }
 
