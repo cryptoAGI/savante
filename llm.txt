@@ -177,7 +177,9 @@ THE PUBLIC OFFICE (generation 10: the page is canon)
   - PYTHAI, huggingface.co/PYTHAI read with public GETs. It lists every repository the org holds,
     and reports whether each mirror carries canon main (read live from GitHub): AGREES, BEHIND,
     DIFFERS, or unreadable. It has no write path.
-  Serve the page locally with `python3 space/serve.py`.
+  The page has two editions sharing those modules: space/ (public, PYTHAI/savante) and
+  space/interactive/ (Gregory-L/Savante: the ultimate input field and browseML; its build
+  bundles are not canon). Serve with `python3 space/serve.py [--edition interactive]`.
 
 THE BOARDROOM SEAT AND THE CARRIERS (generation 8, 2026-09-26)
 

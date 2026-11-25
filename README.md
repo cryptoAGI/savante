@@ -97,8 +97,16 @@ failure. The fixed shape makes Savante usable as a CI merge gate; see
 ## The page: Faicey, PYTHAI and the rooms
 
 `space/` is the office as a web page: plain ES modules, no build step, every string from a model, the Hub or a
-file written with `textContent`. Serve it with `python3 space/serve.py` (127.0.0.1:7864; `#faicey` and `#pythai`
-open a room directly). The Gradio surface `ui.py` carries the same two rooms as tabs.
+file written with `textContent`. It comes in two editions that share their modules (`savante.js`, `faicey.js`,
+`pythai.js`):
+- The **public edition** (`space/`) is served at PYTHAI/savante.
+- The **interactive edition** (`space/interactive/`, layered over the shared files) is served at Gregory-L/Savante. It
+  adds the ultimate input field and Savante in the browser through browseML. Its build bundles (`uif-space.*` from
+  ultimate-bankml-ui, `browseml*.wasm` from bankML) are not canon and live on that Space only.
+
+Serve either edition with `python3 space/serve.py [--edition interactive --bundles DIR]` (127.0.0.1:7864; `#faicey` and
+`#pythai` open a room directly). The mirror sync publishes each edition from the same layout function. The Gradio
+surface `ui.py` carries the same two rooms as tabs.
 
 - **Faicey** is the office embodied, built into one face. The left half is the machine with the skin taken off,
   and the **controls live on it**. The right half is the human: the unplated half of the named artwork

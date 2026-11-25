@@ -32,10 +32,12 @@ Open from this generation, each with what decides it:
       the microphone or the browser voice's envelope, never voaicey samples. A request for `persona=savante` also
       returned 502 on 2026-11-25. **Decided by:** the operator adding the origins on that host, after which Speak on the
       Space shows "voaicey · samples" in the readout.
-- [ ] **The interactive edition is not in canon.** Gregory-L/Savante serves a different page: browseML wasm, plus
-      `uif-space.js`, a 250 KB React bundle from ultimate-bankml-ui. The sync therefore publishes `space/` to
-      PYTHAI/savante only and leaves Gregory-L's page files alone, so Gregory-L has neither Faicey nor PYTHAI.
-      **Decided by:** bringing that edition's sources (not its bundles) into canon, or retiring one of the two pages.
+- [x] **The interactive edition was not in canon.** Gregory-L/Savante's page was uploaded straight to the Space on
+      2026-10-09, and no copy existed anywhere else. Its served page sources are now `space/interactive/`, layered over
+      the shared modules, and they carry the Faicey and PYTHAI rooms. Its build bundles (`uif-space.*`,
+      `browseml*.wasm`) stay on the Space and are not canon. No local build matches the live `uif-space.js` (sizes and
+      md5s of every ultimate-bankml-ui `dist-space` differ), so which commit built it is not yet known. **Decided by:**
+      rebuilding `dist-space` in ultimate-bankml-ui at a commit whose output hashes to the served bundle (md5 `d135ec63`).
 - [x] **.history was behind its public record.** The canon's `.claude/skills/sagi/.history` held 1 interaction while
       PYTHAI/savante-loop reported 38. Closed by adopting the published `.memory`: the committed `.memory` was a byte
       prefix of it, the derived `.history` is byte-identical to the published one, and `bind/skill_history.py --check`
