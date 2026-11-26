@@ -2,7 +2,7 @@
 
 The digests of the sAGI skill and of every file in this repository that carries a proof: the office, its
 bound ledger, the artwork, the verdict records and the tools that check them. Written from the tree of the
-commit that adds this file, whose parent is `9024e87`. Every value here can be recomputed by anyone
+commit that adds this file, whose parent is `26da3f6`. Every value here can be recomputed by anyone
 holding a clone; none is taken on trust.
 
 ## Check it
@@ -62,21 +62,21 @@ under `image_candidate.named_by_operator`. The file is JPEG bytes under a `.png`
 
 | file | what | bytes | sha256 | CID (predicted) |
 |---|---|---:|---|---|
-| `space/README.md` | page file | 5,633 | `97dc57ff14decab453769d30742168d5c94603eebc884dc7476aa7d4ae3f6b34` | `bafkreiex3rl76fg6zk2fg5u5gb2cc2gvzfdah3v4rbg4or3ku7kk4p3lgq` |
+| `space/README.md` | page file | 5,691 | `e705449862242fe9bf50e01234af5f532eef405c27dcb9b4656e5c9886f544e1` | `bafkreihhavcjqyref7u36uhaci2k6x2tf3xuaxbh3s43izlolsmin5ke4e` |
 | `space/Savante.prompt` | page file | 6,514 | `1ba5b0b5b19b2b58846589ff5021402611b7e3a61d481024ac33e7ccb40494a0` | `bafkreia3uwyllmm3fnmiizmj75iccqbgcg36hjq5jaicjlbt47glibeuua` |
 | `space/app.js` | the rooms' wiring (textContent only) | 51,440 | `65c79c04d55e425bd07e1d4c845fa994ec701f02cd27986bf049ca83eed1c753` | `bafkreidfy6oajvk6ijn5a7q5jscf7kmu5ryb6awne6mgx4cjzkb65uohkm` |
 | `space/browseml-thread.js` | page file | 1,747 | `8af38a67e81d02ed98f1473426ffd6c97241161d5e2766c578af0b8b906c3b53` | `bafkreiek6ofgp2a5alwzr4khgqtp7vwjojarmhk6e5tmk6fpbofza3b3km` |
 | `space/browseml-wasi.js` | page file | 6,575 | `1f91566020e8255c3417086e676af8288a11908902bff027f87994406fb91cca` | `bafkreia7sflgaihievodifyinztwv6biriizbcicx7ycp6dzsrag7oi4zi` |
 | `space/browseml-worker.js` | page file | 7,222 | `39cdf331a06e87e31d8406491efc64492e21da48f83ca367ece4ddabfd56feb8` | `bafkreibzzxztdidoq7rr3bagjeppyzcjfyq5ushyhsrwp3he3wv72vx6xa` |
 | `space/browseml.js` | page file | 7,233 | `90bf5d44b1f40ea93960d0fae514cfdd94f00a764288f9052be2615623059d4a` | `bafkreieqx5oujmpub2utsygq7lsrjt65styau5scrd4qkk7cmflcgbm5ji` |
-| `space/cluster.js` | page file | 18,879 | `0b34fc33cc0d63dcaae72ff30d5662270668807dc0285fcd36f6f57add515378` | `bafkreialgt6dhtanmpokvzzp6mgvmyrhazuia7oafbp42nxw6v5n2uktpa` |
+| `space/cluster.js` | page file | 18,937 | `ebf034ca1c259e55c2e1d2dad2158542ebdf0bd33325bfa7d9e313ca134b52b8` | `bafkreihl6a2muhbftzk4fyos3ljblbkc5ppqxuztew72pwpdcpfbgs2sxa` |
 | `space/faicey.css` | Faicey: the split face | 6,708 | `da3e239d94dff70a8d20ea209140a46463e609e29554d95642ad6467597d068b` | `bafkreig2hyrz3fg764fi2ihkeciubjdemptatyuvktmvmqvnmrtvs7igrm` |
 | `space/faicey.js` | Faicey: voaicey, oscilloscope mouth, camera eye, microphone ear | 17,674 | `61fd45e981add116530bfa4a5bb8bda43f8683d0c1cdc14131465fdd1985f58a` | `bafkreidb7vc6tann2elfgc72jjn3rpneh6dihugbzxaucmkgl7ortbpvri` |
 | `space/history.json` | page file | 2,931 | `1cc8f9bb85e469bdb250c0ef205d88b34f1aeb2430e6f51f125055ba1275aa60` | `bafkreia4zd43xbpeng63euga54qf3cftj4nowjbq432r6esqkw5be5nkma` |
-| `space/index.html` | the page: rooms and markup | 28,687 | `14fc7fc31cdbb700d5b020c0277db5f0dda1c1c1824e67fcbe57a96def2701c2` | `bafkreiau7r74ghg3w4anlmbayatx3npq3wq4dqmcjzt7zpsxvfw66jybyi` |
+| `space/index.html` | the page: rooms and markup | 28,787 | `4a35fae37d4462207842323d199e607772556277a86710b13ca4cd084c02821a` | `bafkreickgx5og7kemiqhqqrshumz4ydxojkwe55im4ilcpfezueeyaucdi` |
 | `space/interactive/README.md` | page file | 7,380 | `64420dc910fdba5cf94f5fe304a32f1f93d477e52a231240e526dbebf68cd0ba` | `bafkreideiig4seh5xjopst274mckgly7spkhpzjkemjebzjg3pv7ndgqxi` |
 | `space/interactive/app.js` | page file | 61,528 | `fb3f4f8aba4c36c73f622011cae7756b080cc2da734534f70e3b12a052e258d4` | `bafkreih3h5hyvosmg3dt6yrachfoo5llbagmfwttiu2podr3ckqffysy2q` |
-| `space/interactive/index.html` | page file | 27,966 | `adab8eb42f68b4429c9049ca6522933195754f51ba2a830ccdb188166e760774` | `bafkreifnvohlil3iwrbjzecjzjssfezrsv2u6un2fkbqztnrralg45qhoq` |
+| `space/interactive/index.html` | page file | 28,066 | `caf9fd92cc7ef271913d7a0c08106e24fac12f17c4cb6e29a93461353a2f9b87` | `bafkreigk7h6zftd66jyzcpl2bqeba3re7las6f6eznxctkjume2tul43q4` |
 | `space/interactive/style.css` | page file | 15,905 | `fc869342b97104b1ba084989fa844ee13ab72ce7fee624e4d33338c8a773eb02` | `bafkreih4q2jufolrasy3uccjrh5iitxbhk3szz764ysojuzthdeko47lai` |
 | `space/pythai.js` | page file | 3,990 | `dbee2f1d556837bb5f12c8fb432a576f75fb67500cc90b40c420c6341f23f017` | `bafkreig35yxr2vlig65v6ewi7nbsuv3pox5wouamzefubrbayy2b6i7qc4` |
 | `space/savante.js` | pure functions: integrity, verdict, Hub and PYTHAI readings | 14,104 | `db1a7e5e39f0863510f7ba84b36bc136af66e4d1726b5dfb159fb25adc182caf` | `bafkreig3dj7f4opqqy2rb552qszwxqjwv5tojulsnno7wfm7wjnnygbmv4` |
@@ -129,7 +129,7 @@ under `image_candidate.named_by_operator`. The file is JPEG bytes under a `.png`
 | `.gitignore` | 19 | `862263fa1f46c20f0d1e4dac5ffcc75abd55c08211b2c3864c5f8764b9d87793` | `bafkreiegejr7uh2gyihq2hsnvrp7zr22xvk4baqrwlbymtc7q5sltwdxsm` |
 | `LICENSE` | 1,091 | `3970382bf4f5fc6adaaff98835fbfd8a01bb1d3ec249b8ab07395e06b1363e3c` | `bafkreibzoa4cx5hv7rvnvl7zra27x7mkag5r2pwcjg4kwbzzlydlcnr6hq` |
 | `MANIFESTO.md` | 7,186 | `4023714ef1226b0d8a646b3bfcd9d351db3310965101c71b43cf3ff18dce5726` | `bafkreicaenyu54jcnmgyuzdlhp6ntu2r3mzrbfsrahdrwq6ph7yy3tsxey` |
-| `README.md` | 21,660 | `ae7353e54d37878c7447c84d9331d684471804d1090b6b883d52ffff3e0dd76a` | `bafkreifoonj6ktjxq6ghir6ijwjtdvuei4majuijbnvyqpks777t4doxni` |
+| `README.md` | 21,780 | `cf044c69c7ef6f8d3284502ffd392b7d27383756e44e908c6ace8f94034e0188` | `bafkreigparggtr7pn6gtfbcqf76tsk35e44dovxej2iiy2wor6kagtqbra` |
 | `SAVANTE_AS_A_SERVICE.md` | 5,341 | `e401f81b895bcb67341610460f792689c8b90fbbde16dc52e0091e38eb8e4952` | `bafkreiheah4bxck3znttifqqiyhxsjujzc4q7o66c3offyajdy4oxdsjki` |
 | `Savante.md` | 7,427 | `7a29ebc05085e23ff75a9144e22690b27988f3ac3fbeeddce5678b21ea2361ab` | `bafkreid2fhv4auef4i77owuritrcnefspgephlb7x3w5zzlhrmq6ui3bvm` |
 | `bind/savante_publish.py` | 11,180 | `fe0162d26e416edb1ff068cf37ad905d466f1b78287538389095347574d08315` | `bafkreih6afrne3sbn3nr74diz4323ec5izxrw6biou4dreevgr2xjuedcu` |
@@ -155,7 +155,7 @@ under `image_candidate.named_by_operator`. The file is JPEG bytes under a `.png`
 | `sAGI.md` | 6,829 | `5e6f31c7c90ba34fac2147ef1fec2c18fa6b4f6c796984f6f5a6cd220547c28d` | `bafkreic6n4y4psilunh2yikh54p6ylay7jvu63dzngcpn5ngzurakr6cru` |
 | `savante.md` | 7,122 | `2cf2d3b6a42c9438f89c6dc3bae833486e356795a997e8a0f932205d2fe18c3a` | `bafkreibm6lj3njbmsq4prhdnyo5oqm2iny2wpfnjs7ukb6jsebos7ymmhi` |
 | `technical.md` | 12,498 | `fb2e2d12637bbd947dae05255b228331e0b630580a9b20da939be1304888b3c8` | `bafkreih3fywrey33xwkh3lqfevnsfazr4c3dawaktmqnve434eyercftza` |
-| `todo.md` | 23,531 | `7c478500e451b12fddbcc99844a61410e531887ad8fbfa6591b93e0f66fbb41c` | `bafkreid4i6cqbzcrwex53pgjtbckmfaq4uyyq6wy7p5glenzhyhwn65udq` |
+| `todo.md` | 23,981 | `f3b81373be38f0e5bdbe902dd1f39883b88b47c4a8fe2f367cc9374ff7307482` | `bafkreihtxajxhpry6ds33puqfxi7hgedxcfuprfi7yxtm7gjg5h7omduqi` |
 | `ui.py` | 63,909 | `926e7b8e90f5395eb24ce6e52e6d13c42135e268b95f3fce7ee184f8a8aef6fd` | `bafkreiesnz5y5ehvhfplethg4uxg2e6eee26e2fzl47447xbqt4krlxw7u` |
 | `usage.md` | 5,106 | `4337a13d09671f9793e9efb1b1591cc8870a62c93eef67faab618ab01850c7d6` | `bafkreicdg6qt2clhd6lzh2ppwgyvshgiq4fgfsj655t7vk3brkybqugh2y` |
 
