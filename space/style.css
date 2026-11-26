@@ -172,3 +172,14 @@ td.ok, td.warn, td.bad { white-space:nowrap; }
 .pstate.ok { color: var(--green); } .pstate.warn { color: var(--amber); } .pstate.bad { color: var(--red); }
 .console .bar { margin-bottom: 4px; }
 .console #carriernote { margin-top: 2px; }
+
+/* ── the ultimate input field (uif-space.js) holds the rooms as tabs (uiftabs.js) ── */
+.uifslot { min-height: 150px; display: flex; align-items: flex-end; padding: 6px 4px 0; }
+.uifhint { margin: 0; font-size: .8rem; color: var(--text2, #9aa); }
+body.uif-tabs header.top nav { display: none; }          /* the field's row holds the tabs; this copy is the fallback */
+body.uif-tabs .composer, body.uif-tabs #log:empty { display: none; }   /* the field asks; answers open in its windows */
+body.uif-popout > header, body.uif-popout > main, body.uif-popout > footer { display: none; }
+body.uif-popout { padding: 0; }
+/* the side pills give the tab strip its width: compact, the full text stays in their title */
+body.uif-tabs #uif-root .uif-modules .bk-uif-pill { max-width: 92px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: inline-block; }
+body.uif-tabs #uif-root .uif-actionbar-items { gap: 2px; }

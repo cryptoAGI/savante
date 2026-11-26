@@ -7,6 +7,7 @@ import {
   VERDICTS, DEFAULT_MODEL, REPO_ID, integrity, makeFinding, renderVerdict, hubReading, showAnswer, buildMessages,
 } from "./savante.js";
 import * as browseml from "./browseml.js";
+import { roomActions, tabIds, resetBars, setActive, fieldHoldsTabs } from "./uiftabs.js";
 
 const $ = (id) => document.getElementById(id);
 const SESSION_KEY = "savante.oauth";
@@ -22,6 +23,7 @@ function showRoom(name) {
   if (!document.querySelector(`[data-room="${CSS.escape(name)}"]`)) name = "ask";
   document.querySelectorAll("[data-room]").forEach((s) => (s.hidden = s.dataset.room !== name));
   document.querySelectorAll("nav button").forEach((b) => b.setAttribute("aria-current", b.dataset.go === name));
+  setActive(name);   // the field's tab for this room is marked (uiftabs.js)
 }
 document.querySelectorAll("nav button").forEach((b) => b.addEventListener("click", () => showRoom(b.dataset.go)));
 
@@ -541,7 +543,8 @@ const savanteEngine = {
     done({ ok, line: answer ? d.line : finalLine, details: finalLine || d.line, record: d.record });
     if (askMode === "persona") collapseIntro(document.querySelector(".uif-output-avatar"));
   },
-  status() {
+  status() { return savanteEngine.statusLong().replace(/^Savante · /, ""); },   // the compact pill: the carrier, not her name
+  statusLong() {
     const c = carrier();
     if (c === "browse") return browsed ? `Savante · ✓ ${browsed.model.replace(/\.gguf$/, "")} · ${browsed.threads} thr` : "Savante · browseML: load it";
     if (c === "hf") return `Savante · provider ${pick() === "hf:custom" ? ($("model").value.trim() || DEFAULT_MODEL) : pick().slice(3)} (not bankML)`;
@@ -611,26 +614,6 @@ savanteEngine.actions = [
       if (!n || !EXAMPLES[n - 1]) { EXAMPLES.forEach((e, i) => ctx.print(`${i + 1}. ${e}`)); return; }
       ctx.send(EXAMPLES[n - 1]);
     } },
-  { id: "sv-verdict", label: "Verdict", command: "verdict", icon: "⚖", description: "verdict - the five-field contract (the Verdict room)",
-    run() { goRoom("verdict"); } },
-  { id: "sv-integrity", label: "Integrity", command: "integrity", aliases: ["verify"], icon: "✓",
-    description: "integrity - hash every artefact the ledger commits to, in this browser, and compare",
-    async run(ctx) {
-      ctx.print("hashing the bundle in this browser…");
-      await runIntegrity();
-      ctx.print($("pillint").textContent + " · " + $("intnote").textContent, $("pillint").classList.contains("bad") ? "err" : "out");
-    } },
-  { id: "sv-office", label: "The Office", command: "office", icon: "🏛", defaultHidden: true, description: "office - her charter: mantra, oath, beliefs",
-    run() { goRoom("office"); } },
-  { id: "sv-hub", label: "Hub reading", command: "hub", icon: "⌕", defaultHidden: true,
-    description: "hub <owner/name> - a timestamped reading of a Hub model (evidence of what the Hub said)",
-    async run(ctx) {
-      if (!ctx.args[0]) return ctx.print("hub <owner/name>", "err");
-      const r = await hubReading(ctx.args[0]);
-      ctx.print(JSON.stringify(r).slice(0, 600));
-    } },
-  { id: "sv-skills", label: "Skills", command: "skills", icon: "📜", defaultHidden: true, description: "skills - the sagi skill, read five ways",
-    run() { goRoom("skills"); } },
   { id: "sv-tokens", label: "Max tokens", command: "tokens", icon: "#", defaultHidden: true,
     description: "tokens <1-2048> - the most an answer may use (the free CPU stops at 512)",
     run(ctx) {
@@ -653,6 +636,23 @@ savanteEngine.actions = [
       for (const a of savanteEngine.actions) ctx.print(`  ${a.description}`);
       ctx.print("  details [on|off] - delivery details under answers · last [n] - the last deliveries · and every field command: help");
     } },
+  // the rooms, as tabs in the field (uiftabs.js); Integrity re-hashes when opened, Hub takes `hub <owner/name>`
+  ...roomActions(goRoom, {
+    integrity: { description: "integrity - open Integrity and hash every artefact the ledger commits to, in this browser",
+      async run(ctx) {
+        ctx.print("hashing the bundle in this browser…");
+        await runIntegrity();
+        ctx.print($("pillint").textContent + " · " + $("intnote").textContent, $("pillint").classList.contains("bad") ? "err" : "out");
+      } },
+    hub: { description: "hub [owner/name] - open the Hub room; with a name, a timestamped reading of that model",
+      async run(ctx) {
+        if (!ctx.args[0]) return;
+        $("hubid").value = ctx.args[0];
+        const r = await hubReading(ctx.args[0]);
+        $("hubout").textContent = JSON.stringify(r, null, 1);
+        ctx.print(JSON.stringify(r).slice(0, 600));
+      } },
+  }),
 ];
 document.querySelectorAll("[data-example]").forEach((b) => b.addEventListener("click", () => {
   // into the field: React owns its value, so it is set the way typing sets it
@@ -841,6 +841,8 @@ document.querySelectorAll("pre.cmd").forEach((pre) => {
   const ui = window.BankmlSpaceUIF;
   if (!ui) return;
   if (ui.isOutputWindow()) document.body.classList.add("uif-popout");
+  resetBars("savante-sagi", "rooms-2");   // rows saved before the tabs existed would hide them
+  const tabs = tabIds();
   ui.mount($("uif-root"), savanteEngine, {
     placeholder: "Ask anything: the generic mode, a plain assistant (Enter) · sAGI for Savante · T terminal",
     terminalPlaceholder: "T mode: help · spawn · tile · home all · ping · diag",
@@ -851,9 +853,11 @@ document.querySelectorAll("pre.cmd").forEach((pre) => {
       placeholder: "sAGI · ask Savante: a claim to review, or a question for the office (Enter) · > generic ask · T terminal" },
     // Savante's button set beside the generic field buttons; T mode is Savante mode
     modeBar: {
-      persona: ["sv-carrier", "sv-load", "sv-example", "sv-verdict", "sv-integrity", "spawn", "home", "dock", "outputs"],
-      chat: ["sv-carrier", "spawn", "strings", "home", "dock", "popout", "rename", "clear", "outputs"],
-      terminal: ["sv-help", "sv-carrier", "sv-integrity", "last", "details", "ping", "diag", "win-memory", "win-history", "clear"],
+      // the row is the tab strip: the rooms and who carries her; every other button is under "+" and a T command
+      persona: [...tabs, "sv-carrier"],
+      chat: [...tabs, "sv-carrier"],
+      terminal: [...tabs, "sv-carrier"],
     },
   });
+  if (!ui.isOutputWindow()) fieldHoldsTabs();   // the field's row holds the rooms now; the header's copy steps aside
 })();

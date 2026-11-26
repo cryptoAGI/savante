@@ -90,7 +90,8 @@ THE FILES, AND WHICH ARE AUTHORED VERSUS DERIVED
     ui.py                    the office as a Gradio surface (below)
     space/                   the office as a static web page (canon from generation 10): the rooms,
                              Faicey (the embodied office) and PYTHAI (the org read from the Hub);
-                             space/serve.py serves it on 127.0.0.1:7864
+                             the ultimate input field floats over every room and holds the rooms
+                             as tabs (space/uiftabs.js); space/serve.py serves it on 127.0.0.1:7864
     gfx/                     the images of Savante. gfx/Savante3.png is the ARTWORK the operator
                              named (iNFT.md condition 4, naming half): sha256 30a59db4…c5a9a8, in
                              the ledger's image_candidate. Nothing is pinned, so the card's image is

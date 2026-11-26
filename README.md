@@ -98,11 +98,18 @@ failure. The fixed shape makes Savante usable as a CI merge gate; see
 
 `space/` is the office as a web page: plain ES modules, no build step, every string from a model, the Hub or a
 file written with `textContent`. It comes in two editions that share their modules (`savante.js`, `faicey.js`,
-`pythai.js`):
+`pythai.js`, `uiftabs.js`):
 - The **public edition** (`space/`) is served at PYTHAI/savante.
 - The **interactive edition** (`space/interactive/`, layered over the shared files) is served at Gregory-L/Savante. It
-  adds the ultimate input field and Savante in the browser through browseML. Its build bundles (`uif-space.*` from
-  ultimate-bankml-ui, `browseml*.wasm` from bankML) are not canon and live on that Space only.
+  adds Savante in the browser through browseML.
+
+Both editions float the **ultimate input field** over every room, and the field **holds the rooms as tabs**
+(`uiftabs.js`). Its button row is a tab strip, with one button per room, the open one marked. T mode takes the same
+names as commands (`faicey`, `pythai`, `room <name>`). The public edition's strip ends with the model's on/off switch;
+the field asks through the carrier chosen in Ask's model bar, and only while the switch is on. Every other field button
+sits under **+**. The header nav stays in the markup as the fallback, and steps aside only once the field has mounted.
+The build bundles (`uif-space.*` from ultimate-bankml-ui, plus `browseml*.wasm` from bankML for the interactive
+edition) are not canon: each Space holds its own copy, and the mirror sync never touches them.
 
 Serve either edition with `python3 space/serve.py [--edition interactive --bundles DIR]` (127.0.0.1:7864; `#faicey` and
 `#pythai` open a room directly). The mirror sync publishes each edition from the same layout function. The Gradio

@@ -30,6 +30,11 @@ Canon: [cryptoAGI/savante](https://github.com/cryptoAGI/savante) · engine: [cry
 
 A **static** Space: no server, no compute of its own, and no key of anyone's. Everything runs in your browser.
 
+The **ultimate input field** floats over every room and holds the rooms as tabs: its button row has one button per room
+(the open one is marked), then the model's on/off switch. In T mode, `room`, `faicey`, `pythai` and the other room
+names open a room, `power` flips the switch, and `carrier` chooses the model. Enter asks Savante through the model
+chosen in Ask's model bar. No carrier here puts a receipt on an answer, so the right pill says only whether an answer was delivered.
+
 | room | what it does |
 |---|---|
 | **Ask Savante** | talk to the office. **`Qwen/Qwen3-8B`** answers by default, through Hugging Face Inference Providers, under [`Savante.prompt`](Savante.prompt). **Sign in with Hugging Face** — the call is made from your browser with *your* token and billed to *your* inference quota. |

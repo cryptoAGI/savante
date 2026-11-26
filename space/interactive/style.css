@@ -186,3 +186,9 @@ tr.pick:hover td { background: rgba(88,166,255,.08); }
 td.ok { color: var(--green); } td.warn { color: var(--amber); } td.bad { color: var(--red); }
 #pyfilter { max-width: 320px; }
 td.ok, td.warn, td.bad { white-space:nowrap; }
+
+/* the field's row holds the rooms as tabs (uiftabs.js); the header's nav is the fallback until it mounts */
+body.uif-tabs header.top nav { display: none; }
+/* the side pills give the tab strip its width: compact, the full text stays in their title */
+body.uif-tabs #uif-root .uif-modules .bk-uif-pill { max-width: 92px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: inline-block; }
+body.uif-tabs #uif-root .uif-actionbar-items { gap: 2px; }

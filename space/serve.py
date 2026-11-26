@@ -45,6 +45,9 @@ EDITIONS = ("public", "interactive")
 # They live on the Gregory-L/Savante Space only, the mirror sync never touches them, and here they are linked from
 # --bundles DIR when given (without them the page loads, but the input field and in-browser carrier do not mount).
 BUNDLES = ["uif-space.js", "uif-space.css", "browseml.wasm", "browseml-mt.wasm", "browseml-mt-relaxed.wasm"]
+# The public edition mounts the input field too (it holds the rooms as tabs), so it takes the field's two bundles; it
+# has no in-browser carrier, so not the wasm. Uploaded to PYTHAI/savante beside the page, never by the mirror sync.
+PUBLIC_BUNDLES = ["uif-space.js", "uif-space.css"]
 
 
 def page_files(edition: str = "public") -> list[tuple[Path, str]]:
@@ -63,8 +66,8 @@ def layout(dest: Path, link: bool = False, edition: str = "public", bundles: Pat
     """Copy (for upload) or symlink (for serving here, so an edit shows on reload) the Space layout into dest."""
     dest.mkdir(parents=True, exist_ok=True)
     pairs = page_files(edition)
-    if edition == "interactive" and bundles:
-        pairs += [(bundles / b, b) for b in BUNDLES if (bundles / b).is_file()]
+    if bundles:
+        pairs += [(bundles / b, b) for b in (BUNDLES if edition == "interactive" else PUBLIC_BUNDLES) if (bundles / b).is_file()]
     pairs += [(ROOT / f, f"canon/{f}") for f in SPACE_CANON]
     # two maps, iterated separately: they share a source (.claude/skills/sagi/SKILL.md goes to two places), so a
     # merged dict would keep only one of its destinations
@@ -87,7 +90,7 @@ def main() -> None:
     ap.add_argument("--port", type=int, default=7864)
     ap.add_argument("--layout", type=Path, help="write the layout into this directory and exit")
     ap.add_argument("--edition", choices=EDITIONS, default="public")
-    ap.add_argument("--bundles", type=Path, help="interactive edition: a directory holding the non-canon BUNDLES")
+    ap.add_argument("--bundles", type=Path, help="a directory holding the non-canon BUNDLES (the public edition takes only the input field's two)")
     a = ap.parse_args()
     if a.layout:
         print(layout(a.layout, edition=a.edition, bundles=a.bundles))

@@ -10,6 +10,7 @@
 <meta property="og:image" content="https://huggingface.co/spaces/PYTHAI/savante/resolve/main/gfx/Savante3-gen2-og.jpg">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://huggingface.co/spaces/PYTHAI/savante/resolve/main/gfx/Savante3-gen2-og.jpg">
+<link rel="stylesheet" href="uif-space.css">
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="faicey.css">
 </head>
@@ -70,6 +71,12 @@
         <span id="c_iter" title="the live improve.skill loop: every measured sAGI answer on Bonsai is one iteration; 1000 is 1.0.0">improve.skill …</span>
         <span id="c_live" class="live"></span>
         <span id="c_last" class="muted"></span>
+      </div>
+      <div id="uifslot" class="uifslot" hidden>
+        <p class="uifhint">The <b>ultimate input field</b> floats here and holds the rooms as tabs: move it anywhere, and
+          every room stays one press away. <b>Enter</b> asks Savante with the model chosen above, and each answer opens
+          in a response window (move it, resize it from any corner, pop it out to another screen). <b>T</b> switches to
+          terminal mode: <code>help</code>, <code>room</code>, <code>spawn</code>, <code>tile</code>, <code>home all</code>.</p>
       </div>
       <div id="log" class="log" aria-live="polite"></div>
       <div class="composer">
@@ -377,6 +384,8 @@ cd savante && python3 -m http.server 7872     # then open http://127.0.0.1:7872<
 <footer>Savante Knows. Knowledge Is What Survives Verification; Nothing Else Counts. ·
   <a href="https://github.com/cryptoAGI/savante">cryptoAGI/savante</a> ·
   <a href="https://github.com/cryptoAGI/sagi">cryptoAGI/sagi</a> · MIT</footer>
+<div id="uif-root"></div>
+<script src="uif-space.js"></script>
 <script type="module" src="app.js"></script>
 <script type="module" src="faicey.js"></script>
 <script type="module" src="pythai.js"></script>
