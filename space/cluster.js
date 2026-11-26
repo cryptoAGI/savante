@@ -64,7 +64,8 @@ function draw() {
     resting: "resting (your share)", paused: "paused", error: "stopped by an error" }[st.phase] || st.phase;
   live.textContent = label + (st.why ? ` — ${st.why}` : "");
   live.className = "pstate " + (st.phase === "working" || st.phase === "waiting" ? "ok" : st.phase === "error" ? "bad" : "");
-  $("clgo").textContent = st.phase === "off" || st.phase === "error" ? "Contribute" : "STOP";
+  const go = $("clgo");               // absent on a copy that is not the host's (it is a link there)
+  if (go) go.textContent = st.phase === "off" || st.phase === "error" ? "Contribute" : "STOP";
   const dl = $("clvisit"); dl.textContent = "";
   row(dl, "jobs this visit", `${st.jobs} accepted · ${st.refused} refused`);
   row(dl, "tokens computed", String(st.tokens));
@@ -99,7 +100,8 @@ async function readPool() {
     row(dl, "read", `${new Date().toISOString()} from ${url}`);
     out.append(dl);
   } catch (e) {
-    out.textContent = `the dmind host did not answer (${String(e?.message || e).slice(0, 120)}) at ${url}. ` +
+    const why = e?.name === "AbortError" ? "no answer within 15 s" : String(e?.message || e).slice(0, 120);
+    out.textContent = `the dmind host did not answer (${why}) at ${url}. ` +
       (host ? "" : "mindx.pythai.net is the cluster's host; while it is unreachable, nothing can be contributed. ") +
       "This browser's measurement below still works: it runs here.";
   }
