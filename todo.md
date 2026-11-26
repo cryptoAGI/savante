@@ -66,9 +66,17 @@ Open from this generation, each with what decides it:
         units per kITE exactly;
       - mindX `2f21ad7`: pays only a token answering `decimals() == 18`; the rate is set as
         `MINDX_PAYMINT_PAI_USD_PER_MITE`.
-      The lines in `DeltaVerse/live/deployments.json` (`bankonPai`: PAIStablecoin, issuer-attested, 6 decimals) do not
-      match this design yet. **Decided by:** the operator, who deploys the basket contract, funds a distributor that
-      accepts it, and chooses the dollar price per million ITE.
+      **The basket contract is written and tested.** It is `BankonPAI` and `PaiRails` on DeltaVerse branch
+      `feat/bankon-pai-basket` (`646bd4e`, `contracts-evm/bankon-pai/`). It is unaudited and not deployed.
+      - **Prices.** The price is the mean of the members' Chainlink prices; mint is at the highest member price and
+        redeem at the lowest, and the protocol keeps the change.
+      - **Fees and reserves.** The BANKON φ fee has its on/off switch and settings in the contract. BANKON gld (GLDB),
+        WBTC and WETH are redeem-only reserve assets. BTC, ETH and ALGO redeem over their payment rails.
+      - **Tests.** 22 forge tests (invariants: backing ≥ liabilities). An anvil end-to-end run passed, and dmind's
+        paymint round trip paid real BankonPAI.
+      - **Record.** `deployments.json` → `bankonPai` lists it as the fifth line.
+      **Decided by:** the operator, who audits and deploys it, confirms the DAI/USDS feeds, funds a distributor, and
+      chooses the dollar price per million ITE.
 - [ ] **The Cluster's host edition is not live.** The VPS is back (2026-11-25, ~20:20 UTC): Apache serves TLS for
       mindx.pythai.net, but the mindX backend behind it does not answer, so `/health` times out at the proxy.
       SSH from this session is denied by the permission classifier, so the deploy is the operator's to run:
