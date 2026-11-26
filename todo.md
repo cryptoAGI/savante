@@ -60,8 +60,11 @@ Open from this generation, each with what decides it:
 - [ ] **BANKON PAI paymint is off: PAI is not deployed, and the rate is unset.** **Decided by:** the operator deploying
       PAI (`DeltaVerse/live/deployments.json` → `bankonPai`), funding a distributor that accepts it, and choosing
       `MINDX_PAYMINT_PAI_PER_KITE` (base units per 1,000 ITE). mindX pays only a token that answers `decimals() == 6`.
-- [ ] **The Cluster's host edition is not live: mindx.pythai.net is unreachable (the VPS lapsed).** **Decided by:**
-      the VPS back up, then:
+- [ ] **The Cluster's host edition is not live.** The VPS is back (2026-11-25, ~20:20 UTC): Apache serves TLS for
+      mindx.pythai.net, but the mindX backend behind it does not answer, so `/health` times out at the proxy.
+      SSH from this session is denied by the permission classifier, so the deploy is the operator's to run:
+      `bash ~/mindX/deploy/savante_office_deploy.sh` (kit in `~/savante-office-deploy-kit`, rebuildable from its
+      header). **Decided by:** the operator running it, or allowing this session SSH. Its steps:
       - install dmind 1.7.0 and deploy mindX `19e163e` (by patch);
       - lay out the host edition with `space/serve.py --layout /var/www/mindx-savante-office --host-edition --bundles …`;
       - add `deploy/apache/mindx-savante-office.conf.snippet`.
