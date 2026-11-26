@@ -132,9 +132,9 @@ const STANDING = {
   "bonsai-8b": `Bonsai-8B 1-bit was graded REJECT for review duty in the carrier test (${CARRIER_TEST}): it never used ` +
     "DEFER and it approved a false claim. In the public loop it gave APPROVE_WITH_CONDITIONS to a claim with no evidence " +
     "(PYTHAI/savante-loop, line 11). Its answers are drafts.",
-  "ternary-bonsai-8b": "Ternary-Bonsai-8B has NOT been carrier-tested. In the public loop it answered DEFER to " +
-    "\"our model is production ready because the demo worked\" (PYTHAI/savante-loop, lines 10, 12, 38), where the charter " +
-    "calls for REJECT — DEFER is reserved for decisions that need the operator's signature. Its answers are drafts.",
+  "ternary-bonsai-8b": `Ternary-Bonsai-8B was graded REJECT for review duty in carrier test 3 (${CARRIER_TEST}): it never ` +
+    "DEFERred on jurisdiction, and under the full charter it approved a false claim by moving the evidence. In the public " +
+    "loop it also answered DEFER where REJECT was due (PYTHAI/savante-loop, lines 10, 12, 38). Its answers are drafts.",
   "bonsai-1.7b": "Bonsai-1.7B 1-bit, run in this browser by browseML, has NOT been carrier-tested; the carrier test " +
     "graded its 8B sibling REJECT for review duty. Its answers are drafts.",
   "openai/gpt-oss-120b": `gpt-oss-120b was graded APPROVE_WITH_CONDITIONS as a carrier (${CARRIER_TEST}).`,

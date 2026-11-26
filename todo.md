@@ -44,13 +44,15 @@ Open from this generation, each with what decides it:
       PYTHAI/savante-loop reported 38. Closed by adopting the published `.memory`: the committed `.memory` was a byte
       prefix of it, the derived `.history` is byte-identical to the published one, and `bind/skill_history.py --check`
       passes (improve.skill v0.0.38: 38 verified, 1 refused). Nothing was written by hand.
-- [ ] **Ternary-Bonsai-8B, the public page's default carrier, is not carrier-tested, and the record argues against it.**
-      It answered DEFER three times (savante-loop lines 10, 12, 38) to "our model is production ready because the demo
-      worked", where the charter calls for REJECT. Bonsai-8B answered APPROVE_WITH_CONDITIONS (line 11). The page now
-      labels each carrier with this evidence instead of calling every Bonsai answer "Bonsai-8B, graded REJECT".
-      **Decided by:** the sagi engine's carrier test run on Ternary-Bonsai-8B; until it passes, its APPROVE gates nothing.
-      The harness is ready (mindX `scripts/carrier_test.py` through `bankml serve --native` on :18091). The model file
-      (2.31 GB, PYTHAI/Ternary-Bonsai-8B-gguf-fork) is no longer on the laptop: its cache blob was removed.
+- [x] **Ternary-Bonsai-8B, the public page's default carrier, was not carrier-tested.** Run on 2026-11-25 (sagi
+      `engine/CARRIER_TEST.md` record 3, `bdb9cb5`): the same probe set on the free-CPU Space's llama.cpp. By reading,
+      3 pass, 4 partial and 3 fail. It never DEFERs on jurisdiction, and under the full charter it approves the trap by
+      moving the evidence. **REJECT for review duty**, like Bonsai-8B 1-bit. The page's labels and footer now say so.
+      It stays the default as an answerer (operator 2026-09-26: a better answer beats speed); its APPROVE gates nothing.
+- [ ] **No free carrier on the page passes review duty.** Both Bonsai carriers are REJECT; only gpt-oss-120b (sign-in,
+      the visitor's quota) is APPROVE_WITH_CONDITIONS. **Decided by:** the operator, either choosing the default carrier
+      by the carrier test or keeping Ternary as an answerer with its label; and, for a free reviewer, the probe set (trap
+      revised to like-for-like numbers) on a charter-tuned small model.
 - [x] **The free-CPU Space mislabelled its carrier.** Every sAGI answer said "carrier: Bonsai-8B 1-bit, graded REJECT",
       Ternary-Bonsai's included. Fixed and deployed on 2026-11-25: Gregory-L/mindXhfgradio `309a69d`. It was patched
       onto the live files, which are ahead of mindX's copy, and recorded in mindX `ba29d0d66`. `savante_footer(key)`

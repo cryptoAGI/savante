@@ -123,9 +123,9 @@ const STANDING = {
   "bonsai-8b": `Bonsai-8B 1-bit was graded REJECT for review duty in the carrier test (${CARRIER_TEST}): it never used ` +
     "DEFER and it approved a false claim. In the public loop it gave APPROVE_WITH_CONDITIONS to a claim with no evidence " +
     "(PYTHAI/savante-loop, line 11). Its answers are drafts.",
-  "ternary-bonsai-8b": "Ternary-Bonsai-8B has NOT been carrier-tested. In the public loop it answered DEFER to " +
-    "\"our model is production ready because the demo worked\" (PYTHAI/savante-loop, lines 10, 12, 38), where the charter " +
-    "calls for REJECT — DEFER is reserved for decisions that need the operator's signature. Its answers are drafts.",
+  "ternary-bonsai-8b": `Ternary-Bonsai-8B was graded REJECT for review duty in carrier test 3 (${CARRIER_TEST}): it never ` +
+    "DEFERred on jurisdiction, and under the full charter it approved a false claim by moving the evidence. In the public " +
+    "loop it also answered DEFER where REJECT was due (PYTHAI/savante-loop, lines 10, 12, 38). Its answers are drafts.",
   "openai/gpt-oss-120b": `gpt-oss-120b was graded APPROVE_WITH_CONDITIONS as a carrier (${CARRIER_TEST}).`,
 };
 function carrierStanding(p) {
@@ -253,7 +253,7 @@ const BONSAI_WHERE = { "bonsai-8b": "bonsai-8b (1-bit, CPU llama.cpp)", "ternary
 const LOCAL_LLAMA = "http://127.0.0.1:18092";
 // The footer names the carrier that actually answered: the model llama-server reports, not the one this page expects.
 const sagiFooter = () => "— sAGI (Savante) · public office: https://huggingface.co/spaces/PYTHAI/savante · carrier: " +
-  (/ternary/i.test(LOCAL.name || "") ? "Ternary-Bonsai-8B, not carrier-tested" : `Bonsai-8B 1-bit, graded REJECT for review duty (${CARRIER_TEST})`);
+  `${/ternary/i.test(LOCAL.name || "") ? "Ternary-Bonsai-8B" : "Bonsai-8B 1-bit"}, graded REJECT for review duty (${CARRIER_TEST})`;
 let SAGI_PROMPT = "";
 const FOOTER_MARK = "\n\n— sAGI (Savante)";
 const plain = (html) => new DOMParser().parseFromString(String(html || ""), "text/html").body.textContent.replace(/\s+/g, " ").trim();
