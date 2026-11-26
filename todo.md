@@ -77,7 +77,7 @@ Open from this generation, each with what decides it:
       - **Record.** `deployments.json` → `bankonPai` lists it as the fifth line.
       - **Algorand twin (`8070b1b`):** `BankonPaiAlgo` is an ARC-200 token with 18 decimals, priced only from Algorand
         liquidity through AXIA TWAPs, with USDC as the $1 anchor. Its reserve assets are ALGO, goBTC, goETH and
-        Wormhole WBTC/WETH, and the φ fee is paid in ALGO. 33 LocalNet checks pass. It is unaudited and not deployed.
+        Wormhole WBTC/WETH, and the φ fee is paid in ALGO. 35 LocalNet checks pass (re-run 2026-11-26). It is unaudited and not deployed.
       **Decided by:** the operator, who audits and deploys it, confirms the DAI/USDS feeds, funds a distributor, and
       chooses the dollar price per million ITE.
 - [ ] **The Cluster's host edition is not live.** The VPS is back (2026-11-25, ~20:20 UTC): Apache serves TLS for
