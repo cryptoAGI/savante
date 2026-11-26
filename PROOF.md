@@ -2,7 +2,7 @@
 
 The digests of the sAGI skill and of every file in this repository that carries a proof: the office, its
 bound ledger, the artwork, the verdict records and the tools that check them. Written from the tree of the
-commit that adds this file, whose parent is `986691b`. Every value here can be recomputed by anyone
+commit that adds this file, whose parent is `9024e87`. Every value here can be recomputed by anyone
 holding a clone; none is taken on trust.
 
 ## Check it
@@ -75,9 +75,9 @@ under `image_candidate.named_by_operator`. The file is JPEG bytes under a `.png`
 | `space/history.json` | page file | 2,931 | `1cc8f9bb85e469bdb250c0ef205d88b34f1aeb2430e6f51f125055ba1275aa60` | `bafkreia4zd43xbpeng63euga54qf3cftj4nowjbq432r6esqkw5be5nkma` |
 | `space/index.html` | the page: rooms and markup | 28,687 | `14fc7fc31cdbb700d5b020c0277db5f0dda1c1c1824e67fcbe57a96def2701c2` | `bafkreiau7r74ghg3w4anlmbayatx3npq3wq4dqmcjzt7zpsxvfw66jybyi` |
 | `space/interactive/README.md` | page file | 7,380 | `64420dc910fdba5cf94f5fe304a32f1f93d477e52a231240e526dbebf68cd0ba` | `bafkreideiig4seh5xjopst274mckgly7spkhpzjkemjebzjg3pv7ndgqxi` |
-| `space/interactive/app.js` | page file | 55,209 | `d248f28e2d56431abe5f01a465043732737d4124a09ed98240d8ce3896774a45` | `bafkreigsjdzi4lkwimnl4xybursqinzson6ucjfat3myeqgyzy4jm52kiu` |
-| `space/interactive/index.html` | page file | 27,617 | `af34da55236ccb039431cd658ac58bd91fc9bb0c94f1da6510a1fc14f6913ee2` | `bafkreifpgtnfki3mzmbzimonmwfmlc6zd7e3wdeu6hngkefb7qkpnej64i` |
-| `space/interactive/style.css` | page file | 14,711 | `51eee9cf1c091662637018f93406ca65485b37da49be93040259aa97168dfb0c` | `bafkreicr53u46hajczrgg4ay7e2anstfjbntpwsjx2jqiaszvklrndp3bq` |
+| `space/interactive/app.js` | page file | 61,528 | `fb3f4f8aba4c36c73f622011cae7756b080cc2da734534f70e3b12a052e258d4` | `bafkreih3h5hyvosmg3dt6yrachfoo5llbagmfwttiu2podr3ckqffysy2q` |
+| `space/interactive/index.html` | page file | 27,966 | `adab8eb42f68b4429c9049ca6522933195754f51ba2a830ccdb188166e760774` | `bafkreifnvohlil3iwrbjzecjzjssfezrsv2u6un2fkbqztnrralg45qhoq` |
+| `space/interactive/style.css` | page file | 15,905 | `fc869342b97104b1ba084989fa844ee13ab72ce7fee624e4d33338c8a773eb02` | `bafkreih4q2jufolrasy3uccjrh5iitxbhk3szz764ysojuzthdeko47lai` |
 | `space/pythai.js` | page file | 3,990 | `dbee2f1d556837bb5f12c8fb432a576f75fb67500cc90b40c420c6341f23f017` | `bafkreig35yxr2vlig65v6ewi7nbsuv3pox5wouamzefubrbayy2b6i7qc4` |
 | `space/savante.js` | pure functions: integrity, verdict, Hub and PYTHAI readings | 14,104 | `db1a7e5e39f0863510f7ba84b36bc136af66e4d1726b5dfb159fb25adc182caf` | `bafkreig3dj7f4opqqy2rb552qszwxqjwv5tojulsnno7wfm7wjnnygbmv4` |
 | `space/savanteml.js` | page file | 4,745 | `9295c99a6f5da831fcfb20edd7a6c004e37b775b60d359ca7251ca4751b3a1b2` | `bafkreiessxezu325vay7z6za5xl2nqae4n5xow3a2nm4u4srzjdvdm5bwi` |
@@ -155,7 +155,7 @@ under `image_candidate.named_by_operator`. The file is JPEG bytes under a `.png`
 | `sAGI.md` | 6,829 | `5e6f31c7c90ba34fac2147ef1fec2c18fa6b4f6c796984f6f5a6cd220547c28d` | `bafkreic6n4y4psilunh2yikh54p6ylay7jvu63dzngcpn5ngzurakr6cru` |
 | `savante.md` | 7,122 | `2cf2d3b6a42c9438f89c6dc3bae833486e356795a997e8a0f932205d2fe18c3a` | `bafkreibm6lj3njbmsq4prhdnyo5oqm2iny2wpfnjs7ukb6jsebos7ymmhi` |
 | `technical.md` | 12,498 | `fb2e2d12637bbd947dae05255b228331e0b630580a9b20da939be1304888b3c8` | `bafkreih3fywrey33xwkh3lqfevnsfazr4c3dawaktmqnve434eyercftza` |
-| `todo.md` | 23,299 | `700d944cc0455238785848427df227d5531c8ea8694ba87f08a7a2df4530b473` | `bafkreidqbwkezqcfki4hqwciij67ej6vkmoi5kdjjouh6cfhulpukmfuom` |
+| `todo.md` | 23,531 | `7c478500e451b12fddbcc99844a61410e531887ad8fbfa6591b93e0f66fbb41c` | `bafkreid4i6cqbzcrwex53pgjtbckmfaq4uyyq6wy7p5glenzhyhwn65udq` |
 | `ui.py` | 63,909 | `926e7b8e90f5395eb24ce6e52e6d13c42135e268b95f3fce7ee184f8a8aef6fd` | `bafkreiesnz5y5ehvhfplethg4uxg2e6eee26e2fzl47447xbqt4krlxw7u` |
 | `usage.md` | 5,106 | `4337a13d09671f9793e9efb1b1591cc8870a62c93eef67faab618ab01850c7d6` | `bafkreicdg6qt2clhd6lzh2ppwgyvshgiq4fgfsj655t7vk3brkybqugh2y` |
 
