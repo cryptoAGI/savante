@@ -199,3 +199,17 @@ body.uif-tabs #uif-root .uif-actionbar-items .uif-action { width: 22px; min-widt
 .cluster-room .clthoughts { font-size: .78rem; color: var(--text2); padding-left: 18px; max-height: 14em; overflow: auto; }
 .cluster-room pre.mono { white-space: pre-wrap; overflow-wrap: anywhere; font-size: .72rem; max-height: 22em; overflow: auto; }
 .cluster-room #clgo-link { display: inline-block; padding: 6px 12px; border: 1px solid var(--amber, #e0a040); border-radius: 6px; color: var(--amber, #e0a040); text-decoration: none; }
+
+/* the model's on/off switch (as the public edition's) */
+.modelbar { display:flex; align-items:center; gap:10px 14px; flex-wrap:wrap; margin: 0 0 8px; }
+.power { display:inline-flex; align-items:center; gap:8px; padding:5px 12px 5px 6px; border-radius:999px; font-weight:700;
+  letter-spacing:.08em; border:1px solid rgba(248,81,73,.55); color: var(--red); background:#1a1216; cursor:pointer; }
+.power .knob { width:30px; height:16px; border-radius:999px; background:#3a2a30; position:relative; transition: background .15s; }
+.power .knob::after { content:""; position:absolute; top:2px; left:2px; width:12px; height:12px; border-radius:50%;
+  background: var(--red); transition: left .15s, background .15s; }
+.power.on { border-color: rgba(86,211,100,.55); color: var(--green); background:#10191a; }
+.power.on .knob { background:#1d3a2a; }
+.power.on .knob::after { left:16px; background: var(--green); box-shadow: 0 0 8px var(--green); }
+.power:focus-visible { outline:2px solid var(--amber); outline-offset:2px; }
+.pstate { font-size:.85rem; color: var(--text2); flex:1 1 280px; }
+.pstate.ok { color: var(--green); } .pstate.warn { color: var(--amber); } .pstate.bad { color: var(--red); }

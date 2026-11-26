@@ -57,6 +57,9 @@ Open from this generation, each with what decides it:
       Verified on a local dmind host in headless Brave: a job computed in the browser was accepted with its receipt,
       both sides counted 87.72 ITE, and the huggingface.co copy only links (the realm token never leaves the host's
       origin). PAI paid 250 base units for 5 kITE on a local anvil chain, and the same voucher was refused a second time.
+- [x] **The interactive edition has the model's on/off switch too** (2026-11-25), ported from the public edition. ON warms
+      the chosen carrier and keeps a live state line. It loads browseML from this browser's cache but never starts the
+      248 MB download unasked. OFF stops the input field from calling any model.
 - [ ] **BANKON PAI paymint is off: PAI is not deployed, and the rate is unset.** **Decided by:** the operator deploying
       PAI (`DeltaVerse/live/deployments.json` → `bankonPai`), funding a distributor that accepts it, and choosing
       `MINDX_PAYMINT_PAI_PER_KITE` (base units per 1,000 ITE). mindX pays only a token that answers `decimals() == 6`.
@@ -68,9 +71,8 @@ Open from this generation, each with what decides it:
       - install dmind 1.7.0 and deploy mindX `19e163e` (by patch);
       - lay out the host edition with `space/serve.py --layout /var/www/mindx-savante-office --host-edition --bundles …`;
       - add `deploy/apache/mindx-savante-office.conf.snippet`.
-      Until then both Spaces' Cluster rooms say the host is unreachable. Separately, mindX's
-      `tests/test_sharedcpu_pool.py::test_wrong_hash_or_model_is_refused_and_requeued` fails on its own HEAD with
-      dmind 1.6.9 and 1.7.0 alike (the refused job is not handed back on the next pull); it predates this work.
+      Until then both Spaces' Cluster rooms say the host is unreachable. (mindX's sharedcpu suite passes: 29 tests,
+      after the requeue test was brought up to dmind's rule that a refused job's retry goes to another wallet.)
 - [ ] **No free carrier on the page passes review duty.** Both Bonsai carriers are REJECT; only gpt-oss-120b (sign-in,
       the visitor's quota) is APPROVE_WITH_CONDITIONS. **Decided by:** the operator, either choosing the default carrier
       by the carrier test or keeping Ternary as an answerer with its label; and, for a free reviewer, the probe set (trap

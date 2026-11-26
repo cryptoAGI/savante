@@ -386,6 +386,116 @@ $("browseforget").addEventListener("click", async () => {
   $("browseload").hidden = false; $("browseforget").hidden = true;
   $("browsestatus").textContent = "the model is removed from this browser";
 });
+
+// ── the model's on/off switch ────────────────────────────────────────────────
+// ON loads the chosen carrier and keeps saying what state it is in; OFF means this page calls no model at all. On the
+// free public CPU nothing here unloads a model: other visitors share it, and their answers must not be cut off. That
+// Space evicts idle models itself; the state line says what is resident there right now.
+const POWER = { on: true, phase: "off", t0: 0, poll: 0, note: "" };
+try { POWER.on = localStorage.getItem("savante.power") !== "off"; } catch { /* storage blocked: default on */ }
+const pickLabel = () => ($("modelpick").selectedOptions[0]?.textContent || pick()).split(" · ")[0];
+const since = () => `${Math.round((performance.now() - POWER.t0) / 1000)} s`;
+function drawPower() {
+  const b = $("power");
+  b.setAttribute("aria-checked", String(POWER.on));
+  b.classList.toggle("on", POWER.on);
+  $("powerlabel").textContent = POWER.on ? "ON" : "OFF";
+  const text = {
+    off: "off — no model is called; switch it on to ask",
+    connecting: `turning on — reaching the free public CPU Space (it may be waking up) · ${since()}`,
+    loading: carrier() === "browse" ? `turning on — loading ${pickLabel()} in this browser · ${POWER.note || "…"}`
+      : `turning on — loading ${pickLabel()} (a cold Space downloads it first, which takes minutes) · ${since()}`,
+    queued: `on — ${pickLabel()} loads after the answer being generated for another visitor · ${since()}`,
+    ready: `on — ${pickLabel()} is loaded and ready`,
+    answering: `on — ${pickLabel()} is answering · ${since()}`,
+    signin: "on — this carrier runs on your own Hugging Face token: sign in below",
+    browseload: "on — press “Load Savante in this browser” below: it downloads 248 MB once, then answers here",
+    error: `could not turn on: ${POWER.note}`,
+  }[POWER.on ? POWER.phase : "off"] || POWER.phase;
+  $("powerstate").textContent = text + (POWER.on && POWER.note && POWER.phase === "ready" ? ` · ${POWER.note}` : "");
+  $("powerstate").className = "pstate " + (!POWER.on ? "" : POWER.phase === "ready" ? "ok" : POWER.phase === "error" ? "bad" : "warn");
+  renderAuth();
+  statusListeners.forEach((f) => f());   // the field's left pill says the same
+}
+async function spaceClient() {
+  if (!gradio) gradio = await GradioClient.connect(BONSAI_SPACE);
+  return gradio;
+}
+async function spaceState() {
+  const r = await (await spaceClient()).predict("/bonsai_state", {});
+  return r?.data?.[0] || null;
+}
+function stopPoll() { if (POWER.poll) clearInterval(POWER.poll); POWER.poll = 0; }
+function startPoll(key) {
+  stopPoll();
+  POWER.poll = setInterval(async () => {
+    if (!POWER.on || carrier() !== "space") return stopPoll();
+    if (POWER.phase === "answering") return drawPower();
+    try {
+      const st = await spaceState();
+      if (st && st.resident?.includes(key) && !st.busy && POWER.phase !== "ready") { POWER.phase = "ready"; POWER.note = ""; }
+      else if (st && POWER.phase === "loading" && st.models?.[key]) {
+        POWER.note = st.models[key].downloaded ? "weights on disk; starting llama-server" : "downloading the weights";
+      }
+    } catch { /* the next tick tries again */ }
+    drawPower();
+    if (POWER.phase === "ready") stopPoll();
+  }, 3000);
+}
+async function warmCarrier() {
+  stopPoll();
+  POWER.note = "";
+  if (!POWER.on) { POWER.phase = "off"; return drawPower(); }
+  const [c, key] = pick().split(":");
+  POWER.t0 = performance.now();
+  if (c === "hf") {
+    const signedIn = !!(oauth && oauth.accessToken && new Date(oauth.accessTokenExpiresAt) > new Date());
+    POWER.phase = signedIn ? "ready" : "signin";
+    return drawPower();
+  }
+  if (c === "browse") {        // browseML loads only on the visitor's own press (248 MB once) or from this browser's cache
+    if (browseml.isReady()) { POWER.phase = "ready"; return drawPower(); }
+    if (await browseml.isCached()) {
+      POWER.phase = "loading"; POWER.note = "from this browser's cache"; drawPower();
+      try { await loadBrowse(); POWER.phase = "ready"; POWER.note = ""; }
+      catch (e) { POWER.phase = "error"; POWER.note = String(e?.message || e).slice(0, 160); }
+      return drawPower();
+    }
+    POWER.phase = "browseload"; return drawPower();
+  }
+  if (c === "local") {
+    POWER.phase = "connecting"; drawPower();
+    const up = await probeLocal(true);
+    POWER.phase = up ? "ready" : "error";
+    POWER.note = up ? "" : "llama-server is not answering on 127.0.0.1:18092 (steps below)";
+    return drawPower();
+  }
+  POWER.phase = "connecting"; drawPower();
+  const tick = setInterval(() => { if (["connecting", "loading", "queued"].includes(POWER.phase)) drawPower(); else clearInterval(tick); }, 1000);
+  try {
+    const st = await spaceState();
+    if (st?.resident?.includes(key) && !st.busy) { POWER.phase = "ready"; return drawPower(); }
+    POWER.phase = st?.busy ? "queued" : "loading"; drawPower();
+    startPoll(key);
+    const r = await (await spaceClient()).predict("/bonsai_warm", { key });
+    const w = r?.data?.[0] || {};
+    if (w.error) { POWER.phase = "error"; POWER.note = w.error; }
+    else if (w.warmed) { POWER.phase = "ready"; POWER.note = w.load_s > 1 ? `loaded in ${w.load_s} s` : ""; stopPoll(); }
+  } catch (e) {
+    POWER.phase = "error";
+    POWER.note = `the free public CPU Space did not answer (${String(e?.message || e).slice(0, 140)}) — it may be rebuilding; switch off and on again in a minute`;
+    stopPoll();
+  }
+  drawPower();
+}
+$("power").addEventListener("click", () => {
+  POWER.on = !POWER.on;
+  try { localStorage.setItem("savante.power", POWER.on ? "on" : "off"); } catch { /* per-viewer convenience only */ }
+  warmCarrier();
+});
+$("modelpick").addEventListener("change", () => warmCarrier());
+$("browseload").addEventListener("click", () => setTimeout(() => warmCarrier(), 50));
+
 async function askBrowse(message, push, progress) {
   if (!browseml.isReady()) {
     if (!browseml.isLoading() && !(await browseml.isCached()))
@@ -509,6 +619,11 @@ async function deliveryOf(c, key, message, answer, details, ok) {
 const CARRIER_NAME = { browse: "bankML in this browser", space: "Bonsai on the free public CPU", local: "Bonsai on this machine", hf: "a Hugging Face provider" };
 const savanteEngine = {
   async *ask(hist, message, done, _window, progress = () => {}, mode = "persona") {
+    if (!POWER.on) {
+      yield "The model is switched off, so nothing was asked. Switch it on at the top of Ask Savante.";
+      done({ ok: false, line: "off: no model called" });
+      return;
+    }
     history = hist;
     askMode = mode === "chat" ? "chat" : "persona";
     // Savante's face heads her answers; a generic answer has none
@@ -517,6 +632,7 @@ const savanteEngine = {
     let finalLine = "", ok = false, answer = null;
     counts = {};
     const meta = { get textContent() { return finalLine; }, set textContent(t) { finalLine = String(t); progress(finalLine); } };
+    POWER.phase = "answering"; POWER.t0 = performance.now(); drawPower();
     yield* streamOf(async (push) => {
       const out = sink(push);
       try {
@@ -536,7 +652,8 @@ const savanteEngine = {
         finalLine = m;
       } finally {
         live("");
-        renderAuth();
+        if (POWER.phase === "answering") POWER.phase = "ready";
+        drawPower();
       }
     });
     const d = await deliveryOf(c, key, message, answer, finalLine, ok);
@@ -832,6 +949,7 @@ document.querySelectorAll("pre.cmd").forEach((pre) => {
   try { PROMPT = await fetchText("Savante.prompt"); } catch (e) { PROMPT = "You are Savante. Answers are drafts, never findings."; }
   PROMPT_SHA = { "Savante.prompt": await sha256hex(PROMPT), "canon/savante.persona system_prompt": await sha256hex(SAGI_PROMPT || ""), generic: await sha256hex(GENERIC_PROMPT) };
   await initAuth();
+  warmCarrier();
   office();
   runIntegrity();
   showSkill();
