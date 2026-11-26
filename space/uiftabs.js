@@ -13,7 +13,7 @@ export function rooms() {
   return [...document.querySelectorAll("nav button[data-go]")].map((b) => ({ id: b.dataset.go, label: b.textContent.trim() }));
 }
 
-const ICON = { ask: "✎", about: "ⓘ", faicey: "◑", pythai: "⧉", hub: "⌕", office: "🏛", verdict: "⚖", integrity: "✓", skills: "📜", settings: "⚙" };
+const ICON = { ask: "✎", about: "ⓘ", cluster: "▦", faicey: "◑", pythai: "⧉", hub: "⌕", office: "🏛", verdict: "⚖", integrity: "✓", skills: "📜", settings: "⚙" };
 export const tabId = (room) => `sv-room-${room}`;
 
 /**

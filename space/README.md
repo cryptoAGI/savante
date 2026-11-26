@@ -11,6 +11,10 @@ hf_oauth_expiration_minutes: 480
 hf_oauth_scopes:
 - inference-api
 short_description: Savante — the read-only office of sAGI
+custom_headers:
+  cross-origin-embedder-policy: credentialless
+  cross-origin-opener-policy: same-origin
+  cross-origin-resource-policy: cross-origin
 thumbnail: https://huggingface.co/spaces/PYTHAI/savante/resolve/main/gfx/Savante3-gen2-og.jpg
 tags:
 - sagi
@@ -34,6 +38,13 @@ The **ultimate input field** floats over every room and holds the rooms as tabs:
 (the open one is marked), then the model's on/off switch. In T mode, `room`, `faicey`, `pythai` and the other room
 names open a room, `power` flips the switch, and `carrier` chooses the model. Enter asks Savante through the model
 chosen in Ask's model bar. No carrier here puts a receipt on an answer, so the right pill says only whether an answer was delivered.
+
+**savanteML** runs Savante in your browser: choose "this browser" in Ask's model bar. bankML, compiled to WebAssembly,
+downloads Bonsai-1.7B once (248 MB, kept in this browser), verifies every byte against its pin, and puts a receipt
+on every answer. Nothing you type leaves your device. The **Cluster** room lends that engine to distributed.mind
+(dmind) and measures what you give in **ITE**: one token through a 1B-parameter model, the same on any CPU, RAM or GPU.
+A host may pay it in BANKON PAI, which is not deployed yet. Contributing happens on the host's own copy of the room,
+so your sign-in token never leaves the host.
 
 | room | what it does |
 |---|---|

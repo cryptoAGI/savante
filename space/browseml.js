@@ -96,6 +96,19 @@ async function loadOnce(progress, log, { threads: want, ctx = 4096 } = {}) {
   return verified;
 }
 
+/** Stop the answer being written: the engine is ended (its memory freed; the model stays in this browser's cache)
+ *  and the answer's promise rejects. The cluster's STOP, and a job the host withdrew, use it. Loading again takes
+ *  seconds from the cache. */
+let rejectBusy = null;
+export function abort() {
+  if (!busy) return false;
+  if (worker) worker.terminate();
+  worker = null; ready = null; busy = null; memoryBytes = 0;
+  const r = rejectBusy; rejectBusy = null;
+  r && r(new Error("stopped"));
+  return true;
+}
+
 /**
  * One answer: an OpenAI-shaped request (messages, max_tokens, …), the pieces as they are written, and the
  * `/v1/chat/completions` object at the end (usage, timings, bankml_receipt).
@@ -104,12 +117,13 @@ export function chat(request, onPiece, log) {
   if (!ready) return Promise.reject(new Error("browseML is not loaded"));
   if (busy) return Promise.reject(new Error("browseML is still writing the last answer"));
   busy = new Promise((resolve, reject) => {
+    rejectBusy = reject;
     worker.onmessage = (e) => {
       const m = e.data;
       if (m.type === "piece") onPiece(m.text);
       else if (m.type === "log") log(m.level, m.text);
       else if (m.type === "done") {
-        busy = null;
+        busy = null; rejectBusy = null;
         memoryBytes = m.memory || memoryBytes;
         if (m.rc === -99) { ready = null; worker.terminate(); worker = null; }  // the engine trapped: load it again
         const j = (() => { try { return JSON.parse(m.out); } catch { return { error: { message: m.out } }; } })();

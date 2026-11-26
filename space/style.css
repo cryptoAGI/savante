@@ -182,4 +182,11 @@ body.uif-popout > header, body.uif-popout > main, body.uif-popout > footer { dis
 body.uif-popout { padding: 0; }
 /* the side pills give the tab strip its width: compact, the full text stays in their title */
 body.uif-tabs #uif-root .uif-modules .bk-uif-pill { max-width: 92px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: inline-block; }
-body.uif-tabs #uif-root .uif-actionbar-items { gap: 2px; }
+body.uif-tabs #uif-root .uif-actionbar-items { gap: 1px; }
+body.uif-tabs #uif-root .uif-actionbar-items .uif-action { width: 22px; min-width: 22px; padding: 0; }
+
+/* cpu.cluster (cluster.js) */
+.cluster-room .cluster-terms { flex-wrap: wrap; gap: 10px; align-items: center; }
+.cluster-room .clthoughts { font-size: .78rem; color: var(--text2); padding-left: 18px; max-height: 14em; overflow: auto; }
+.cluster-room pre.mono { white-space: pre-wrap; overflow-wrap: anywhere; font-size: .72rem; max-height: 22em; overflow: auto; }
+.cluster-room #clgo-link { display: inline-block; padding: 6px 12px; border: 1px solid var(--amber, #e0a040); border-radius: 6px; color: var(--amber, #e0a040); text-decoration: none; }

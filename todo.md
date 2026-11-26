@@ -49,6 +49,25 @@ Open from this generation, each with what decides it:
       3 pass, 4 partial and 3 fail. It never DEFERs on jurisdiction, and under the full charter it approves the trap by
       moving the evidence. **REJECT for review duty**, like Bonsai-8B 1-bit. The page's labels and footer now say so.
       It stays the default as an answerer (operator 2026-09-26: a better answer beats speed); its APPROVE gates nothing.
+- [x] **savanteML and the Cluster room (2026-11-25).** Savante runs in the visitor's browser on both editions
+      (`space/savanteml.js` over browseML; the public edition's carrier "this browser"; COOP/COEP on its Space card).
+      The **Cluster** room (`space/cluster.js`) lends that engine to distributed.mind and measures what is given in
+      **ITE** (dmind 1.7.0, `17720c8`, tag `v1.7.0`: one token through a 1B-parameter model, the same on any CPU, RAM or
+      GPU), with RAM GB-seconds beside core- and GPU-seconds, and pays it per kITE in BANKON PAI through paymint.
+      Verified on a local dmind host in headless Brave: a job computed in the browser was accepted with its receipt,
+      both sides counted 87.72 ITE, and the huggingface.co copy only links (the realm token never leaves the host's
+      origin). PAI paid 250 base units for 5 kITE on a local anvil chain, and the same voucher was refused a second time.
+- [ ] **BANKON PAI paymint is off: PAI is not deployed, and the rate is unset.** **Decided by:** the operator deploying
+      PAI (`DeltaVerse/live/deployments.json` → `bankonPai`), funding a distributor that accepts it, and choosing
+      `MINDX_PAYMINT_PAI_PER_KITE` (base units per 1,000 ITE). mindX pays only a token that answers `decimals() == 6`.
+- [ ] **The Cluster's host edition is not live: mindx.pythai.net is unreachable (the VPS lapsed).** **Decided by:**
+      the VPS back up, then:
+      - install dmind 1.7.0 and deploy mindX `19e163e` (by patch);
+      - lay out the host edition with `space/serve.py --layout /var/www/mindx-savante-office --host-edition --bundles …`;
+      - add `deploy/apache/mindx-savante-office.conf.snippet`.
+      Until then both Spaces' Cluster rooms say the host is unreachable. Separately, mindX's
+      `tests/test_sharedcpu_pool.py::test_wrong_hash_or_model_is_refused_and_requeued` fails on its own HEAD with
+      dmind 1.6.9 and 1.7.0 alike (the refused job is not handed back on the next pull); it predates this work.
 - [ ] **No free carrier on the page passes review duty.** Both Bonsai carriers are REJECT; only gpt-oss-120b (sign-in,
       the visitor's quota) is APPROVE_WITH_CONDITIONS. **Decided by:** the operator, either choosing the default carrier
       by the carrier test or keeping Ternary as an answerer with its label; and, for a free reviewer, the probe set (trap

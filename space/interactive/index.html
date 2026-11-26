@@ -24,6 +24,7 @@
     <button data-go="ask">Ask Savante</button>
     <button data-go="faicey">Faicey</button>
     <button data-go="pythai">PYTHAI</button>
+    <button data-go="cluster">Cluster</button>
     <button data-go="hub">Hub</button>
     <button data-go="office">The Office</button>
     <button data-go="verdict">Verdict</button>
@@ -297,6 +298,42 @@ cd savante && python3 -m http.server 7872     # then open http://127.0.0.1:7872<
     <pre id="pyout" class="out"></pre>
   </section>
 
+  <section data-room="cluster" class="cluster-room" hidden>
+    <h2>cpu.cluster</h2>
+    <p class="muted">Visitors' browsers lend <b>savanteML</b> (Savante's engine: bankML in WebAssembly, the model verified
+      before it answers, a receipt on every answer) to <b>distributed.mind</b>, the dmind host at mindx.pythai.net.
+      Whole jobs go out. Each comes back with its receipt, and the host checks it, at first by re-running it.</p>
+    <p class="note"><b>How a contribution is measured.</b> In <b>ITE</b>, inference-token equivalents: one ITE is one
+      token through a 1-billion-parameter model (about 2 GFLOP). A job's ITE is its prompt plus completion tokens ×
+      the model's parameters / 10⁹, counted from the receipt and bounded by the host. One token through Bonsai-1.7B is
+      1.72 ITE. The same work counts the same on any CPU, RAM or GPU, so a slower machine earns no more for the same
+      tokens. Core-, GPU- and RAM GB-seconds are kept beside it as the record of where the work came from.
+      <b>Payment</b>: a host may pay matured ITE per kITE (1,000 ITE) in <b>BANKON PAI</b> through paymint. PAI is
+      <b>not deployed on any chain yet</b>, so nothing is payable today, but what you give is measured and kept.</p>
+    <h3 class="histhead">the pool</h3>
+    <div id="clpool" class="note">—</div>
+    <h3 class="histhead">this browser</h3>
+    <div id="clbench" class="note">—</div>
+    <div class="bar"><button id="clmeasure" type="button">Measure (loads savanteML: 248 MB once)</button></div>
+    <h3 class="histhead">contribute</h3>
+    <p id="clwhere" class="muted">—</p>
+    <div class="bar cluster-terms">
+      <label class="chooser">your share <input id="clpct" type="range" min="5" max="100" step="5" value="25"> <b id="clpctv">25%</b></label>
+      <label class="chooser">largest job <select id="cltok"><option>128</option><option selected>256</option><option>512</option><option>1024</option></select> tokens</label>
+      <label class="chooser"><input id="clvis" type="checkbox" checked> only while this tab is visible</label>
+      <button id="clgo" class="primary" type="button">Contribute</button>
+    </div>
+    <p id="clstate" class="pstate" aria-live="polite">not contributing</p>
+    <dl id="clvisit" class="kv"></dl>
+    <ol id="clthoughts" class="clthoughts"></ol>
+    <div id="clmewrap">
+      <h3 class="histhead">your contribution, as the host measured it</h3>
+      <div id="clme" class="note">—</div>
+      <div class="bar"><button id="clcollect" type="button">Collect (vouchers for your wallet)</button></div>
+      <pre id="clvouchers" class="mono"></pre>
+    </div>
+  </section>
+
   <section data-room="hub" hidden>
     <p><b>Hugging Face as a tool.</b> A reading of a model repository — commit sha, licence, task, parameters, gating
       and who serves it right now — stamped with the time it was read. A reading is evidence of what the Hub
@@ -381,5 +418,6 @@ cd savante && python3 -m http.server 7872     # then open http://127.0.0.1:7872<
 <script type="module" src="app.js"></script>
 <script type="module" src="faicey.js"></script>
 <script type="module" src="pythai.js"></script>
+<script type="module" src="cluster.js"></script>
 </body>
 </html>

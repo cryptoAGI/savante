@@ -18,6 +18,7 @@ from __future__ import annotations
 import argparse
 import functools
 import http.server
+import json
 import shutil
 import tempfile
 from pathlib import Path
@@ -44,10 +45,17 @@ EDITIONS = ("public", "interactive")
 # These build outputs are NOT canon: uif-space.* is built by ultimate-bankml-ui, the wasm by bankML (PYTHAI/bankml).
 # They live on the Gregory-L/Savante Space only, the mirror sync never touches them, and here they are linked from
 # --bundles DIR when given (without them the page loads, but the input field and in-browser carrier do not mount).
-BUNDLES = ["uif-space.js", "uif-space.css", "browseml.wasm", "browseml-mt.wasm", "browseml-mt-relaxed.wasm"]
-# The public edition mounts the input field too (it holds the rooms as tabs), so it takes the field's two bundles; it
-# has no in-browser carrier, so not the wasm. Uploaded to PYTHAI/savante beside the page, never by the mirror sync.
-PUBLIC_BUNDLES = ["uif-space.js", "uif-space.css"]
+FORK = "browseML/Bonsai-1.7B-Q1_0.gguf.FORK.json"     # the browser model's pin (bankML's), which savanteML verifies against
+BUNDLES = ["uif-space.js", "uif-space.css", "browseml.wasm", "browseml-mt.wasm", "browseml-mt-relaxed.wasm", FORK]
+# Both editions carry savanteML (Savante in the browser) and the input field, so both take every bundle. Uploaded to
+# each Space beside the page, never by the mirror sync.
+PUBLIC_BUNDLES = BUNDLES
+# The host edition: the page served by a dmind host itself (mindX at /savante/), so the cluster room may send the
+# realm token to the host's own same-origin paths. savante-host.json names them, as browseML's browseml-host.json does.
+HOST_JSON = {"label": "mindX", "share": {
+    "join": "/sharedcpu/join", "update": "/sharedcpu/update", "pull": "/sharedcpu/pull", "result": "/sharedcpu/result",
+    "leave": "/sharedcpu/leave", "me": "/sharedcpu/me", "collect": "/sharedcpu/collect", "insight": "/insight/sharedcpu",
+    "token": "mindx_realm_token", "signin": "/activity?from=/savante/office/%23cluster"}}
 
 
 def page_files(edition: str = "public") -> list[tuple[Path, str]]:
@@ -62,7 +70,8 @@ def page_files(edition: str = "public") -> list[tuple[Path, str]]:
     return sorted((src, rel) for rel, src in shared.items())
 
 
-def layout(dest: Path, link: bool = False, edition: str = "public", bundles: Path | None = None) -> Path:
+def layout(dest: Path, link: bool = False, edition: str = "public", bundles: Path | None = None,
+           host_edition: bool = False) -> Path:
     """Copy (for upload) or symlink (for serving here, so an edit shows on reload) the Space layout into dest."""
     dest.mkdir(parents=True, exist_ok=True)
     pairs = page_files(edition)
@@ -73,6 +82,8 @@ def layout(dest: Path, link: bool = False, edition: str = "public", bundles: Pat
     # merged dict would keep only one of its destinations
     pairs += [(ROOT / s, d) for s, d in SPACE_RENAMED.items()]
     pairs += [(ROOT / s, d) for s, d in SPACE_EXTRA.items()]
+    if host_edition:
+        (dest / "savante-host.json").write_text(json.dumps(HOST_JSON, indent=1) + "\n", encoding="utf-8")
     for src, rel in pairs:
         out = dest / rel
         out.parent.mkdir(parents=True, exist_ok=True)
@@ -90,12 +101,15 @@ def main() -> None:
     ap.add_argument("--port", type=int, default=7864)
     ap.add_argument("--layout", type=Path, help="write the layout into this directory and exit")
     ap.add_argument("--edition", choices=EDITIONS, default="public")
-    ap.add_argument("--bundles", type=Path, help="a directory holding the non-canon BUNDLES (the public edition takes only the input field's two)")
+    ap.add_argument("--bundles", type=Path, help="a directory holding the non-canon BUNDLES")
+    ap.add_argument("--host-edition", action="store_true",
+                    help="write savante-host.json: the copy a dmind host serves itself (the cluster may contribute)")
     a = ap.parse_args()
     if a.layout:
-        print(layout(a.layout, edition=a.edition, bundles=a.bundles))
+        print(layout(a.layout, edition=a.edition, bundles=a.bundles, host_edition=a.host_edition))
         return
-    d = layout(Path(tempfile.mkdtemp(prefix="savante-space-")), link=True, edition=a.edition, bundles=a.bundles)
+    d = layout(Path(tempfile.mkdtemp(prefix="savante-space-")), link=True, edition=a.edition, bundles=a.bundles,
+               host_edition=a.host_edition)
     handler = functools.partial(http.server.SimpleHTTPRequestHandler, directory=str(d))
     print(f"Savante ({a.edition} edition), served from {d}: http://{a.host}:{a.port}/   (#faicey · #pythai)")
     http.server.ThreadingHTTPServer((a.host, a.port), handler).serve_forever()

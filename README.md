@@ -108,8 +108,20 @@ Both editions float the **ultimate input field** over every room, and the field 
 names as commands (`faicey`, `pythai`, `room <name>`). The public edition's strip ends with the model's on/off switch;
 the field asks through the carrier chosen in Ask's model bar, and only while the switch is on. Every other field button
 sits under **+**. The header nav stays in the markup as the fallback, and steps aside only once the field has mounted.
-The build bundles (`uif-space.*` from ultimate-bankml-ui, plus `browseml*.wasm` from bankML for the interactive
-edition) are not canon: each Space holds its own copy, and the mirror sync never touches them.
+**savanteML** (`savanteml.js`) is Savante running in the visitor's browser: browseML, bankML compiled to WebAssembly,
+downloads Bonsai-1.7B once (248 MB), verifies every byte against its pin, and puts a receipt on every answer. Both
+editions offer it ("this browser" in Ask's model bar), and nothing typed leaves the device.
+
+The **Cluster** room (`cluster.js`) lends that engine to distributed.mind: dmind at mindx.pythai.net, whole jobs, each
+answer receipt-checked and audited. What a browser gives is measured in **ITE** (dmind 1.7.0): one token through a
+1-billion-parameter model, so one Bonsai-1.7B token is 1.72 ITE. The measure is the same for CPU, RAM and GPU, with
+core-, GPU- and RAM GB-seconds kept beside it. A host may pay it per kITE in BANKON PAI through paymint; PAI is not
+deployed yet, so nothing is payable today. Contributing happens only on the host's own copy of the room
+(`/savante/office/`, `serve.py --host-edition`), so the realm token never leaves the host's origin. The Hugging Face
+copies show the pool, measure this browser, and link there.
+
+The build bundles (`uif-space.*` from ultimate-bankml-ui, `browseml*.wasm` and the model's FORK.json from bankML) are
+not canon: each Space holds its own copy, and the mirror sync never touches them.
 
 Serve either edition with `python3 space/serve.py [--edition interactive --bundles DIR]` (127.0.0.1:7864; `#faicey` and
 `#pythai` open a room directly). The mirror sync publishes each edition from the same layout function. The Gradio

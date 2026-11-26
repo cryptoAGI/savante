@@ -91,7 +91,10 @@ THE FILES, AND WHICH ARE AUTHORED VERSUS DERIVED
     space/                   the office as a static web page (canon from generation 10): the rooms,
                              Faicey (the embodied office) and PYTHAI (the org read from the Hub);
                              the ultimate input field floats over every room and holds the rooms
-                             as tabs (space/uiftabs.js); space/serve.py serves it on 127.0.0.1:7864
+                             as tabs (space/uiftabs.js); savanteML (space/savanteml.js) runs Savante
+                             in the browser on browseML; the Cluster room (space/cluster.js) lends it
+                             to distributed.mind, measured in ITE (dmind 1.7.0) and payable in BANKON
+                             PAI (not deployed); space/serve.py serves it on 127.0.0.1:7864
     gfx/                     the images of Savante. gfx/Savante3.png is the ARTWORK the operator
                              named (iNFT.md condition 4, naming half): sha256 30a59db4…c5a9a8, in
                              the ledger's image_candidate. Nothing is pinned, so the card's image is
