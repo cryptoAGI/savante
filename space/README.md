@@ -43,7 +43,7 @@ chosen in Ask's model bar. No carrier here puts a receipt on an answer, so the r
 downloads Bonsai-1.7B once (248 MB, kept in this browser), verifies every byte against its pin, and puts a receipt
 on every answer. Nothing you type leaves your device. The **Cluster** room lends that engine to distributed.mind
 (dmind) and measures what you give in **ITE**: one token through a 1B-parameter model, the same on any CPU, RAM or GPU.
-A host may pay it in BANKON PAI, which is not deployed yet. Contributing happens on the host's own copy of the room,
+A host may pay it in BANKON PAI, a USD basket of USDC, USDT and DAI / USDS at 18 decimals, which is not deployed yet. Contributing happens on the host's own copy of the room,
 so your sign-in token never leaves the host.
 
 | room | what it does |

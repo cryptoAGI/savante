@@ -6,7 +6,7 @@
 //
 // The host measures what this browser gave as ITE (dmind 1.7.0: one token through a 1B-parameter model; a job's ITE =
 // (prompt + completion tokens) × params / 1e9, from the receipt's host-bounded counts), beside core-, GPU- and RAM
-// GB-seconds; a host may pay it per kITE in BANKON PAI (paymint). The page never signs anything: COLLECT returns
+// GB-seconds; a host may pay it per kITE in BANKON PAI (paymint; a USD basket of USDC, USDT and DAI / USDS at 18 decimals). The page never signs anything: COLLECT returns
 // vouchers the contributor sends from their own wallet.
 //
 // Safety, as browseML's SHARE keeps it: the realm token goes ONLY to the host's own same-origin paths. CONTRIBUTE is

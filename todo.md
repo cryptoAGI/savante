@@ -60,9 +60,15 @@ Open from this generation, each with what decides it:
 - [x] **The interactive edition has the model's on/off switch too** (2026-11-25), ported from the public edition. ON warms
       the chosen carrier and keeps a live state line. It loads browseML from this browser's cache but never starts the
       248 MB download unasked. OFF stops the input field from calling any model.
-- [ ] **BANKON PAI paymint is off: PAI is not deployed, and the rate is unset.** **Decided by:** the operator deploying
-      PAI (`DeltaVerse/live/deployments.json` → `bankonPai`), funding a distributor that accepts it, and choosing
-      `MINDX_PAYMINT_PAI_PER_KITE` (base units per 1,000 ITE). mindX pays only a token that answers `decimals() == 6`.
+- [ ] **BANKON PAI paymint is off: PAI is not deployed, and the rate is unset.** The operator set the design
+      (2026-11-25): **a USD basket of USDC, USDT and DAI / USDS, averaged at 18 decimals.** The code follows it:
+      - dmind 1.7.1 (`b9376c4`): `PAI_DECIMALS = 18`, and `pai_per_kite` turns a USD price per million ITE into base
+        units per kITE exactly;
+      - mindX `2f21ad7`: pays only a token answering `decimals() == 18`; the rate is set as
+        `MINDX_PAYMINT_PAI_USD_PER_MITE`.
+      The lines in `DeltaVerse/live/deployments.json` (`bankonPai`: PAIStablecoin, issuer-attested, 6 decimals) do not
+      match this design yet. **Decided by:** the operator, who deploys the basket contract, funds a distributor that
+      accepts it, and chooses the dollar price per million ITE.
 - [ ] **The Cluster's host edition is not live.** The VPS is back (2026-11-25, ~20:20 UTC): Apache serves TLS for
       mindx.pythai.net, but the mindX backend behind it does not answer, so `/health` times out at the proxy.
       SSH from this session is denied by the permission classifier, so the deploy is the operator's to run:
