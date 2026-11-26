@@ -2,7 +2,7 @@
 
 The digests of the sAGI skill and of every file in this repository that carries a proof: the office, its
 bound ledger, the artwork, the verdict records and the tools that check them. Written from the tree of the
-commit that adds this file, whose parent is `26da3f6`. Every value here can be recomputed by anyone
+commit that adds this file, whose parent is `a15dbab`. Every value here can be recomputed by anyone
 holding a clone; none is taken on trust.
 
 ## Check it
@@ -155,7 +155,7 @@ under `image_candidate.named_by_operator`. The file is JPEG bytes under a `.png`
 | `sAGI.md` | 6,829 | `5e6f31c7c90ba34fac2147ef1fec2c18fa6b4f6c796984f6f5a6cd220547c28d` | `bafkreic6n4y4psilunh2yikh54p6ylay7jvu63dzngcpn5ngzurakr6cru` |
 | `savante.md` | 7,122 | `2cf2d3b6a42c9438f89c6dc3bae833486e356795a997e8a0f932205d2fe18c3a` | `bafkreibm6lj3njbmsq4prhdnyo5oqm2iny2wpfnjs7ukb6jsebos7ymmhi` |
 | `technical.md` | 12,498 | `fb2e2d12637bbd947dae05255b228331e0b630580a9b20da939be1304888b3c8` | `bafkreih3fywrey33xwkh3lqfevnsfazr4c3dawaktmqnve434eyercftza` |
-| `todo.md` | 23,981 | `f3b81373be38f0e5bdbe902dd1f39883b88b47c4a8fe2f367cc9374ff7307482` | `bafkreihtxajxhpry6ds33puqfxi7hgedxcfuprfi7yxtm7gjg5h7omduqi` |
+| `todo.md` | 24,714 | `446ec766c11644aa12f859ac430e03b82f27e61ba32f206b099e80b172950d5f` | `bafkreicen3dwnqiwisvbf6czvrbq4a5yf4t6mg5df4qgwcm6qcyxffinl4` |
 | `ui.py` | 63,909 | `926e7b8e90f5395eb24ce6e52e6d13c42135e268b95f3fce7ee184f8a8aef6fd` | `bafkreiesnz5y5ehvhfplethg4uxg2e6eee26e2fzl47447xbqt4krlxw7u` |
 | `usage.md` | 5,106 | `4337a13d09671f9793e9efb1b1591cc8870a62c93eef67faab618ab01850c7d6` | `bafkreicdg6qt2clhd6lzh2ppwgyvshgiq4fgfsj655t7vk3brkybqugh2y` |
 
