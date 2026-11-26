@@ -2,7 +2,7 @@
 
 The digests of the sAGI skill and of every file in this repository that carries a proof: the office, its
 bound ledger, the artwork, the verdict records and the tools that check them. Written from the tree of the
-commit that adds this file, whose parent is `1a71d67`. Every value here can be recomputed by anyone
+commit that adds this file, whose parent is `ea77a58`. Every value here can be recomputed by anyone
 holding a clone; none is taken on trust.
 
 ## Check it
@@ -69,7 +69,7 @@ under `image_candidate.named_by_operator`. The file is JPEG bytes under a `.png`
 | `space/browseml-wasi.js` | page file | 6,575 | `1f91566020e8255c3417086e676af8288a11908902bff027f87994406fb91cca` | `bafkreia7sflgaihievodifyinztwv6biriizbcicx7ycp6dzsrag7oi4zi` |
 | `space/browseml-worker.js` | page file | 7,222 | `39cdf331a06e87e31d8406491efc64492e21da48f83ca367ece4ddabfd56feb8` | `bafkreibzzxztdidoq7rr3bagjeppyzcjfyq5ushyhsrwp3he3wv72vx6xa` |
 | `space/browseml.js` | page file | 7,233 | `90bf5d44b1f40ea93960d0fae514cfdd94f00a764288f9052be2615623059d4a` | `bafkreieqx5oujmpub2utsygq7lsrjt65styau5scrd4qkk7cmflcgbm5ji` |
-| `space/cluster.js` | page file | 18,702 | `7d9bcfd84628278ffd06360385707414ff43d66ca33a40dc59d2dbed774de47f` | `bafkreid5tph5qrrie6h72brwaocxa5au75b5m3fdhjanywos3pwxotpep4` |
+| `space/cluster.js` | page file | 18,879 | `0b34fc33cc0d63dcaae72ff30d5662270668807dc0285fcd36f6f57add515378` | `bafkreialgt6dhtanmpokvzzp6mgvmyrhazuia7oafbp42nxw6v5n2uktpa` |
 | `space/faicey.css` | Faicey: the split face | 6,708 | `da3e239d94dff70a8d20ea209140a46463e609e29554d95642ad6467597d068b` | `bafkreig2hyrz3fg764fi2ihkeciubjdemptatyuvktmvmqvnmrtvs7igrm` |
 | `space/faicey.js` | Faicey: voaicey, oscilloscope mouth, camera eye, microphone ear | 17,674 | `61fd45e981add116530bfa4a5bb8bda43f8683d0c1cdc14131465fdd1985f58a` | `bafkreidb7vc6tann2elfgc72jjn3rpneh6dihugbzxaucmkgl7ortbpvri` |
 | `space/history.json` | page file | 2,931 | `1cc8f9bb85e469bdb250c0ef205d88b34f1aeb2430e6f51f125055ba1275aa60` | `bafkreia4zd43xbpeng63euga54qf3cftj4nowjbq432r6esqkw5be5nkma` |
