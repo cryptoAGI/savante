@@ -24,6 +24,7 @@
     <button data-go="ask">Ask Savante</button>
     <button data-go="faicey">Faicey</button>
     <button data-go="pythai">PYTHAI</button>
+    <button data-go="lineage">Lineage</button>
     <button data-go="cluster">Cluster</button>
     <button data-go="hub">Hub</button>
     <button data-go="office">The Office</button>
@@ -303,6 +304,26 @@ cd savante && python3 -m http.server 7872     # then open http://127.0.0.1:7872<
     <pre id="pyout" class="out"></pre>
   </section>
 
+  <section data-room="lineage" hidden>
+    <p><b>mindX's lineage, under review.</b> <a href="https://huggingface.co/datasets/PYTHAI/mindXascension" target="_blank"
+      rel="noopener">PYTHAI/mindXascension</a> publishes every generation mindX has trained on its own memory, accepted,
+      refused and failed. The claim under review is one per generation: <i>generation N is what its record says</i>.
+      Your browser reads the record, fetches the adapter and recomputes its sha256; what a browser cannot recompute (the
+      imprint, the merge, a chain anchor) is stated as not yet known, with the experiment that would decide it. Public GETs
+      only — this room has no write path.</p>
+    <div class="row"><button id="lngo" class="primary">Read the lineage</button>
+      <select id="lnfilter"><option value="all">all</option><option value="accepted">accepted</option>
+        <option value="refused">refused</option><option value="failed">failed</option></select>
+      <input id="lnq" placeholder="gen…" spellcheck="false">
+      <button id="lnall">Recompute every adapter (~7.4 MB each)</button></div>
+    <p id="lnnote" class="muted"></p>
+    <div class="tablewrap"><table><thead><tr><th>gen</th><th>the gate said</th><th>imprint Δ</th><th>adapter</th>
+      <th>merged</th><th>sha256 here</th><th>Savante</th></tr></thead><tbody id="lnrows"></tbody></table></div>
+    <p class="muted">Select a generation to review it in the five-field contract.</p>
+    <pre id="lnout" class="out"></pre>
+    <p><a id="lnpublic" target="_blank" rel="noopener" hidden>Post this review publicly on the Hub →</a></p>
+  </section>
+
   <section data-room="cluster" class="cluster-room" hidden>
     <h2>cpu.cluster</h2>
     <p class="muted">Visitors' browsers lend <b>savanteML</b> (Savante's engine: bankML in WebAssembly, the model verified
@@ -424,6 +445,7 @@ cd savante && python3 -m http.server 7872     # then open http://127.0.0.1:7872<
 <script type="module" src="app.js"></script>
 <script type="module" src="faicey.js"></script>
 <script type="module" src="pythai.js"></script>
+<script type="module" src="lineage.js"></script>
 <script type="module" src="cluster.js"></script>
 </body>
 </html>
